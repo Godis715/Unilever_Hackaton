@@ -383,14 +383,32 @@ namespace PalletViewer
             new int[] { 2, 1, 3,   0, 1, 2,   5, 6, 7,   5, 4, 6 }, // side
         };
 
+        public static readonly int[][] BoxSidesIndecies = {
+            new int[] { 4, 5, 1, 0,    3, 7, 6, 2 },
+            new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+            new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+        };
+
+        public static readonly double BroderIndent = 0.001;
+
         public static readonly double CameraEPS = Math.PI / 50.0;
 
         public static readonly Vector CameraRotationCoefs = new Vector(1.0, 1.0);
+
+        public static readonly SolidColorBrush UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 };
+        public static readonly SolidColorBrush FrontBush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 };
+        public static readonly SolidColorBrush SideBrush = new SolidColorBrush { Color = Colors.Green, Opacity = 1.0 };
+        public static readonly SolidColorBrush BorderBrush = new SolidColorBrush { Color = Colors.Black, Opacity = 1.0 };
+
+        public static readonly Material UpMaterial = new DiffuseMaterial(UpBrush);
+        public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
+        public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
+        public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
+
     }
 
     public partial class MainWindow : Window
     {
-
         public MeshGeometry3D[] BoxToPolygons(Box[] boxes)
         {
             var PolyIndecies = Params.BoxPolyIndecies;
@@ -425,6 +443,126 @@ namespace PalletViewer
             return meshes;
         }
 
+        public MeshGeometry3D CreatePolygonMesh(Point3D[] points)
+        {
+            MeshGeometry3D polyMesh = new MeshGeometry3D();
+
+            for (int i = 0; i < points.Length; ++i)
+            {
+                polyMesh.Positions.Add(points[i]);
+            }
+
+            polyMesh.TriangleIndices.Add(0);
+            polyMesh.TriangleIndices.Add(1);
+            polyMesh.TriangleIndices.Add(2);
+            polyMesh.TriangleIndices.Add(2);
+            polyMesh.TriangleIndices.Add(3);
+            polyMesh.TriangleIndices.Add(0);
+
+            return polyMesh;
+        }
+
+        public GeometryModel3D[] CreateMarkedPolygon(Point3D[] points, Material mat, double thickness)
+        {
+            var markedPolygon = new GeometryModel3D[2];
+
+            var polyMesh = CreatePolygonMesh(points);
+
+            markedPolygon[0] = new GeometryModel3D(polyMesh, mat);
+
+            var markMesh = new MeshGeometry3D();
+
+            var indent = Vector3D.CrossProduct(points[1] - points[0], points[3] - points[0]);
+
+            indent.Normalize();
+
+            indent *= Params.BroderIndent;
+
+            for(int i = 0; i < points.Length; ++i)
+            {
+                markMesh.Positions.Add(points[i] + indent);
+            }
+
+            for(int i = 0; i < 4; ++i)
+            {
+                int j = (i + 1) % 4;
+
+                int k = (i + 2) % 4;
+
+
+                Vector3D dir = points[k] - points[j];
+
+                dir.Normalize();
+
+                dir *= thickness;
+
+                Point3D newPoint = points[j] + dir + indent;
+
+                markMesh.Positions.Add(newPoint);
+
+                markMesh.TriangleIndices.Add(i);
+                markMesh.TriangleIndices.Add(j);
+                markMesh.TriangleIndices.Add(4 + 2 * i);
+
+                int l = (i + 4 - 1) % 4;
+
+                dir = points[l] - points[i];
+
+                dir.Normalize();
+
+                dir *= thickness;
+
+                newPoint = points[i] + dir + indent;
+
+                markMesh.Positions.Add(newPoint);
+
+                markMesh.TriangleIndices.Add(i);
+                markMesh.TriangleIndices.Add(4 + 2 * i);
+                markMesh.TriangleIndices.Add(4 + 2 * i + 1);
+            }
+
+            markedPolygon[1] = new GeometryModel3D(markMesh, Params.BorderMaterial);
+
+            return markedPolygon;
+        }
+
+        public GeometryModel3D[] BoxToPolygons1(Box[] boxes)
+        {
+            List<GeometryModel3D> polygons = new List<GeometryModel3D>();
+
+            var materials = new Material[] { Params.UpMaterial, Params.FrontMaterial, Params.SideMaterial };
+
+            var ind = Params.BoxSidesIndecies;
+            for (int i = 0; i < boxes.Length; ++i)
+            {
+                for (int j = 0; j < 3; ++j)
+                {
+                    int orient = boxes[i].Orient[j];
+                    for (int k = 0; k < 2; ++k)
+                    {
+
+                        var markedPoly = CreateMarkedPolygon(
+                            new Point3D[]
+                            {
+                                boxes[i].Points[ind[orient][k * 4 + 0]],
+                                boxes[i].Points[ind[orient][k * 4 + 1]],
+                                boxes[i].Points[ind[orient][k * 4 + 2]],
+                                boxes[i].Points[ind[orient][k * 4 + 3]],
+                            },
+                            materials[orient],
+                            0.5
+                            );
+
+                        polygons.Add(markedPoly[0]);
+                        polygons.Add(markedPoly[1]);
+
+                    }
+                }
+            }
+
+            return polygons.ToArray();
+        }
+
         public Scene MyScene { get; set; }
 
 
@@ -437,19 +575,23 @@ namespace PalletViewer
 
         private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            double widthPallet = 12;
-            double lengthPallet = 8;
+            double widthPallet = 120;
+            double lengthPallet = 80;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
-            double widthBox = 0.4;
-            double lengthBox = 2.2;
-            double heigthBox = 2.3;
+            double widthBox = 14;
+            double lengthBox = 5;
+            double heigthBox = 10;
             layer.createLayer(widthBox, lengthBox, heigthBox, new BoxFactory(widthBox, heigthBox, lengthBox),
                 LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
 
-            var meshes = BoxToPolygons(layer.coordBoxes.ToArray());
+            var polygons = BoxToPolygons1(layer.coordBoxes.ToArray());
 
-            MyScene.RestoreMesh(meshes);
+            for (int i = 0; i < polygons.Length; ++i)
+            {
+                polygons[i].Freeze();
+                Models.Children.Add(polygons[i]);
+            }
 
         }
 
@@ -491,27 +633,17 @@ namespace PalletViewer
 
         private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
         {
-            BoxFactory boxFactory = new BoxFactory(0.23, 0.11, 0.13);
 
-            Box box = boxFactory.GenBox();
 
-            Box box1 = boxFactory.GenBox();
-
-            Box box2 = boxFactory.GenBox();
-
-            box.RotUp();
-
-            box1.RotFront();
-
-            MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1, box2 });
-
-            MyScene = new Scene(new Point3D(0, 0, 0), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
+            MyScene = new Scene(new Point3D(60, 0, 40), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
             {
 
-                UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 },
-                FrontBrush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 },
-                SideBrush = new SolidColorBrush { Color = Colors.Green, Opacity = 1.0 },
+                UpBrush = Params.UpBrush,
+                FrontBrush = Params.FrontBush,
+                SideBrush = Params.SideBrush,
             };
+
+            
 
             this.DataContext = MyScene;
         }

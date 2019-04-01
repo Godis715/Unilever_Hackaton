@@ -22,12 +22,15 @@
             Grid.Row="1">
             <Viewport3D 
             Name="myViewport"
-            Margin="10,10,0,0">
+            Margin="10,10,0,0"
+            ClipToBounds="false"
+            IsHitTestVisible="False">
+
 
             <!-- Add a camera. -->
             <Viewport3D.Camera>
                 <PerspectiveCamera 
-                        FarPlaneDistance="100" 
+                        FarPlaneDistance="300" 
                         LookDirection="{Binding Path=Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
@@ -39,7 +42,7 @@
             <Viewport3D.Children>
                 <ModelVisual3D x:Name="Model">
                     <ModelVisual3D.Content>
-                        <Model3DGroup >
+                        <Model3DGroup x:Name="Models">
                             <Model3DGroup.Children>
                                 <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
                                 <AmbientLight Color="#FFFFFFFF"/>

@@ -41,11 +41,6 @@ namespace PalletViewer
                 shift.Y / ViewportSize.Height * (Math.PI / 2 - Params.CameraEPS) * Params.CameraRotationCoefs.Y
                 );
 
-            if (normShift.X > Math.PI)
-            {
-                int a = 5;
-            }
-
             UVPos = SavedUVPos - normShift;
 
             if (UVPos.Y < Params.CameraEPS)

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -102,17 +103,25 @@ namespace PalletViewer
 
         private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            double widthPallet = 12;
-            double lengthPallet = 8;
+            double widthPallet = 70;
+            double lengthPallet = 90;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
             double widthBox = 0.4;
             double lengthBox = 2.2;
             double heigthBox = 2.3;
 
+			Stopwatch stopwatch = new Stopwatch();
+
+			stopwatch.Start();
 			layer.GenerateBoxs_On(new BoxFactory(widthBox, heigthBox, lengthBox));
-            layer.CreateLayer(widthBox, lengthBox, heigthBox,
-                LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+			layer.CreateLayer(widthBox, lengthBox, heigthBox,
+				LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+			stopwatch.Stop();
+
+			var elapsedTime = stopwatch.Elapsed;
+
+			
 
             var meshes = BoxToPolygons(layer.Boxes.ToArray());
 

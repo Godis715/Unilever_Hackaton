@@ -117,7 +117,10 @@ namespace PalletViewer
 			var startPoint = new Vector { X = 0, Y = 0 };
 
 			//Убрать
-			DrawArea(startPoint, new Vector { X = startPoint.X + WidthPallet, Y = startPoint.Y + LengthPallet } * ScalingKoef);
+			if (isEnableGen)
+			{
+				DrawArea(startPoint, new Vector { X = startPoint.X + WidthPallet, Y = startPoint.Y + LengthPallet } * ScalingKoef);
+			}
 
 			FillArea(directionFilling, orientationBox, startPoint, WidthPallet, LengthPallet);
 		}
@@ -207,8 +210,11 @@ namespace PalletViewer
 					nextLength = length - Length_sideWall * alpha;
 
 					//Убрать
-					DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef,
+					if (isEnableGen)
+					{
+						DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef,
 						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef, Brushes.Blue);
+					}
 					break;
 
 				case DirectionFilling.Right:
@@ -247,8 +253,11 @@ namespace PalletViewer
 					nextWidth = width - Length_belowWall * alpha;
 					nextLength = length;
 
-					DrawLine(new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y } * ScalingKoef,
+					if (isEnableGen)
+					{
+						DrawLine(new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y } * ScalingKoef,
 						new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y + length } * ScalingKoef, Brushes.Blue);
+					}
 					break;
 			}
 			CountBoxes += countBoxesOnRow * countBoxesOnColumn;

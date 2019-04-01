@@ -1,9 +1,12 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Shapes;
 
 namespace PalletViewer
 {
@@ -335,7 +338,7 @@ namespace PalletViewer
 		}
 	}
 
-	class Box
+	class Helper
     {
         public static void Swap<T>(ref T a, ref T b)
         {
@@ -555,30 +558,10 @@ namespace PalletViewer
 
             MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1, box2 });
 
-            /* mesh.Positions.Add(new Point3D(0, 1, 0));
-            mesh.Positions.Add(new Point3D(0, 0, 0));
-            mesh.Positions.Add(new Point3D(-1, 0, 0));
-            mesh.Positions.Add(new Point3D(-1, 1, 0));
 
-<<<<<<<
-            mesh.TriangleIndices.Add(1);
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(2);
-            mesh.TriangleIndices.Add(2);
-            mesh.TriangleIndices.Add(0);
-            mesh.TriangleIndices.Add(3); */
-=======
-            //mesh.TriangleIndices.Add(1);
-            //mesh.TriangleIndices.Add(0);
-            //mesh.TriangleIndices.Add(2);
-            //mesh.TriangleIndices.Add(2);
-            //mesh.TriangleIndices.Add(0);
-            //mesh.TriangleIndices.Add(3);
-            
-            //DiffuseMaterial meshMat = new DiffuseMaterial((Brush)Application.Current.Resources["patternBrush"]);
->>>>>>>
 
-            MyScene = new Scene {
+            MyScene = new Scene
+            {
 
                 UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 },
                 FrontBrush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 },
@@ -595,17 +578,17 @@ namespace PalletViewer
 
             this.DataContext = MyScene;
         }
-		private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-		{
-			double widthPallet = 1200 / 2;
-			double lengthPallet = 800 / 2;
-			var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
+        private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            double widthPallet = 1200 / 2;
+            double lengthPallet = 800 / 2;
+            var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
-			double widthBox = 206 / 2;
-			double lengthBox = 331 / 2;
-			double heigthBox = 10.6;
-			layer.createLayer(widthBox, lengthBox, heigthBox,
-				LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
-		}
-	}
+            double widthBox = 206 / 2;
+            double lengthBox = 331 / 2;
+            double heigthBox = 10.6;
+            layer.createLayer(widthBox, lengthBox, heigthBox,
+                LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+        }
+    }
 }

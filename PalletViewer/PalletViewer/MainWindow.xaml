@@ -7,8 +7,16 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="mainWindow">
     <Grid>
-        <Viewport3D Name="myViewport" >
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="900"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Canvas x:Name="TestScene" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+                    Background="Black"
+                    MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
+                    ClipToBounds="True">
+        </Canvas>
+        <Viewport3D Name="myViewport" Grid.Row="1">
             <!-- Add a camera. -->
             <Viewport3D.Camera>
                 <OrthographicCamera 
@@ -19,16 +27,12 @@
                         Position="{Binding Path=CameraPosition}" 
                         />
             </Viewport3D.Camera>
-
             <!-- Add models. -->
             <Viewport3D.Children>
-
-                <ModelVisual3D>
+                <ModelVisual3D x:Name="Model">
                     <ModelVisual3D.Content>
-
                         <Model3DGroup >
                             <Model3DGroup.Children>
-
                                 <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
                                 <AmbientLight Color="#FFFFFFFF"/>
 
@@ -46,7 +50,6 @@
                                     <GeometryModel3D.Material>
                                         <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
                                     </GeometryModel3D.Material>
-
                                 </GeometryModel3D>
 
                                 <GeometryModel3D Geometry="{Binding Path=SideMesh}">
@@ -59,16 +62,9 @@
 
                             </Model3DGroup.Children>
                         </Model3DGroup>
-
                     </ModelVisual3D.Content>
-
                 </ModelVisual3D>
-                
-
             </Viewport3D.Children>
-
         </Viewport3D>
-        
-        
     </Grid>
 </Window>

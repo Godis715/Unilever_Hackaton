@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PalletViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Name="mainWindow">
+        Title="MainWindow" Height="450" Width="800" Name="mainWindow"
+        Loaded="MainWindow_Loaded_1">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="200"/>
@@ -17,7 +18,8 @@
                     MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
                     ClipToBounds="True">
         </Canvas>
-        <Grid Grid.Row="1">
+        <Grid 
+            Grid.Row="1">
             <Viewport3D 
             Name="myViewport"
             Margin="10,10,0,0">
@@ -77,6 +79,9 @@
                 MouseLeftButtonDown="MouseDown_ViewPort"
                 MouseLeftButtonUp="MouseUp_ViewPort"
                 MouseMove="MouseMove_ViewPort"
+                MouseLeave="MouseLeave_ViewPort"
+                x:Name="ViewportArea"
+
                 />
         </Grid>
     </Grid>

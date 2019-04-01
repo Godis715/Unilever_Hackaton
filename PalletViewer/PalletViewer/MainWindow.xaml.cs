@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -90,25 +91,28 @@ namespace PalletViewer
 		{
 			widthPallet = _widthPallet;
 			lengthPallet = _lengthPallet;
-			coordBoxes = new List<coordBox>();
+			coordBoxes = new List<Box>();
 			scene = _scene;
 		}
 
 		#region Выходные данные 
 		public double errorLayer { get; set; }
 
-		public List<coordBox> coordBoxes { get; set; }
-		#endregion
+		public List<Box> coordBoxes { get; set; }
+        #endregion
 
-		public void createLayer(double _widthBox, double _lengthBox, double _heightBox,
+        public BoxFactory boxFactory { get; set; }
+		public void createLayer(double _widthBox, double _lengthBox, double _heightBox, BoxFactory _boxFactory,
 			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)
 		{
 			widthBox = _widthBox;
 			lengthBox = _lengthBox;
 			heightBox = _heightBox;
 
-			 var startPoint = new Vector { X = 10, Y = 10 };
-			DrawArea(startPoint, new Vector { X = startPoint.X + widthPallet, Y = startPoint.Y + lengthPallet });
+            boxFactory = _boxFactory;
+
+			 var startPoint = new Vector { X = 0, Y = 0 };
+			DrawArea(startPoint, new Vector { X = startPoint.X + widthPallet, Y = startPoint.Y + lengthPallet } * koef);
 			fillArea(directionFilling, orientationBox, startPoint, widthPallet, lengthPallet);
 			int size = coordBoxes.Count;
 		}
@@ -143,8 +147,8 @@ namespace PalletViewer
 			}
 		}
 		#endregion'
-
-		private double allowEps = 0;
+        private double koef = 10;
+        private double allowEps = 0;
 		private void fillArea(DirectionFilling dirFil, OrientationBox orBox, 
 			Vector startPoint, double width, double length)
 		{
@@ -194,9 +198,20 @@ namespace PalletViewer
 								point1 = pointBegin,
 								point2 = new Vector { X = pointBegin.X + length_belowWall, Y = pointBegin.Y + length_sideWall}
 							};
-							DrawBox(tempCoordBox.point1, tempCoordBox.point2);
+
+                            var box = boxFactory.GenBox();
+
+                            box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
+
+                            if (orBox == OrientationBox.Horizontally)
+                            {
+                                box.RotUp();
+                            }
+                            
+							DrawBox(tempCoordBox.point1 * koef, tempCoordBox.point2 * koef);
 							//Добавление в список координат коробов
-							coordBoxes.Add(tempCoordBox);
+							coordBoxes.Add(box);
+
 							pointBegin.Y += length_sideWall;
 						}
 						//Переход на следующий столбец
@@ -213,8 +228,8 @@ namespace PalletViewer
 					nextWidth = width;
 					nextLength = length - length_sideWall * alpha;
 
-					DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * length_sideWall },
-						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * length_sideWall }, Brushes.Blue);
+					DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * length_sideWall } * koef,
+						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * length_sideWall } * koef, Brushes.Blue);
 
 					//Проверка на выход из рекурсии
 					if ( nextLength < length_belowWall &&  Math.Abs(nextLength - length_belowWall) / length_belowWall > 0)
@@ -261,9 +276,19 @@ namespace PalletViewer
 								point1 = pointBegin,
 								point2 = new Vector { X = pointBegin.X + length_belowWall, Y = pointBegin.Y + length_sideWall }
 							};
-							DrawBox(tempCoordBox.point1, tempCoordBox.point2);
+
+                            var box = boxFactory.GenBox();
+
+                            box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
+
+                            if (orBox == OrientationBox.Horizontally)
+                            {
+                                box.RotUp();
+                            }
+
+                            DrawBox(tempCoordBox.point1 * koef, tempCoordBox.point2 * koef);
 							//Добавление в список координат коробов
-							coordBoxes.Add(tempCoordBox);
+							coordBoxes.Add(box);
 							pointBegin.X += length_belowWall;
 						}
 						//Переход на следующую строку
@@ -280,8 +305,8 @@ namespace PalletViewer
 					nextWidth = width - length_belowWall * alpha;
 					nextLength = length;
 
-					DrawLine(new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y },
-						new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y + length }, Brushes.Blue);
+					DrawLine(new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y } * koef,
+						new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y + length } * koef, Brushes.Blue);
 
 					//Проверка на выход из рекурсии
 					if (nextWidth < length_sideWall && Math.Abs(nextWidth - length_sideWall) / length_sideWall > 0)
@@ -450,8 +475,10 @@ namespace PalletViewer
         }
     }
 
-    public class Scene
+    public class Scene : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #region brushes
         public SolidColorBrush UpBrush { get; set; }
 
@@ -468,19 +495,103 @@ namespace PalletViewer
         public MeshGeometry3D SideMesh { get; set; }
         #endregion
 
-        public Point3D SceneCenter { get; set; }
+        private Point3D SceneCenter { get; set; }
 
-        public Point3D CameraPosition { get; set; }
+        public MyCamera Camera { get; set; }
+
+        public void RestoreMesh(MeshGeometry3D[] meshes)
+        {
+            UpMesh = meshes[0];
+            FrontMesh = meshes[1];
+            SideMesh = meshes[2];
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UpMesh)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FrontMesh)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SideMesh)));
+        }
+
+        public Scene(Point3D _scenter)
+        {
+            SceneCenter = _scenter;
+            Camera = new MyCamera(2.0, _scenter, new Point(Math.PI / 4, Math.PI / 4));
+        }
+
+        public Point StartMousePos { get; set; }
+
+        public Point LastMousePos { get; set; }
+    }
+
+
+    public class MyCamera : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private Point SavedUVPos { get; set; }
+
+        private Point UVPos { get; set; }
+
+        public Point3D CameraPos { get; set; }
 
         public Vector3D CameraOrient { get; set; }
 
-        public void RestoreCamera()
+        public double Rad { get; set; }
+
+        public Point3D Center { get; set; }
+
+        private readonly double MaxU = Math.PI / 2.0 - 0.01;
+
+        public MyCamera(double _rad, Point3D _center, Point _uvpos)
         {
-            CameraOrient = SceneCenter - CameraPosition;
+            Rad = _rad;
+            Center = _center;
+            SavedUVPos = _uvpos;
+            UVPos = _uvpos;
+
+            ShiftUVPosition(new Vector(0, 0));
         }
 
-        private Vector LastMousePos { get; set; }
+        public void ShiftUVPosition(Vector shift)
+        {
+            shift /= 100;
+
+            UVPos = SavedUVPos - shift;
+
+            if (UVPos.Y < 0.1)
+            {
+                UVPos = new Point(UVPos.X, 0.1);
+            }
+            else if (UVPos.Y > Math.PI / 2)
+            {
+                UVPos = new Point(UVPos.X, Math.PI / 2);
+            }
+
+            double RsinU = Rad * Math.Sin(UVPos.Y);
+            double RcosU = Rad * Math.Cos(UVPos.Y);
+            double cosV = Math.Cos(UVPos.X);
+            double sinV = Math.Sin(UVPos.X);
+
+            Vector3D sphereCoords = new Vector3D
+            {
+                Z = RsinU * cosV,
+                X = RsinU * sinV,
+                Y = RcosU
+            };
+
+            CameraPos = Center + sphereCoords;
+
+            CameraOrient = Center - CameraPos;
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CameraPos)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CameraOrient)));
+
+        }
+
+        public void RestorePosition()
+        {
+            SavedUVPos = UVPos;
+        }
     }
+
 
     public partial class MainWindow : Window
     {
@@ -527,18 +638,6 @@ namespace PalletViewer
 
         public Scene MyScene { get; set; }
 
-        void MouseDownEventHandler()
-        {
-
-        }
-
-        /*class Camera
-        {
-            public Point UVPosition { get; set; }
-            public double Rad { get; set; }
-            public Point3D Center {  }
-            pub
-        }*/
 
         public MainWindow()
         {
@@ -558,9 +657,7 @@ namespace PalletViewer
 
             MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1, box2 });
 
-
-
-            MyScene = new Scene
+            MyScene = new Scene(new Point3D(0, 0, 0))
             {
 
                 UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 },
@@ -570,25 +667,57 @@ namespace PalletViewer
                 UpMesh = meshes[0],
                 FrontMesh = meshes[1],
                 SideMesh = meshes[2],
-
-                CameraPosition = new Point3D(5, 5, 5)
             };
-
-            MyScene.RestoreCamera();
 
             this.DataContext = MyScene;
         }
+
+        #region event handlers
+
         private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            double widthPallet = 1200 / 2;
-            double lengthPallet = 800 / 2;
+            double widthPallet = 12;
+            double lengthPallet = 8;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
-            double widthBox = 206 / 2;
-            double lengthBox = 331 / 2;
-            double heigthBox = 10.6;
-            layer.createLayer(widthBox, lengthBox, heigthBox,
+            double widthBox = 1.3;
+            double lengthBox = 2.2;
+            double heigthBox = 2.3;
+            layer.createLayer(widthBox, lengthBox, heigthBox, new BoxFactory(widthBox, heigthBox, lengthBox),
                 LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+
+            var meshes = BoxToPolygons(layer.coordBoxes.ToArray());
+
+            MyScene.RestoreMesh(meshes);
+
         }
+
+        void MouseDown_ViewPort(object sender, MouseButtonEventArgs e)
+        {
+            MyScene.StartMousePos = e.GetPosition(this);
+
+            MyScene.LastMousePos = MyScene.StartMousePos;
+        }
+
+        void MouseMove_ViewPort(object sender, MouseEventArgs e)
+        {
+            if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                if ((MyScene.LastMousePos - e.GetPosition(this)).Length > 10)
+                {
+                    Vector shift = e.GetPosition(this) - MyScene.StartMousePos;
+
+                    MyScene.Camera.ShiftUVPosition(shift);
+
+                    MyScene.LastMousePos = e.GetPosition(this);
+                }
+            }
+        }
+
+        void MouseUp_ViewPort(object sender, MouseButtonEventArgs e)
+        {
+            MyScene.Camera.RestorePosition();
+        }
+        #endregion
     }
 }

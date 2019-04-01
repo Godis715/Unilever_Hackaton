@@ -8,23 +8,29 @@
         Title="MainWindow" Height="450" Width="800" Name="mainWindow">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="900"/>
-            <RowDefinition Height="auto"/>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="200"/>
+
         </Grid.RowDefinitions>
-        <Canvas x:Name="TestScene" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10"
+        <Canvas x:Name="TestScene" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="210,10,397,138"
                     Background="Black"
                     MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
                     ClipToBounds="True">
         </Canvas>
-        <Viewport3D Name="myViewport" Grid.Row="1">
+        <Grid>
+            <Viewport3D 
+            Name="myViewport"
+            Margin="10,10,0,0" Grid.Row="1">
+
             <!-- Add a camera. -->
             <Viewport3D.Camera>
-                <OrthographicCamera 
+                <PerspectiveCamera 
                         FarPlaneDistance="100" 
-                        LookDirection="{Binding Path=CameraOrient}" 
+                        LookDirection="{Binding Path=Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
-                        Position="{Binding Path=CameraPosition}" 
+                        Position="{Binding Path=Camera.CameraPos}" 
+                        FieldOfView="80"
                         />
             </Viewport3D.Camera>
             <!-- Add models. -->
@@ -66,5 +72,12 @@
                 </ModelVisual3D>
             </Viewport3D.Children>
         </Viewport3D>
+            <Canvas
+                Background="Transparent" 
+                MouseLeftButtonDown="MouseDown_ViewPort"
+                MouseLeftButtonUp="MouseUp_ViewPort"
+                MouseMove="MouseMove_ViewPort"
+                Grid.Row="1"/>
+        </Grid>
     </Grid>
 </Window>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PalletViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Name="mainWindow">
     <Grid>
         <Viewport3D Name="myViewport" >
 
@@ -13,10 +13,10 @@
             <Viewport3D.Camera>
                 <PerspectiveCamera 
                         FarPlaneDistance="20" 
-                        LookDirection="-0.2,0,-1" 
+                        LookDirection="{Binding Path=CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
-                        Position="3,1,5" 
+                        Position="{Binding Path=CameraPosition}" 
                         FieldOfView="80" />
             </Viewport3D.Camera>
 
@@ -30,34 +30,29 @@
                             <Model3DGroup.Children>
 
                                 <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
-                                <DirectionalLight Color="#FFFFFFFF" Direction="3,-4,5" />
+                                <AmbientLight Color="#FFFFFFFF"/>
 
-                                <!-- Define a red cone. -->
-                                <GeometryModel3D>
+                                <!-- Up faces. -->
+                                <GeometryModel3D Geometry="{Binding Path=UpMesh}">
 
-                                    <GeometryModel3D.Geometry>
-                                        <MeshGeometry3D 
-              Positions="
-                                            0 1 0
-                                            0 0 0
-                                            -1 0 0
-                                            
-                                            -1 1 0" 
-                                            
-                                            Normals="-1,-1,1 -1,-1,1 -1,-1,1 -1,-1,1"
-                                            
-                                            TriangleIndices="1 0 2 2 0 3" />
-
-                                    </GeometryModel3D.Geometry>
-                                    
                                     <GeometryModel3D.Material>
-                                        <DiffuseMaterial>
-                                            <DiffuseMaterial.Brush>
-                                                <SolidColorBrush 
-                                                    Color="Red" 
-                                                    Opacity="1.0"/>
-                                            </DiffuseMaterial.Brush>
-                                        </DiffuseMaterial>
+                                        <DiffuseMaterial Brush="{Binding Path=UpBrush}"/>
+                                    </GeometryModel3D.Material>
+
+                                </GeometryModel3D>
+
+                                <GeometryModel3D Geometry="{Binding Path=FrontMesh}">
+
+                                    <GeometryModel3D.Material>
+                                        <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
+                                    </GeometryModel3D.Material>
+
+                                </GeometryModel3D>
+
+                                <GeometryModel3D Geometry="{Binding Path=SideMesh}">
+
+                                    <GeometryModel3D.Material>
+                                        <DiffuseMaterial Brush="{Binding Path=SideBrush}"/>
                                     </GeometryModel3D.Material>
 
                                 </GeometryModel3D>

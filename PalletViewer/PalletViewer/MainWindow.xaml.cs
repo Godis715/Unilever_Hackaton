@@ -28,7 +28,7 @@ namespace PalletViewer
 		#region Функции рисования
 		private void DrawLine(Vector pointStart, Vector pointEnd, SolidColorBrush color)
 		{
-			scene.Children.Add(new Line
+			Canvas.Children.Add(new Line
 			{
 				X1 = pointStart.X,
 				Y1 = pointStart.Y,
@@ -66,76 +66,88 @@ namespace PalletViewer
 		#endregion
 
 		#region Определения доп.типов данных
-		public struct coordBox
-		{
-			public Vector point1 { get; set; }
-			public Vector point2 { get; set; }
-		}
-
 		public enum DirectionFilling { Down, Right }
 
 		public enum OrientationBox { Vertically, Horizontally }
 		#endregion'
 
 		#region Входные данные
-		public double widthPallet { get; set; }
-		public double lengthPallet { get; set; }
+		public double WidthPallet { get; set; }
+		public double LengthPallet { get; set; }
 
-		public double widthBox { get; set; }
-		public double lengthBox { get; set; }
-		public double heightBox { get; set; }
+		public double WidthBox { get; set; }
+		public double LengthBox { get; set; }
+		public double HeightBox { get; set; }
 
-		private Canvas scene;
+		private Canvas Canvas;
 		#endregion
-		public LayerOnPallet(double _widthPallet, double _lengthPallet, Canvas _scene)
+		public LayerOnPallet(double _WidthPallet, double _LengthPallet, Canvas _Canvas)
 		{
-			widthPallet = _widthPallet;
-			lengthPallet = _lengthPallet;
-			coordBoxes = new List<Box>();
-			scene = _scene;
+			WidthPallet = _WidthPallet;
+			LengthPallet = _LengthPallet;
+			Canvas = _Canvas;
 		}
 
 		#region Выходные данные 
-		public double errorLayer { get; set; }
+		public double ErrorLayer { get; set; }
+		public int CountBoxes { get; set; }
+		#endregion
 
-		public List<Box> coordBoxes { get; set; }
-        #endregion
+		#region Для 3D генерации коробов
+		private BoxFactory boxFactory;
+		private bool isEnableGen = false;
+		public void GenerateBoxs_On(BoxFactory _boxFactory)
+		{
+			Boxes = new List<Box>();
+			boxFactory = _boxFactory;
+			isEnableGen = true;
+		}
+		public void GenerateBoxs_Off()
+		{
+			isEnableGen = false;
+		}
+		public List<Box> Boxes { get; set; }
+		#endregion
 
-        public BoxFactory boxFactory { get; set; }
-		public void createLayer(double _widthBox, double _lengthBox, double _heightBox, BoxFactory _boxFactory,
+		private readonly double ScalingKoef = 10;
+		private readonly double AllowEps = 0;
+
+		public void CreateLayer(double _widthBox, double _lengthBox, double _heightBox,
 			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)
 		{
-			widthBox = _widthBox;
-			lengthBox = _lengthBox;
-			heightBox = _heightBox;
+			WidthBox = _widthBox;
+			LengthBox = _lengthBox;
+			HeightBox = _heightBox;
 
-            boxFactory = _boxFactory;
+			CountBoxes = 0;
 
-			 var startPoint = new Vector { X = 0, Y = 0 };
-			DrawArea(startPoint, new Vector { X = startPoint.X + widthPallet, Y = startPoint.Y + lengthPallet } * koef);
-			fillArea(directionFilling, orientationBox, startPoint, widthPallet, lengthPallet);
-			int size = coordBoxes.Count;
+			var startPoint = new Vector { X = 0, Y = 0 };
+			
+			//Убрать
+			DrawArea(startPoint, new Vector { X = startPoint.X + WidthPallet, Y = startPoint.Y + LengthPallet } * ScalingKoef);
+
+			FillArea(directionFilling, orientationBox, startPoint, WidthPallet, LengthPallet);
 		}
 
 		#region Для ориентации короба
-		private double length_belowWall;
-		private double length_sideWall;
+		private double Length_belowWall;
+		private double Length_sideWall;
 		//Назначаем длину Низа и Бока для данной ориентации 
-		private void initLengths(OrientationBox orBox)
+		private void InitLengths(OrientationBox orBox)
 		{
 			if (orBox == OrientationBox.Vertically)
 			{
-				length_sideWall = lengthBox;
-				length_belowWall = widthBox;
+				Length_sideWall = LengthBox;
+				Length_belowWall = WidthBox;
 			}
 			if (orBox == OrientationBox.Horizontally)
 			{
-				length_sideWall = widthBox;
-				length_belowWall = lengthBox;
+				Length_sideWall = WidthBox;
+				Length_belowWall = LengthBox;
 			}
 		}
 		//Меняем ориентацию
-		private OrientationBox invertOrientation(OrientationBox orBox)
+		private OrientationBox InvertOrientation(OrientationBox orBox)
 		{
 			if (orBox == OrientationBox.Vertically)
 			{
@@ -147,96 +159,70 @@ namespace PalletViewer
 			}
 		}
 		#endregion'
-        private double koef = 10;
-        private double allowEps = 0;
-		private void fillArea(DirectionFilling dirFil, OrientationBox orBox, 
+
+		private void FillArea(DirectionFilling dirFil, OrientationBox orBox, 
 			Vector startPoint, double width, double length)
 		{
-			//Определение длины Низа и Бока
-			initLengths(orBox);
+			//Определение длины Низа и Бока для текущей ориентации 
+			InitLengths(orBox);
+
 			//Данные для следующей итерации
 			DirectionFilling nextDir = dirFil;
 			Vector nextStartPoint = startPoint;
 			double nextWidth = 0;
 			double nextLength = 0;
 
-			int alpha;
-			Vector pointBegin;
+			int alpha = 0;
+			int countBoxesOnColumn = 0;
+			int countBoxesOnRow = 0;
 			switch (dirFil)
 			{
 				case DirectionFilling.Down:
 					//Нужно ещё обдумать
-					if (width < length_sideWall)
+					if (width < Length_sideWall)
 					{
-						alpha = Convert.ToInt32(Math.Floor(length / length_sideWall));
+						alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
 					}
 					else
 					{
-						alpha = CountAlpha(length, length_sideWall, length_belowWall);
+						alpha = CountAlpha(length, Length_sideWall, Length_belowWall);
 					}
 					if (alpha == 0)
 					{
 						//Вар1
 						//orBox = invertOrientation(orBox);
 						//initLengths(orBox);
-						//alpha = Convert.ToInt32(Math.Floor(length / length_sideWall));
+						//alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
 
 						//alpha = 1; вар2
 
 						//Вар 3
-						alpha = Convert.ToInt32(Math.Floor(length / length_sideWall));
+						alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
 					}
 					//...
-					pointBegin = startPoint;
-					do
-					{
-						//Замощение по столбцу до разделяющей линии
-						for (int i = 0; i < alpha; i++)
-						{
-							var tempCoordBox = new coordBox
-							{
-								point1 = pointBegin,
-								point2 = new Vector { X = pointBegin.X + length_belowWall, Y = pointBegin.Y + length_sideWall}
-							};
 
-                            var box = boxFactory.GenBox();
-
-                            box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
-
-                            if (orBox == OrientationBox.Horizontally)
-                            {
-                                box.RotUp();
-                            }
-                            
-							DrawBox(tempCoordBox.point1 * koef, tempCoordBox.point2 * koef);
-							//Добавление в список координат коробов
-							coordBoxes.Add(box);
-
-							pointBegin.Y += length_sideWall;
-						}
-						//Переход на следующий столбец
-						pointBegin.X += length_belowWall;
-						pointBegin.Y = startPoint.Y;
-					} while ((pointBegin.X + length_belowWall) - startPoint.X <= width ||
-					Math.Abs((pointBegin.X + length_belowWall) - startPoint.X - width) < allowEps);
+					countBoxesOnColumn = alpha;
+					countBoxesOnRow = Convert.ToInt32(Math.Floor(width / Length_belowWall));
+					
 					//Подсчёт общей ошибки
-					errorLayer += (width - (pointBegin.X - startPoint.X)) * (length_sideWall * alpha);
+					ErrorLayer += (width - (countBoxesOnRow * Length_belowWall - startPoint.X)) * (Length_sideWall * alpha);
 
 					//Инициализация данных для следующей итерации
 					nextDir = DirectionFilling.Right;
-					nextStartPoint = new Vector { X = startPoint.X, Y = startPoint.Y + length_sideWall * alpha };
+					nextStartPoint = new Vector { X = startPoint.X, Y = startPoint.Y + Length_sideWall * alpha };
 					nextWidth = width;
-					nextLength = length - length_sideWall * alpha;
+					nextLength = length - Length_sideWall * alpha;
 
-					DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * length_sideWall } * koef,
-						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * length_sideWall } * koef, Brushes.Blue);
+					//Убрать
+					DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef,
+						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef, Brushes.Blue);
 
 					//Проверка на выход из рекурсии
-					if ( nextLength < length_belowWall &&  Math.Abs(nextLength - length_belowWall) / length_belowWall > 0)
+					if ( nextLength < Length_belowWall &&  Math.Abs(nextLength - Length_belowWall) / Length_belowWall > 0)
 					{
 						return;
 					}
-					if ( nextWidth < length_sideWall && Math.Abs(nextWidth - length_sideWall) / length_sideWall > 0)
+					if ( nextWidth < Length_sideWall && Math.Abs(nextWidth - Length_sideWall) / Length_sideWall > 0)
 					{
 						return;
 					}
@@ -244,84 +230,61 @@ namespace PalletViewer
 
 				case DirectionFilling.Right:
 					//Нужно ещё обдумать
-					if (length < length_belowWall)
+					if (length < Length_belowWall)
 					{
-						alpha = Convert.ToInt32(Math.Floor(width / length_belowWall));
+						alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
 					}
 					else
 					{
-						alpha = CountAlpha(width, length_belowWall, length_sideWall);
+						alpha = CountAlpha(width, Length_belowWall, Length_sideWall);
 					}	
 					if (alpha == 0)
 					{
 						//Вар1
 						//orBox = invertOrientation(orBox);
 						//initLengths(orBox);
-						//alpha = Convert.ToInt32(Math.Floor(width / length_belowWall));
+						//alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
 
 						//alpha = 1; вар2
 
 						//Вар 3
-						alpha = Convert.ToInt32(Math.Floor(width / length_belowWall));
+						alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
 					}
 					//...
-					pointBegin = startPoint;
-					do
-					{
-						//Замощение по строке до разделяющей линии 
-						for (int i = 0; i < alpha; i++)
-						{
-							var tempCoordBox = new coordBox
-							{
-								point1 = pointBegin,
-								point2 = new Vector { X = pointBegin.X + length_belowWall, Y = pointBegin.Y + length_sideWall }
-							};
 
-                            var box = boxFactory.GenBox();
+					countBoxesOnColumn = Convert.ToInt32(Math.Floor(length / Length_sideWall));
+					countBoxesOnRow = alpha;
 
-                            box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
-
-                            if (orBox == OrientationBox.Horizontally)
-                            {
-                                box.RotUp();
-                            }
-
-                            DrawBox(tempCoordBox.point1 * koef, tempCoordBox.point2 * koef);
-							//Добавление в список координат коробов
-							coordBoxes.Add(box);
-							pointBegin.X += length_belowWall;
-						}
-						//Переход на следующую строку
-						pointBegin.X = startPoint.X;
-						pointBegin.Y += length_sideWall;
-					} while ((pointBegin.Y + length_sideWall) - startPoint.Y <= length ||
-					Math.Abs((pointBegin.Y + length_sideWall) - startPoint.Y - length) < allowEps);
 					//Подсчёт общей ошибки
-					errorLayer += (length - (pointBegin.Y - startPoint.Y)) * (length_belowWall * alpha);
+					ErrorLayer += (length - (countBoxesOnColumn * Length_sideWall - startPoint.Y)) * (Length_belowWall * alpha);
 
 					//Инициализация данных для следующей итерации
 					nextDir = DirectionFilling.Down;
-					nextStartPoint = new Vector { X = startPoint.X + length_belowWall * alpha, Y = startPoint.Y };
-					nextWidth = width - length_belowWall * alpha;
+					nextStartPoint = new Vector { X = startPoint.X + Length_belowWall * alpha, Y = startPoint.Y };
+					nextWidth = width - Length_belowWall * alpha;
 					nextLength = length;
 
-					DrawLine(new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y } * koef,
-						new Vector { X = startPoint.X + alpha * length_belowWall, Y = startPoint.Y + length } * koef, Brushes.Blue);
+					DrawLine(new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y } * ScalingKoef,
+						new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y + length } * ScalingKoef, Brushes.Blue);
 
 					//Проверка на выход из рекурсии
-					if (nextWidth < length_sideWall && Math.Abs(nextWidth - length_sideWall) / length_sideWall > 0)
+					if (nextWidth < Length_sideWall && Math.Abs(nextWidth - Length_sideWall) / Length_sideWall > 0)
 					{
 						return;
 					}
-					if (nextLength < length_belowWall && Math.Abs(nextLength - length_belowWall) / length_belowWall > 0)
+					if (nextLength < Length_belowWall && Math.Abs(nextLength - Length_belowWall) / Length_belowWall > 0)
 					{
 						return;
 					}
 					break;
 			}
+			CountBoxes += countBoxesOnRow * countBoxesOnColumn;
+
+			if (isEnableGen) GenerateBoxes(dirFil, orBox, startPoint, countBoxesOnRow, countBoxesOnColumn);
+
 			//Смена ориентации короба
-			var nextOr = invertOrientation(orBox);
-			fillArea(nextDir, nextOr, nextStartPoint, nextWidth, nextLength);
+			var nextOr = InvertOrientation(orBox);
+			FillArea(nextDir, nextOr, nextStartPoint, nextWidth, nextLength);
 		}
 
 		private int CountAlpha(double divisionLenth, double length_1, double length_2)
@@ -353,13 +316,69 @@ namespace PalletViewer
 				//Вычисление текущей ошибки
 				double tempError = Math.Abs(divisionLenth - (length_1 * alpha + length_2 * betta));
 
-				if (tempError < lastError || (resAlpha == 0 && tempError - lastError < allowEps))
+				if (tempError < lastError || (resAlpha == 0 && tempError - lastError < AllowEps))
 				{
 					lastError = tempError;
 					resAlpha = alpha;
 				}
 			}
 			return resAlpha;
+		}
+
+		private void GenerateBoxes(DirectionFilling dirFil, OrientationBox orBox, Vector startPoint,
+			int countBoxesOnRow, int countBoxesOnColumn)
+		{
+			Vector pointBegin = startPoint;
+			switch (dirFil)
+			{
+				case DirectionFilling.Down:
+					for (int i = 0; i <= countBoxesOnRow; i++)
+					{
+						//Замощение по столбцу до разделяющей линии
+						for (int j = 0; j < countBoxesOnColumn; j++)
+						{
+							var box = boxFactory.GenBox();
+							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
+
+							if (orBox == OrientationBox.Horizontally) box.RotUp();
+
+							//Убрать
+							var point1 = pointBegin * ScalingKoef;
+							var point2 = new Vector { X = pointBegin.X + Length_belowWall, Y = pointBegin.Y + Length_sideWall } * ScalingKoef;
+							DrawBox(point1, point2);
+
+							pointBegin.Y += Length_sideWall;
+						}
+						//Переход на следующий столбец
+						pointBegin.X += Length_belowWall;
+						pointBegin.Y = startPoint.Y;
+					}
+					break;
+				case DirectionFilling.Right:
+					for (int i = 0; i < countBoxesOnColumn; i++)
+					{
+						//Замощение по строке до разделяющей линии 
+						for (int j = 0; j < countBoxesOnRow; j++)
+						{
+							var box = boxFactory.GenBox();
+
+							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
+
+							if (orBox == OrientationBox.Horizontally) box.RotUp();
+
+							//Убрать
+							var point1 = pointBegin * ScalingKoef;
+							var point2 = new Vector { X = pointBegin.X + Length_belowWall, Y = pointBegin.Y + Length_sideWall } * ScalingKoef;
+							DrawBox(point1, point2);
+
+							pointBegin.X += Length_belowWall;
+						}
+						//Переход на следующую строку
+						pointBegin.X = startPoint.X;
+						pointBegin.Y += Length_sideWall;
+					}
+					break;
+			}
 		}
 	}
 
@@ -521,7 +540,6 @@ namespace PalletViewer
         public Point LastMousePos { get; set; }
     }
 
-
     public class MyCamera : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -592,7 +610,6 @@ namespace PalletViewer
         }
     }
 
-
     public partial class MainWindow : Window
     {
 
@@ -638,7 +655,6 @@ namespace PalletViewer
 
         public Scene MyScene { get; set; }
 
-
         public MainWindow()
         {
             InitializeComponent();
@@ -683,10 +699,12 @@ namespace PalletViewer
             double widthBox = 1.3;
             double lengthBox = 2.2;
             double heigthBox = 2.3;
-            layer.createLayer(widthBox, lengthBox, heigthBox, new BoxFactory(widthBox, heigthBox, lengthBox),
+
+			layer.GenerateBoxs_On(new BoxFactory(widthBox, heigthBox, lengthBox));
+            layer.CreateLayer(widthBox, lengthBox, heigthBox,
                 LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
 
-            var meshes = BoxToPolygons(layer.coordBoxes.ToArray());
+            var meshes = BoxToPolygons(layer.Boxes.ToArray());
 
             MyScene.RestoreMesh(meshes);
 

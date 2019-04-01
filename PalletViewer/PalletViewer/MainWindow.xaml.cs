@@ -82,7 +82,7 @@ namespace PalletViewer
         public void RotUp()
         {
             Dim = new Vector3D(Dim.Z, Dim.Y, Dim.X);
-            Helper.Swap(ref Orient[0], ref Orient[2]);
+            Helper.Swap(ref Orient[1], ref Orient[2]);
 
             points = null;
         }
@@ -90,7 +90,7 @@ namespace PalletViewer
         public void RotFront()
         {
             Dim = new Vector3D(Dim.Y, Dim.X, Dim.Z);
-            Helper.Swap(ref Orient[0], ref Orient[1]);
+            Helper.Swap(ref Orient[0], ref Orient[2]);
 
             points = null;
         }
@@ -98,7 +98,7 @@ namespace PalletViewer
         public void RotSide()
         {
             Dim = new Vector3D(Dim.X, Dim.Z, Dim.Y);
-            Helper.Swap(ref Orient[1], ref Orient[2]);
+            Helper.Swap(ref Orient[0], ref Orient[1]);
 
             points = null;
         }
@@ -206,19 +206,31 @@ namespace PalletViewer
 
         }
 
+        /*class Camera
+        {
+            public Point UVPosition { get; set; }
+            public double Rad { get; set; }
+            public Point3D Center {  }
+            pub
+        }*/
+
         public MainWindow()
         {
             InitializeComponent();
 
-            BoxFactory boxFactory = new BoxFactory(2.3, 1.1, 1.3);
+            BoxFactory boxFactory = new BoxFactory(0.23, 0.11, 0.13);
 
             Box box = boxFactory.GenBox();
 
             Box box1 = boxFactory.GenBox();
 
+            Box box2 = boxFactory.GenBox();
+
             box.RotUp();
 
-            MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1 });
+            box1.RotFront();
+
+            MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1, box2 });
 
             /* mesh.Positions.Add(new Point3D(0, 1, 0));
             mesh.Positions.Add(new Point3D(0, 0, 0));
@@ -242,7 +254,7 @@ namespace PalletViewer
                 FrontMesh = meshes[1],
                 SideMesh = meshes[2],
 
-                CameraPosition = new Point3D(3, 5, 3)
+                CameraPosition = new Point3D(5, 5, 5)
             };
 
             MyScene.RestoreCamera();

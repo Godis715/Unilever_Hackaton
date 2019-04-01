@@ -11,13 +11,13 @@
 
             <!-- Add a camera. -->
             <Viewport3D.Camera>
-                <PerspectiveCamera 
-                        FarPlaneDistance="20" 
+                <OrthographicCamera 
+                        FarPlaneDistance="100" 
                         LookDirection="{Binding Path=CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
                         Position="{Binding Path=CameraPosition}" 
-                        FieldOfView="80" />
+                        />
             </Viewport3D.Camera>
 
             <!-- Add models. -->

@@ -102,7 +102,7 @@ namespace PalletViewer
 		public List<Box> Boxes { get; set; }
 		#endregion
 
-		private readonly double ScalingKoef = 20;
+		private readonly double ScalingKoef = 1;
 		private readonly double AllowEps = 0;
 
 		public void CreateLayer(double _widthBox, double _lengthBox, double _heightBox,

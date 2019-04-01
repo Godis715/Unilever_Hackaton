@@ -7,24 +7,37 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="mainWindow">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="200"/>
-            <RowDefinition Height="200"/>
 
-        </Grid.RowDefinitions>
-        <Canvas x:Name="TestScene" Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                    Background="Black"
-                    MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
-                    ClipToBounds="True">
-        </Canvas>
-        <Grid Grid.Row="1">
-            <Viewport3D 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="30"/>
+            </Grid.RowDefinitions>
+            <ToolBar Grid.Row="0">
+                <Button Margin="2" HorizontalAlignment="Stretch">MainView</Button>
+                <Button Margin="2">BoxView</Button>
+                <Separator/>
+                <Button>
+                    <Menu>
+                        <MenuItem x:Name="Orders" Header="Orders" />
+                    </Menu>
+                </Button>
+            </ToolBar>
+            <Grid Grid.Row="1" Background="Bisque">
+                <Viewport3D 
             Name="myViewport"
             Margin="10,10,0,0">
 
-            <!-- Add a camera. -->
-            <Viewport3D.Camera>
-                <PerspectiveCamera 
+                    <!-- Add a camera. -->
+                    <Viewport3D.Camera>
+                        <PerspectiveCamera 
                         FarPlaneDistance="100" 
                         LookDirection="{Binding Path=Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
@@ -32,52 +45,122 @@
                         Position="{Binding Path=Camera.CameraPos}" 
                         FieldOfView="80"
                         />
-            </Viewport3D.Camera>
-            <!-- Add models. -->
-            <Viewport3D.Children>
-                <ModelVisual3D x:Name="Model">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup >
-                            <Model3DGroup.Children>
-                                <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
-                                <AmbientLight Color="#FFFFFFFF"/>
+                    </Viewport3D.Camera>
+                    <!-- Add models. -->
+                    <Viewport3D.Children>
+                        <ModelVisual3D x:Name="Model">
+                            <ModelVisual3D.Content>
+                                <Model3DGroup >
+                                    <Model3DGroup.Children>
+                                        <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
+                                        <AmbientLight Color="#FFFFFFFF"/>
 
-                                <!-- Up faces. -->
-                                <GeometryModel3D Geometry="{Binding Path=UpMesh}">
+                                        <!-- Up faces. -->
+                                        <GeometryModel3D Geometry="{Binding Path=UpMesh}">
 
-                                    <GeometryModel3D.Material>
-                                        <DiffuseMaterial Brush="{Binding Path=UpBrush}"/>
-                                    </GeometryModel3D.Material>
+                                            <GeometryModel3D.Material>
+                                                <DiffuseMaterial Brush="{Binding Path=UpBrush}"/>
+                                            </GeometryModel3D.Material>
 
-                                </GeometryModel3D>
+                                        </GeometryModel3D>
 
-                                <GeometryModel3D Geometry="{Binding Path=FrontMesh}">
+                                        <GeometryModel3D Geometry="{Binding Path=FrontMesh}">
 
-                                    <GeometryModel3D.Material>
-                                        <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
-                                    </GeometryModel3D.Material>
-                                </GeometryModel3D>
+                                            <GeometryModel3D.Material>
+                                                <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
+                                            </GeometryModel3D.Material>
+                                        </GeometryModel3D>
 
-                                <GeometryModel3D Geometry="{Binding Path=SideMesh}">
+                                        <GeometryModel3D Geometry="{Binding Path=SideMesh}">
 
-                                    <GeometryModel3D.Material>
-                                        <DiffuseMaterial Brush="{Binding Path=SideBrush}"/>
-                                    </GeometryModel3D.Material>
+                                            <GeometryModel3D.Material>
+                                                <DiffuseMaterial Brush="{Binding Path=SideBrush}"/>
+                                            </GeometryModel3D.Material>
 
-                                </GeometryModel3D>
+                                        </GeometryModel3D>
 
-                            </Model3DGroup.Children>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D.Children>
-        </Viewport3D>
-            <Canvas
+                                    </Model3DGroup.Children>
+                                </Model3DGroup>
+                            </ModelVisual3D.Content>
+                        </ModelVisual3D>
+                    </Viewport3D.Children>
+                </Viewport3D>
+                <Canvas
                 Background="Transparent" 
                 MouseLeftButtonDown="MouseDown_ViewPort"
                 MouseLeftButtonUp="MouseUp_ViewPort"
                 MouseMove="MouseMove_ViewPort"
                 />
+            </Grid>
+            <StatusBar Grid.Row="2" x:Name="StatusBar" Background="LightGray">
+                <Label Content="TempOrder: ..."  />
+            </StatusBar>
         </Grid>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
+        HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="DarkBlue" Margin="0,10"/>
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <GroupBox Grid.Row="0" Header="Added one order">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <!--Название полей-->
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="0" Content="Width" Margin="5"/>
+                                <Label Grid.Column="1" Content="Length" Margin="5"/>
+                                <Label Grid.Column="2" Content="Heigth" Margin="5"/>
+                                <Label Grid.Column="3" Content="Mass" Margin="5"/>
+                                <Label Grid.Column="4" Content="" Margin="5"/>
+                            </Grid>
+                            <Grid Grid.Row="1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox Grid.Column="0" Name="WidthProduct" Margin="5 0 5 0"/>
+                                <TextBox Grid.Column="1" Name="LengthProduct" Margin="5 0 5 0"/>
+                                <TextBox Grid.Column="2" Name="HeightProduct" Margin="5 0 5 0"/>
+                                <TextBox Grid.Column="3" Name="MassProduct" Margin="5 0 5 0"/>
+                                <Button Grid.Column="4" Content="Add" Click="AddOrder" Margin="5 0 5 0"/>
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+                <GroupBox Grid.Row="1" Header="Added a lot order">
+                    
+                </GroupBox>
+                
+                
+            </Grid>
+            <Canvas x:Name="TestScene" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+                    Background="Black"
+                    MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
+                    ClipToBounds="True">
+            </Canvas>
+
+        </Grid>
+
+        
     </Grid>
 </Window>

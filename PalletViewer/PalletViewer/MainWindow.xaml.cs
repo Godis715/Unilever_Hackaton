@@ -103,8 +103,8 @@ namespace PalletViewer
 
         private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            double widthPallet = 70;
-            double lengthPallet = 90;
+            double widthPallet = 6;
+            double lengthPallet = 8;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
             double widthBox = 0.4;
@@ -120,8 +120,6 @@ namespace PalletViewer
 			stopwatch.Stop();
 
 			var elapsedTime = stopwatch.Elapsed;
-
-			
 
             var meshes = BoxToPolygons(layer.Boxes.ToArray());
 
@@ -155,6 +153,28 @@ namespace PalletViewer
         {
             MyScene.Camera.RestorePosition();
         }
-        #endregion
-    }
+		#endregion
+
+		private void AddOrder(object sender, RoutedEventArgs e)
+		{
+			var WidthProd = double.Parse(WidthProduct.Text);
+			WidthProduct.Clear();
+			var LengthProd = double.Parse(LengthProduct.Text);
+			LengthProduct.Clear();
+			var HeigthProd = double.Parse(HeightProduct.Text);
+			HeightProduct.Clear();
+			var MassProd = double.Parse(MassProduct.Text);
+			MassProduct.Clear();
+
+			TestScene.Children.Clear();
+
+			double widthPallet = 200;
+			double lengthPallet = 150;
+			var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
+
+			layer.GenerateBoxs_On(new BoxFactory(WidthProd, HeigthProd, LengthProd));
+			layer.CreateLayer(WidthProd, LengthProd, HeigthProd,
+				LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+		}
+	}
 }

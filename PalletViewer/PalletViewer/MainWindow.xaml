@@ -106,52 +106,103 @@
             <Grid Grid.Row="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <GroupBox Grid.Row="0" Header="Added one order">
-                    <StackPanel>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*"/>
-                                <RowDefinition Height="*"/>
-                            </Grid.RowDefinitions>
-                            <!--Название полей-->
-                            <Grid Grid.Row="0">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Label Grid.Column="0" Content="Width" Margin="5"/>
-                                <Label Grid.Column="1" Content="Length" Margin="5"/>
-                                <Label Grid.Column="2" Content="Heigth" Margin="5"/>
-                                <Label Grid.Column="3" Content="Mass" Margin="5"/>
-                                <Label Grid.Column="4" Content="" Margin="5"/>
-                            </Grid>
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Name="WidthProduct" Margin="5 0 5 0"/>
-                                <TextBox Grid.Column="1" Name="LengthProduct" Margin="5 0 5 0"/>
-                                <TextBox Grid.Column="2" Name="HeightProduct" Margin="5 0 5 0"/>
-                                <TextBox Grid.Column="3" Name="MassProduct" Margin="5 0 5 0"/>
-                                <Button Grid.Column="4" Content="Add" Click="AddOrder" Margin="5 0 5 0"/>
-                            </Grid>
-                        </Grid>
-                    </StackPanel>
+                <ScrollViewer Grid.Row="0" CanContentScroll="True">
+                    <GroupBox Header="Added one order">
+                        <StackPanel>
+                            <Label x:Name="ErrorInput" Content="Message: " FontStyle="Italic"/>
+                            <GroupBox Header="Main parameters">
+                                <StackPanel>
+                                    <GroupBox Header="Width product" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="WidthProduct" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Length product" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="LengthProduct" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Height product" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="HeightProduct" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Weight product" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="WeightProduct" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <Separator/>
+                                    <GroupBox Header="Width pallet" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="WidthPallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Length pallet" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Name="LengthPallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </StackPanel>
+                            </GroupBox>
+                            <GroupBox Header="Additional parameters">
+                                <StackPanel>
+                                    <GroupBox Header="Heigth pallet" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="1800" Name="HeigthPallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Max weight on pallet" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="650" Name="MaxWeightOnPallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <Separator/>
+                                    <GroupBox Header="Max weight in box" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="15" Name="MaxWeightInBox" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Min count in box" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="10" Name="MinCountInBox" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Max count in box" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="20" Name="MaxCountInBox" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Ratio side box" FontStyle="Italic">
+                                        <StackPanel>
+                                            <TextBox Text="4" Name="RatioSideBox" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <Separator/>
+                                    <GroupBox Header="Size product" FontStyle="Italic">
+                                        <StackPanel Name="SizesProduct">
+                                            <RadioButton Content="Small" Margin="4"/>
+                                            <RadioButton Content="Evarage"  Margin="4"/>
+                                            <RadioButton Content="Big" IsChecked="True" Margin="4"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Diffenet layer?" FontStyle="Italic">
+                                        <StackPanel Name="isDifferentLayer">
+                                            <RadioButton Content="Yes" Margin="4"/>
+                                            <RadioButton Content="No" IsChecked="True" Margin="4"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
+                </ScrollViewer>
+                <Button   Grid.Row="1" Content="Add" Click="AddOrder" Margin="5 0 5 0"/>
+                <GroupBox Grid.Row="2" Header="Added a lot order">
                 </GroupBox>
-                <GroupBox Grid.Row="1" Header="Added a lot order">
-                    
-                </GroupBox>
-                
-                
             </Grid>
             <Canvas x:Name="TestScene" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     Background="Black"

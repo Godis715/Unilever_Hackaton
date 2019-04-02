@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -158,35 +159,92 @@ namespace PalletViewer
 
 		private void AddOrder(object sender, RoutedEventArgs e)
 		{
-			var WidthProd = double.Parse(WidthProduct.Text);
-			WidthProduct.Clear();
-			var LengthProd = double.Parse(LengthProduct.Text);
-			LengthProduct.Clear();
-			var HeigthProd = double.Parse(HeightProduct.Text);
-			HeightProduct.Clear();
-			var WeightProd = double.Parse(MassProduct.Text);
-			MassProduct.Clear();
-			var boxesGen = new BoxGenerator((int)WidthProd, (int)LengthProd, (int)HeigthProd, 15, 25, (int)WeightProd);
-			var boxes = boxesGen.GetBoxes();
-			boxes = boxesGen.ValidationSize(boxes, 5);
-
-			var file = new StreamWriter("test.txt");
-			foreach (var item in boxes)
+			try
 			{
-				file.WriteLine("Box: " + item.x.ToString() + "; "
-					+ item.y.ToString() + "; " + item.z.ToString());
+				#region Считывание параметров
+				var _WidthProduct = UInt32.Parse(WidthProduct.Text);
+				var _LengthProduct = UInt32.Parse(LengthProduct.Text);
+				var _HeightProduct = UInt32.Parse(HeightProduct.Text);
+				var _WeightProduct = UInt32.Parse(WeightProduct.Text);
+
+				var _SizeProduct = "";
+				foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+				{
+					_SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
+				}
+
+				var _WidthPallet = UInt32.Parse(WidthPallet.Text);
+				var _LengthPallet = UInt32.Parse(LengthPallet.Text);
+				var _HeigthPallet = UInt32.Parse(HeigthPallet.Text);
+				var _MaxWeightOnPallet = UInt32.Parse(MaxWeightOnPallet.Text);
+
+				var _MaxWeightInBox = UInt32.Parse(MaxWeightInBox.Text);
+				var _MinCountInBox = UInt32.Parse(MinCountInBox.Text);
+				var _MaxCountInBox = UInt32.Parse(MaxCountInBox.Text);
+				var _RatioSideBox = UInt32.Parse(RatioSideBox.Text);
+
+				var _isDifferentLayer = false;
+				foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+				{
+					if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
+					{
+						_isDifferentLayer = true;
+					}
+				}
+				#endregion
+				#region Сбрасывание парамтров
+				WidthProduct.Clear();
+				LengthProduct.Clear();
+				HeightProduct.Clear();
+				WeightProduct.Clear();
+				foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+				{
+					SizeProduct_rb.IsChecked = (SizeProduct_rb.Content.ToString() == "Big") ? true : false;
+				}
+				WidthPallet.Clear();
+				LengthPallet.Clear();
+				HeigthPallet.Text = "1800";
+				MaxWeightOnPallet.Text = "800";
+				MaxWeightInBox.Text = "15";
+				MinCountInBox.Text = "10";
+				MaxCountInBox.Text = "20";
+				RatioSideBox.Text = "4";
+				foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+				{
+					isDifferentLayer_Answer_rb.IsChecked = (isDifferentLayer_Answer_rb.Content.ToString() == "No") ? true : false;
+				}
+				ErrorInput.Content = "Message: ";
+				ErrorInput.Foreground = Brushes.Black;
+				#endregion
+
+				//var boxesGen = new BoxGenerator((int)_WeightProduct, (int)_LengthPallet, (int)_HeightProduct, (int)_MinCountInBox, (int)_MaxCountInBox, (int)_WeightProduct);
+				//var boxes = boxesGen.GetBoxes();
+				//boxes = boxesGen.ValidationSize(boxes, (int)_RatioSideBox);
+
+				//var file = new StreamWriter("test.txt");
+				//foreach (var item in boxes)
+				//{
+				//	file.WriteLine("Box: " + item.x.ToString() + "; "
+				//		+ item.y.ToString() + "; " + item.z.ToString());
+				//}
+				//file.WriteLine(boxes.Length);
+				//file.Close();
+				//TestScene.Children.Clear();
+
+				//double widthPallet = 200;
+				//double lengthPallet = 150;
+				//var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
+
+				//layer.GenerateBoxs_On(new BoxFactory(_WeightProduct, _HeightProduct, _LengthPallet));
+				//layer.CreateLayer(_WeightProduct, _LengthPallet, _HeightProduct,
+				//	LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
 			}
-			file.WriteLine(boxes.Length);
-			file.Close();
-			TestScene.Children.Clear();
-
-			double widthPallet = 200;
-			double lengthPallet = 150;
-			var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
-
-			layer.GenerateBoxs_On(new BoxFactory(WidthProd, HeigthProd, LengthProd));
-			layer.CreateLayer(WidthProd, LengthProd, HeigthProd,
-				LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+			catch
+			{
+				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Foreground = Brushes.Red;
+				return;
+			}
 		}
 	}
 }

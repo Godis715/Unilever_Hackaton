@@ -27,33 +27,26 @@ namespace PalletViewer
 
 	public class BoxGenerator
 	{
-		private int lenght;
-		private int widht;
-		private int height;
-		private int minCount;
-		private int maxCount;
-		private int weight;
+		private readonly int lenght;
+		private readonly int widht;
+		private readonly int height;
+		private readonly int weight;
 
-		public BoxGenerator(int l, int w, int h, int min, int max,
-			int wgt, int minW, int maxW)
-		{
-			lenght = l;
-			widht = w;
-			height = h;
-			minCount = (int)Math.Ceiling((double)minW / wgt);
-			minCount = Math.Max(min, minCount);
-			maxCount = (int)Math.Floor((double)maxW / wgt);
-			maxCount = Math.Min(max, maxCount);
-		}
+		private readonly int minCount;
+		private readonly int maxCount;
+		private readonly int ratioBox;
+		private readonly string sizeProduct;
 
-		public BoxGenerator(int l, int w, int h, int min, int max, int wgt)
+		public BoxGenerator(int _lengthPr, int _widhtPr, int _heightPr, int _weightPr,
+			int _minCount, int _maxCount, int _maxBoxWeight, int _ratioBox,
+			string _sizeProduct)
 		{
-			lenght = l;
-			widht = w;
-			height = h;
-			minCount = min;
-			maxCount = max;
-			weight = wgt;
+			lenght = _lengthPr;
+			widht = _widhtPr;
+			height = _heightPr;
+			minCount = _minCount;
+			maxCount = (int)Math.Floor((double)_maxBoxWeight / _weightPr);
+			maxCount = Math.Min(_minCount, maxCount);
 		}
 
 		public BoxParam[] GetBoxes()
@@ -61,10 +54,10 @@ namespace PalletViewer
 			var result = new BoxParam[0];
 			for (int i = minCount; i <= maxCount; ++i)
 			{
-
 				result = result.Concat(GetBoxesByCount(i)).ToArray();
 			}
-			return result;
+
+			return ValidationSize(result, ratioBox);
 		}
 
 		private BoxParam[] GetBoxesByCount(int count)
@@ -82,6 +75,18 @@ namespace PalletViewer
 			{
 				for (int j = i; divs[i] * divs[j] * divs[j] <= count; j++)
 				{
+					if (sizeProduct == "avarage" &&
+						divs[j] == 1 &&
+						divs[i] == 1)
+					{
+						continue;
+					}
+					if (sizeProduct == "small" &&
+						(divs[j] == 1 ||
+						divs[i] == 1))
+					{
+						continue;
+					}
 					if (count % (divs[i] * divs[j]) == 0)
 					{
 						var triple = new Triple
@@ -262,17 +267,14 @@ namespace PalletViewer
 			return result.ToArray();
 		}
 
-		public BoxParam[] ValidationSize(BoxParam[] triples, int ratio)
+		private BoxParam[] ValidationSize(BoxParam[] boxes, int ratio)
 		{
 			var result = new Stack<BoxParam>();
-			foreach (var item in triples)
+			foreach (var item in boxes)
 			{
-				var arr = new SortedSet<int>();
-				arr.Add(item.x);
-				arr.Add(item.y);
-				arr.Add(item.z);
-
-				if (arr.Max / arr.Min <= ratio)
+				int min = Math.Min(Math.Min(item.x, item.y), item.z);
+				int max = Math.Max(Math.Max(item.x, item.y), item.z);
+				if (max / min <= ratio)
 				{
 					result.Push(item);
 				}

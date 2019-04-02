@@ -81,6 +81,12 @@ namespace PalletViewer
 			Canvas = _Canvas;
 		}
 
+		public LayerOnPallet(double _WidthPallet, double _LengthPallet)
+		{
+			WidthPallet = _WidthPallet;
+			LengthPallet = _LengthPallet;
+		}
+
 		#region Выходные данные 
 		public double ErrorLayer { get; set; }
 		public int CountBoxes { get; set; }
@@ -104,6 +110,11 @@ namespace PalletViewer
 
 		private readonly double ScalingKoef = 1;
 		private readonly double AllowEps = 0;
+
+		public void CreateLayer(double _widthBox, double _lengthBox)
+		{
+
+		}
 
 		public void CreateLayer(double _widthBox, double _lengthBox, double _heightBox,
 			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)

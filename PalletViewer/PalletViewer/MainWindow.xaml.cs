@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -163,9 +164,20 @@ namespace PalletViewer
 			LengthProduct.Clear();
 			var HeigthProd = double.Parse(HeightProduct.Text);
 			HeightProduct.Clear();
-			var MassProd = double.Parse(MassProduct.Text);
+			var WeightProd = double.Parse(MassProduct.Text);
 			MassProduct.Clear();
+			var boxesGen = new BoxGenerator((int)WidthProd, (int)LengthProd, (int)HeigthProd, 15, 25, (int)WeightProd);
+			var boxes = boxesGen.GetBoxes();
+			boxes = boxesGen.ValidationSize(boxes, 5);
 
+			var file = new StreamWriter("test.txt");
+			foreach (var item in boxes)
+			{
+				file.WriteLine("Box: " + item.x.ToString() + "; "
+					+ item.y.ToString() + "; " + item.z.ToString());
+			}
+			file.WriteLine(boxes.Length);
+			file.Close();
 			TestScene.Children.Clear();
 
 			double widthPallet = 200;

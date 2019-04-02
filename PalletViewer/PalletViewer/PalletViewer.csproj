@@ -55,6 +55,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoxGenerator.cs" />
     <Compile Include="LayerOnPallet.cs" />
     <Compile Include="Scene.cs" />
     <Page Include="MainWindow.xaml">

@@ -7,9 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="mainWindow">
     <Grid>
-
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -20,20 +19,21 @@
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            <ToolBar Grid.Row="0">
+            <ToolBar Grid.Row="0" HorizontalAlignment="Stretch" >
+                
                 <Button Margin="2" HorizontalAlignment="Stretch">MainView</Button>
                 <Button Margin="2">BoxView</Button>
                 <Separator/>
-                <Button>
-                    <Menu>
-                        <MenuItem x:Name="Orders" Header="Orders" />
-                    </Menu>
-                </Button>
+                <Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
+                    <MenuItem  x:Name="Orders" Header="Orders"  Width="200">
+                        <MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />
+                    </MenuItem>
+                </Menu>
             </ToolBar>
-            <Grid Grid.Row="1" Background="Bisque">
+            <Grid Grid.Row="1" Background="#f8f8ff" >
                 <Viewport3D 
-            Name="myViewport"
-            Margin="10,10,0,0">
+                Name="myViewport"
+                Margin="10,10,0,0"> 
 
                     <!-- Add a camera. -->
                     <Viewport3D.Camera>
@@ -92,104 +92,105 @@
                 MouseMove="MouseMove_ViewPort"
                 />
             </Grid>
-            <StatusBar Grid.Row="2" x:Name="StatusBar" Background="LightGray">
+            <StatusBar Grid.Row="2" x:Name="StatusBar" Background="#f0f0f0">
                 <Label Content="TempOrder: ..."  />
             </StatusBar>
         </Grid>
-        <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"
-        HorizontalAlignment="Center" VerticalAlignment="Stretch" Background="DarkBlue" Margin="0,10"/>
+        <GridSplitter Grid.Column="1" ShowsPreview="False" Style="{StaticResource VerticalGridSplitter}" />
         <Grid Grid.Column="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
+            <Grid Grid.Row="0" Background="{StaticResource BlueGardientBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" CanContentScroll="True">
-                    <GroupBox Header="Added one order">
+                    <GroupBox Header="Added one order" FontWeight="Bold">
                         <StackPanel>
-                            <Label x:Name="ErrorInput" Content="Message: " FontStyle="Italic"/>
-                            <GroupBox Header="Main parameters">
+                            <Label x:Name="ErrorInput" Content="Message: " FontStyle="Italic" FontWeight="Normal"/>
+                            <GroupBox Header="Main parameters" FontStyle="Italic">
                                 <StackPanel>
-                                    <GroupBox Header="Width product" FontStyle="Italic">
+                                    <GroupBox Header="Product width" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="WidthProduct" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Length product" FontStyle="Italic">
+                                    <GroupBox Header="Product length" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="LengthProduct" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Height product" FontStyle="Italic">
+                                    <GroupBox Header="Product height" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="HeightProduct" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Weight product" FontStyle="Italic">
+                                    <GroupBox Header="Product weight" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="WeightProduct" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <Separator/>
-                                    <GroupBox Header="Width pallet" FontStyle="Italic">
+                                    <GroupBox Header="Pallet width" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="WidthPallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Length pallet" FontStyle="Italic">
+                                    <GroupBox Header="Pallet length" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Name="LengthPallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
                                 </StackPanel>
                             </GroupBox>
-                            <GroupBox Header="Additional parameters">
+                            <GroupBox Header="Additional parameters" FontStyle="Italic">
                                 <StackPanel>
-                                    <GroupBox Header="Heigth pallet" FontStyle="Italic">
+                                    <GroupBox Header="Pallet height" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="1800" Name="HeigthPallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Max weight on pallet" FontStyle="Italic">
+                                    <GroupBox Header="Max weight on pallet" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="650" Name="MaxWeightOnPallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <Separator/>
-                                    <GroupBox Header="Max weight in box" FontStyle="Italic">
+                                    <GroupBox Header="Max weight in box" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="15" Name="MaxWeightInBox" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Min count in box" FontStyle="Italic">
+                                    <GroupBox Header="Min count in box" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="10" Name="MinCountInBox" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Max count in box" FontStyle="Italic">
+                                    <GroupBox Header="Max count in box" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="20" Name="MaxCountInBox" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Ratio side box" FontStyle="Italic">
+                                    <GroupBox Header="Ratio side box" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="4" Name="RatioSideBox" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <Separator/>
-                                    <GroupBox Header="Size product" FontStyle="Italic">
+                                    <GroupBox Header="Product size" FontWeight="Normal">
                                         <StackPanel Name="SizesProduct">
                                             <RadioButton Content="Small" Margin="4"/>
                                             <RadioButton Content="Evarage"  Margin="4"/>
                                             <RadioButton Content="Big" IsChecked="True" Margin="4"/>
                                         </StackPanel>
                                     </GroupBox>
-                                    <GroupBox Header="Diffenet layer?" FontStyle="Italic">
+                                    <GroupBox Header="Diffenet layer?" FontWeight="Normal">
                                         <StackPanel Name="isDifferentLayer">
                                             <RadioButton Content="Yes" Margin="4"/>
                                             <RadioButton Content="No" IsChecked="True" Margin="4"/>
@@ -200,11 +201,25 @@
                         </StackPanel>
                     </GroupBox>
                 </ScrollViewer>
-                <Button   Grid.Row="1" Content="Add" Click="AddOrder" Margin="5 0 5 0"/>
-                <GroupBox Grid.Row="2" Header="Added a lot order">
+                <Grid Grid.Row="1">
+                    <Button Content="Add order" Click="AddOrder" Margin="5"/>
+                </Grid>
+                <GroupBox Grid.Row="2" Header="Added a lot order" FontWeight="Bold" >
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox Grid.Column="0" Name="PathFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                        <Button  Grid.Column="1" Content="Open file"  Click="AddFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                    </Grid>
                 </GroupBox>
+                <Grid Grid.Row="3">
+                    <Button Content="Download file" Click="AddOrders"  Margin="5"/>
+                </Grid>
             </Grid>
-            <Canvas x:Name="TestScene" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
+            <Canvas x:Name="TestScene" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     Background="Black"
                     MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
                     ClipToBounds="True">

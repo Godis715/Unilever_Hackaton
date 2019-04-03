@@ -64,5 +64,7 @@ namespace PalletViewer
         public Point StartMousePos { get; set; }
 
         public Point LastMousePos { get; set; }
-    }
+
+		public MeshContainer MyMesh { get; set; }
+	}
 }

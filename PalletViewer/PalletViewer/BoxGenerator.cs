@@ -24,7 +24,7 @@ namespace PalletViewer
 			Array.Sort(arr);
 			x = arr[0];
 			y = arr[1];
-			z = arr[3];
+			z = arr[2];
 		}
 	}
 
@@ -54,9 +54,12 @@ namespace PalletViewer
 			lenght = _lengthPr;
 			widht = _widhtPr;
 			height = _heightPr;
+			weight = _weightPr;
 			minCount = _minCount;
 			maxCount = (int)Math.Floor((double)_maxBoxWeight / _weightPr);
-			maxCount = Math.Min(_minCount, maxCount);
+			maxCount = Math.Min(_maxCount, maxCount);
+			ratioBox = _ratioBox;
+			sizeProduct = _sizeProduct;
 		}
 
 		public BoxParam[] GetBoxes()
@@ -74,16 +77,12 @@ namespace PalletViewer
 		{
 			var result = new BoxParam[0];
 			var divs = GetDividers(count);
-			//Console.Write("dividers: ");
-			//foreach (var item in divs)
-			//{
-			//	Console.Write(item.ToString() + "; ");
-			//}
-			//Console.WriteLine();
-			int len = divs.Length;
-			for (int i = 0; divs[i] * divs[i] * divs[i] <= count; ++i)
+			
+			for (int i = 0; i < divs.Length &&
+				divs[i] * divs[i] * divs[i] <= count; ++i)
 			{
-				for (int j = i; divs[i] * divs[j] * divs[j] <= count; j++)
+				for (int j = i; j < divs.Length &&
+					divs[i] * divs[j] * divs[j] <= count; j++)
 				{
 					if (sizeProduct == "avarage" &&
 						divs[j] == 1 &&
@@ -105,15 +104,7 @@ namespace PalletViewer
 							y = divs[j],
 							z = count / (divs[i] * divs[j])
 						};
-						var arr = GetBoxesByTriple(triple);
-						//Console.WriteLine("Triple: " + triple.x.ToString() + "; "
-						//	+ triple.y.ToString() + "; " + triple.z.ToString());
-						//foreach (var item in arr)
-						//{
-						//	Console.WriteLine("Box: " + item.x.ToString() + "; "
-						//		+ item.y.ToString() + "; " + item.z.ToString());
-						//}
-						result = result.Concat(arr).ToArray();
+						result = result.Concat(GetBoxesByTriple(triple)).ToArray();
 					}
 				}
 			}
@@ -135,10 +126,10 @@ namespace PalletViewer
 						isUnique = false;
 						break;
 					}
-					if (isUnique)
-					{
-						result.Push(boxes[i]);
-					}
+				}
+				if (isUnique)
+				{
+					result.Push(boxes[i]);
 				}
 			}
 			return result.ToArray();

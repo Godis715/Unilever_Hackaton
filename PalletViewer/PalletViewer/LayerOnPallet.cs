@@ -68,9 +68,8 @@ namespace PalletViewer
 		public double WidthPallet { get; set; }
 		public double LengthPallet { get; set; }
 
-		public double WidthBox { get; set; }
-		public double LengthBox { get; set; }
-		public double HeightBox { get; set; }
+		public double Length_belowWall { get; set; }
+		public double Length_sideWall { get; set; }
 
 		private Canvas Canvas;
 		#endregion
@@ -120,22 +119,93 @@ namespace PalletViewer
 		private readonly double ScalingKoef = 1;
 		private readonly double AllowEps = 0;
 
-		public void CreateLayer(double _widthBox, double _lengthBox)
+		private void CheckValue(ref double tempErrorLayer, ref int tempMaxCountBox)
 		{
+			if (tempMaxCountBox < CountBoxes || (tempMaxCountBox == CountBoxes && ErrorLayer < tempErrorLayer))
+			{
+				tempMaxCountBox = CountBoxes;
+				tempErrorLayer = ErrorLayer;
+			}
+			CountBoxes = 0;
+			ErrorLayer = 0;
+		}
+		private void FillInfoAboutLayer(ref Layer layer)
+		{
+			double tempErrorLayer = double.PositiveInfinity;
+			int tempMaxCountBox = 0;
 
+			var startPoint = new Vector { X = 0, Y = 0 };
+			FillArea(DirectionFilling.Down, OrientationBox.Horizontally, startPoint, WidthPallet, LengthPallet);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			FillArea(DirectionFilling.Down, OrientationBox.Vertically, startPoint, WidthPallet, LengthPallet);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			FillArea(DirectionFilling.Right, OrientationBox.Horizontally, startPoint, WidthPallet, LengthPallet);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			FillArea(DirectionFilling.Right, OrientationBox.Vertically, startPoint, WidthPallet, LengthPallet);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+
+			layer.countBox = tempMaxCountBox;
 		}
 
 		public Layer[] CreateLayers(double _heightBox, double _widthBox, double _lengthBox)
 		{
-			return new Layer[0];
+			var layers = new Stack<Layer>();
+
+			Length_belowWall = _widthBox;
+			Length_sideWall = _lengthBox;
+			var layer1 = new Layer();
+			layer1.height = (int)_heightBox;
+			FillInfoAboutLayer(ref layer1);
+			if (layer1.countBox != 0)
+			{
+				layers.Push(layer1);
+			}
+			// two param is equal and one is different
+			if ((_widthBox == _lengthBox && _heightBox != _widthBox) ||
+				(_widthBox != _lengthBox && _heightBox == _widthBox))
+			{
+				Length_belowWall = _widthBox;
+				Length_sideWall = _heightBox;
+				var layer2 = new Layer();
+				layer2.height = (int)_lengthBox;
+				FillInfoAboutLayer(ref layer2);
+				if (layer2.countBox != 0)
+				{
+					layers.Push(layer2);
+				}
+			}
+			// trhee params is equal
+			else if (_widthBox != _lengthBox && _heightBox != _widthBox)
+			{
+				Length_belowWall = _widthBox;
+				Length_sideWall = _heightBox;
+				var layer2 = new Layer();
+				layer2.height = (int)_lengthBox;
+				FillInfoAboutLayer(ref layer2);
+				if (layer2.countBox != 0)
+				{
+					layers.Push(layer2);
+				}
+
+				Length_belowWall = _heightBox;
+				Length_sideWall = _lengthBox;
+				var layer3 = new Layer();
+				layer3.height = (int)_widthBox;
+				FillInfoAboutLayer(ref layer3);
+				if (layer3.countBox != 0)
+				{
+					layers.Push(layer3);
+				}
+			}
+			return layers.ToArray();
 		}
 
-		public void CreateLayer(double _widthBox, double _lengthBox, double _heightBox,
+		public void CreateLayer(double _Length_belowWall, double _Length_sideWall, double _heightBox,
 			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)
 		{
-			WidthBox = _widthBox;
-			LengthBox = _lengthBox;
-			HeightBox = _heightBox;
+			Length_belowWall = _Length_belowWall;
+			Length_sideWall = _Length_sideWall;
+			//HeightBox = _heightBox;
 
 			CountBoxes = 0;
 
@@ -151,20 +221,20 @@ namespace PalletViewer
 		}
 
 		#region Для ориентации короба
-		private double Length_belowWall;
-		private double Length_sideWall;
+		private double LengthTemp_belowWall;
+		private double LengthTemp_sideWall;
 		//Назначаем длину Низа и Бока для данной ориентации 
 		private void InitLengths(OrientationBox orBox)
 		{
 			if (orBox == OrientationBox.Vertically)
 			{
-				Length_sideWall = LengthBox;
-				Length_belowWall = WidthBox;
+				LengthTemp_sideWall = Length_sideWall;
+				LengthTemp_belowWall = Length_belowWall;
 			}
 			if (orBox == OrientationBox.Horizontally)
 			{
-				Length_sideWall = WidthBox;
-				Length_belowWall = LengthBox;
+				LengthTemp_sideWall = Length_belowWall;
+				LengthTemp_belowWall = Length_sideWall;
 			}
 		}
 		//Меняем ориентацию
@@ -200,88 +270,88 @@ namespace PalletViewer
 			{
 				case DirectionFilling.Down:
 					//Нужно ещё обдумать
-					if (width < Length_sideWall)
+					if (width < LengthTemp_sideWall)
 					{
-						alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
+						alpha = Convert.ToInt32(Math.Floor(length / LengthTemp_sideWall));
 					}
 					else
 					{
-						alpha = CountAlpha(length, Length_sideWall, Length_belowWall);
+						alpha = CountAlpha(length, LengthTemp_sideWall, LengthTemp_belowWall);
 					}
 					if (alpha == 0)
 					{
 						//Вар1
 						//orBox = invertOrientation(orBox);
 						//initLengths(orBox);
-						//alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
+						//alpha = Convert.ToInt32(Math.Floor(length / LengthTemp_sideWall));
 
 						//alpha = 1; вар2
 
 						//Вар 3
-						alpha = Convert.ToInt32(Math.Floor(length / Length_sideWall));
+						alpha = Convert.ToInt32(Math.Floor(length / LengthTemp_sideWall));
 					}
 					//...
 
 					countBoxesOnColumn = alpha;
-					countBoxesOnRow = Convert.ToInt32(Math.Floor(width / Length_belowWall));
+					countBoxesOnRow = Convert.ToInt32(Math.Floor(width / LengthTemp_belowWall));
 
 					//Подсчёт общей ошибки
-					ErrorLayer += (width - (countBoxesOnRow * Length_belowWall - startPoint.X)) * (Length_sideWall * alpha);
+					ErrorLayer += (width - (countBoxesOnRow * LengthTemp_belowWall - startPoint.X)) * (LengthTemp_sideWall * alpha);
 
 					//Инициализация данных для следующей итерации
 					nextDir = DirectionFilling.Right;
-					nextStartPoint = new Vector { X = startPoint.X, Y = startPoint.Y + Length_sideWall * alpha };
+					nextStartPoint = new Vector { X = startPoint.X, Y = startPoint.Y + LengthTemp_sideWall * alpha };
 					nextWidth = width;
-					nextLength = length - Length_sideWall * alpha;
+					nextLength = length - LengthTemp_sideWall * alpha;
 
 					//Убрать
 					if (isEnableGen)
 					{
-						DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef,
-						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * Length_sideWall } * ScalingKoef, Brushes.Blue);
+						DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * LengthTemp_sideWall } * ScalingKoef,
+						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * LengthTemp_sideWall } * ScalingKoef, Brushes.Blue);
 					}
 					break;
 
 				case DirectionFilling.Right:
 					//Нужно ещё обдумать
-					if (length < Length_belowWall)
+					if (length < LengthTemp_belowWall)
 					{
-						alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
+						alpha = Convert.ToInt32(Math.Floor(width / LengthTemp_belowWall));
 					}
 					else
 					{
-						alpha = CountAlpha(width, Length_belowWall, Length_sideWall);
+						alpha = CountAlpha(width, LengthTemp_belowWall, LengthTemp_sideWall);
 					}
 					if (alpha == 0)
 					{
 						//Вар1
 						//orBox = invertOrientation(orBox);
 						//initLengths(orBox);
-						//alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
+						//alpha = Convert.ToInt32(Math.Floor(width / LengthTemp_belowWall));
 
 						//alpha = 1; вар2
 
 						//Вар 3
-						alpha = Convert.ToInt32(Math.Floor(width / Length_belowWall));
+						alpha = Convert.ToInt32(Math.Floor(width / LengthTemp_belowWall));
 					}
 					//...
 
-					countBoxesOnColumn = Convert.ToInt32(Math.Floor(length / Length_sideWall));
+					countBoxesOnColumn = Convert.ToInt32(Math.Floor(length / LengthTemp_sideWall));
 					countBoxesOnRow = alpha;
 
 					//Подсчёт общей ошибки
-					ErrorLayer += (length - (countBoxesOnColumn * Length_sideWall - startPoint.Y)) * (Length_belowWall * alpha);
+					ErrorLayer += (length - (countBoxesOnColumn * LengthTemp_sideWall - startPoint.Y)) * (LengthTemp_belowWall * alpha);
 
 					//Инициализация данных для следующей итерации
 					nextDir = DirectionFilling.Down;
-					nextStartPoint = new Vector { X = startPoint.X + Length_belowWall * alpha, Y = startPoint.Y };
-					nextWidth = width - Length_belowWall * alpha;
+					nextStartPoint = new Vector { X = startPoint.X + LengthTemp_belowWall * alpha, Y = startPoint.Y };
+					nextWidth = width - LengthTemp_belowWall * alpha;
 					nextLength = length;
 
 					if (isEnableGen)
 					{
-						DrawLine(new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y } * ScalingKoef,
-						new Vector { X = startPoint.X + alpha * Length_belowWall, Y = startPoint.Y + length } * ScalingKoef, Brushes.Blue);
+						DrawLine(new Vector { X = startPoint.X + alpha * LengthTemp_belowWall, Y = startPoint.Y } * ScalingKoef,
+						new Vector { X = startPoint.X + alpha * LengthTemp_belowWall, Y = startPoint.Y + length } * ScalingKoef, Brushes.Blue);
 					}
 					break;
 			}
@@ -290,11 +360,11 @@ namespace PalletViewer
 			if (isEnableGen) GenerateBoxes(dirFil, orBox, startPoint, countBoxesOnRow, countBoxesOnColumn);
 
 			//Проверка на выход из рекурсии
-			if (nextLength < Length_belowWall && Math.Abs(nextLength - Length_belowWall) / Length_belowWall > 0)
+			if (nextLength < LengthTemp_belowWall && Math.Abs(nextLength - LengthTemp_belowWall) / LengthTemp_belowWall > 0)
 			{
 				return;
 			}
-			if (nextWidth < Length_sideWall && Math.Abs(nextWidth - Length_sideWall) / Length_sideWall > 0)
+			if (nextWidth < LengthTemp_sideWall && Math.Abs(nextWidth - LengthTemp_sideWall) / LengthTemp_sideWall > 0)
 			{
 				return;
 			}
@@ -361,13 +431,13 @@ namespace PalletViewer
 
 							//Убрать
 							var point1 = pointBegin * ScalingKoef;
-							var point2 = new Vector { X = pointBegin.X + Length_belowWall, Y = pointBegin.Y + Length_sideWall } * ScalingKoef;
+							var point2 = new Vector { X = pointBegin.X + LengthTemp_belowWall, Y = pointBegin.Y + LengthTemp_sideWall } * ScalingKoef;
 							DrawBox(point1, point2);
 
-							pointBegin.Y += Length_sideWall;
+							pointBegin.Y += LengthTemp_sideWall;
 						}
 						//Переход на следующий столбец
-						pointBegin.X += Length_belowWall;
+						pointBegin.X += LengthTemp_belowWall;
 						pointBegin.Y = startPoint.Y;
 					}
 					break;
@@ -385,14 +455,14 @@ namespace PalletViewer
 
 							//Убрать
 							var point1 = pointBegin * ScalingKoef;
-							var point2 = new Vector { X = pointBegin.X + Length_belowWall, Y = pointBegin.Y + Length_sideWall } * ScalingKoef;
+							var point2 = new Vector { X = pointBegin.X + LengthTemp_belowWall, Y = pointBegin.Y + LengthTemp_sideWall } * ScalingKoef;
 							DrawBox(point1, point2);
 
-							pointBegin.X += Length_belowWall;
+							pointBegin.X += LengthTemp_belowWall;
 						}
 						//Переход на следующую строку
 						pointBegin.X = startPoint.X;
-						pointBegin.Y += Length_sideWall;
+						pointBegin.Y += LengthTemp_sideWall;
 					}
 					break;
 			}

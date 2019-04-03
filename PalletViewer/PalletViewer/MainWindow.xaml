@@ -185,9 +185,9 @@
                                     <Separator/>
                                     <GroupBox Header="Product size" FontWeight="Normal">
                                         <StackPanel Name="SizesProduct">
-                                            <RadioButton Content="Small" Margin="4"/>
-                                            <RadioButton Content="Evarage"  Margin="4"/>
-                                            <RadioButton Content="Big" IsChecked="True" Margin="4"/>
+                                            <RadioButton Content="small" Margin="4"/>
+                                            <RadioButton Content="avarage"  Margin="4"/>
+                                            <RadioButton Content="big" IsChecked="True" Margin="4"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="Diffenet layer?" FontWeight="Normal">

@@ -87,6 +87,15 @@ namespace PalletViewer
 			LengthPallet = _LengthPallet;
 		}
 
+		public class BoxBlock
+		{
+			public Vector3D point1 { get; set; }
+			public Vector3D point2 { get; set; }
+			public int countX { get; set; }
+			public int countY { get; set; }
+			public int[] orient { get; set; }
+		}
+
 		#region Выходные данные 
 		public double ErrorLayer { get; set; }
 		public int CountBoxes { get; set; }

@@ -271,7 +271,7 @@ namespace PalletViewer
 				}
 			}
 
-			return GetPalletByBox(boxes[0]);
+			return pallet;
 		}
 
 		public Pallet[] GetBeterPallet(int n)
@@ -313,6 +313,29 @@ namespace PalletViewer
 
 				return new Pallet(layer, box, heightPal, maxPalWeight);
 			}
+			else if (box.x == box.y && box.y != box.x )
+			{
+				var layers = layerMaker.CreateLayers((double)box.x, (double)box.y, (double)box.z);
+				switch (layers.Length)
+				{
+					case 1:
+						{
+							return new Pallet(layers[0], box, heightPal, maxPalWeight);
+						}
+					case 2:
+						{
+							return new Pallet(layers[0], layers[1], differentLayer,
+						box, heightPal, maxPalWeight);
+						}
+					case 3:
+						{
+							return new Pallet(layers[0], layers[1], layers[2], differentLayer,
+						box, heightPal, maxPalWeight);
+						}
+					default:
+						throw new Exception("invalid count layers");
+				}
+			}
 			else
 			{
 				layerMaker.CreateLayer((double)box.x, (double)box.y);
@@ -337,7 +360,6 @@ namespace PalletViewer
 				return new Pallet(layer1, layer2, layer3, differentLayer,
 					box, heightPal, maxPalWeight);
 			}
-			
 		}
 	}
 }

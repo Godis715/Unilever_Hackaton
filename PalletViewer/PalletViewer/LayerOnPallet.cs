@@ -125,6 +125,11 @@ namespace PalletViewer
 
 		}
 
+		public Layer[] CreateLayers(double _heightBox, double _widthBox, double _lengthBox)
+		{
+			return new Layer[0];
+		}
+
 		public void CreateLayer(double _widthBox, double _lengthBox, double _heightBox,
 			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)
 		{

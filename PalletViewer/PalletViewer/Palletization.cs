@@ -8,7 +8,7 @@ namespace PalletViewer
 {
 	class Layer
 	{
-		public int countPr;
+		public int countBox;
 		public int height;
 	}
 
@@ -33,7 +33,6 @@ namespace PalletViewer
 			layer2 = _layer2;
 			layer3 = _layer3;
 			box = _box;
-			int weightPr = box.weight / box.count;
 			if (differentLayer)
 			{
 				// temp counts layers
@@ -41,7 +40,7 @@ namespace PalletViewer
 				int count2 = 0;
 				int count3 = 0;
 				// temp var
-				int _countPr = 0;
+				int countBox = 0;
 				int _height = 0;
 				// brute force - perebor
 				while (weight <= maxPalWeight && _height <= maxHeightPal)
@@ -52,62 +51,65 @@ namespace PalletViewer
 						count3 = 0;
 						while (weight <= maxPalWeight && _height <= maxHeightPal)
 						{
-							if (_countPr > countPr ||
-								(_countPr == countPr && _height < height))
+							if (countBox * box.count > countPr ||
+								(countBox * box.count == countPr && _height < height))
 							{
-								countPr = _countPr;
+								countPr = countBox * box.count;
 								height = _height;
 								CountLayer1 = count1;
 								CountLayer2 = count2;
 								CountLayer3 = count3;
 							}
 							++count3;
-							_countPr += layer3.countPr;
+							countBox += layer3.countBox;
 							_height += layer3.height;
-							weight = _countPr * weightPr;
+							weight = countBox * box.weight;
 						}
 						++count2;
-						_countPr = layer1.countPr * count1 + layer2.countPr * count2;
+						countBox = layer1.countBox * count1 + layer2.countBox * count2;
 						_height += layer1.height * count1 + layer2.height * count2;
-						weight = _countPr * weightPr;
+						weight = countBox * box.weight;
 					}
 					++count1;
-					_countPr = layer1.countPr * count1;
-					_height += layer1.height * count1
-;
-					weight = _countPr * weightPr;
+					countBox = layer1.countBox * count1;
+					_height += layer1.height * count1;
+					weight = countBox * box.weight;
 				}
 			}
 			// if not different layer
-			CountLayer1 = Math.Min(maxPalWeight / (weightPr * layer1.countPr),
+			CountLayer1 = Math.Min(maxPalWeight / (box.weight * layer1.countBox),
 				maxPalWeight / layer1.height);
-			CountLayer2 = Math.Min(maxPalWeight / (weightPr * layer2.countPr),
+			CountLayer2 = Math.Min(maxPalWeight / (box.weight * layer2.countBox),
 				maxPalWeight / layer2.height);
-			CountLayer3 = Math.Min(maxPalWeight / (weightPr * layer3.countPr),
+			CountLayer3 = Math.Min(maxPalWeight / (box.weight * layer3.countBox),
 				maxPalWeight / layer3.height);
-			countPr = CountLayer1 * layer1.countPr;
-			if (CountLayer1 * layer1.countPr < CountLayer2 * layer2.countPr)
+
+
+			if (CountLayer1 * layer1.countBox < CountLayer2 * layer2.countBox)
 			{
 				CountLayer1 = 0;
-				countPr = CountLayer2 * layer2.countPr;
+				int countBox = CountLayer2 * layer2.countBox;
 				height = CountLayer2 * layer2.height;
-				weight = weightPr * countPr;
+				weight = box.weight * countPr;
+				countPr = countBox * box.count;
 			}
 			else
 			{
 				CountLayer2 = 0;
-				countPr = CountLayer1 * layer1.countPr;
+				int countBox = CountLayer1 * layer1.countBox;
 				height = CountLayer1 * layer1.height;
-				weight = weightPr * countPr;
+				weight = countBox * countPr;
+				countPr = countBox * box.count;
 			}
 
-			if (countPr < CountLayer3 * layer3.countPr)
+			if (countPr < CountLayer3 * layer3.countBox)
 			{
 				CountLayer1 = 0;
 				CountLayer2 = 0;
-				countPr = CountLayer3 * layer3.countPr;
+				int countBox = CountLayer3 * layer3.countBox;
 				height = CountLayer3 * layer3.height;
-				weight = weightPr * countPr;
+				weight = box.weight * countPr;
+				countPr = countBox * box.count;
 			}
 			else
 			{
@@ -123,14 +125,13 @@ namespace PalletViewer
 			layer3 = _layer2;
 			CountLayer3 = 0;
 			box = _box;
-			int weightPr = box.weight / box.count;
 			if (differentLayer)
 			{
 				// temp counts layers
 				int count1 = 0;
 				int count2 = 0;
 				// temp var
-				int _countPr = 0;
+				int countBox = 0;
 				int _height = 0;
 				// brute force - perebor
 				while (weight <= maxPalWeight && _height <= maxHeightPal)
@@ -138,46 +139,46 @@ namespace PalletViewer
 					count2 = 0;
 					while (weight <= maxPalWeight && _height <= maxHeightPal)
 					{
-						if (_countPr > countPr ||
-							(_countPr == countPr && _height < height))
+						if (countBox * box.weight > countPr ||
+							(countBox * box.weight == countPr && _height < height))
 						{
-							countPr = _countPr;
+							countPr = countBox * box.weight;
 							height = _height;
 							CountLayer1 = count1;
 							CountLayer2 = count2;
 						}
 						++count2;
-						_countPr += layer3.countPr;
+						countBox += layer3.countBox;
 						_height += layer3.height;
-						weight = _countPr * weightPr;
+						weight = countBox * box.weight;
 					}
 					++count1;
-					_countPr = layer1.countPr * count1;
-					_height += layer1.height * count1
-;
-					weight = _countPr * weightPr;
+					countBox = layer1.countBox * count1;
+					_height += layer1.height * count1;
+					weight = countBox * box.weight;
 				}
 			}
 			// if not different layer
-			CountLayer1 = Math.Min(maxPalWeight / (weightPr * layer1.countPr),
+			CountLayer1 = Math.Min(maxPalWeight / (box.weight * layer1.countBox),
 				maxPalWeight / layer1.height);
-			CountLayer2 = Math.Min(maxPalWeight / (weightPr * layer2.countPr),
+			CountLayer2 = Math.Min(maxPalWeight / (box.weight * layer2.countBox),
 				maxPalWeight / layer2.height);
 			
-			if (CountLayer1 * layer1.countPr < CountLayer2 * layer2.countPr)
+			if (CountLayer1 * layer1.countBox < CountLayer2 * layer2.countBox)
 			{
 				CountLayer1 = 0;
-				countPr = CountLayer2 * layer2.countPr;
+				int countBox = CountLayer2 * layer2.countBox;
 				height = CountLayer2 * layer1.height;
-				weight = weightPr * countPr;
-
+				weight = countBox * countPr;
+				countPr = countBox * box.count;
 			}
 			else
 			{
 				CountLayer2 = 0;
-				countPr = CountLayer1 * layer1.countPr;
+				int countBox = CountLayer1 * layer1.countBox;
 				height = CountLayer1 * layer1.height;
-				weight = weightPr * countPr;
+				weight = box.weight * countPr;
+				countPr = countBox * box.count;
 			}
 		}
 
@@ -189,13 +190,13 @@ namespace PalletViewer
 			CountLayer2 = 0;
 			CountLayer3 = 0;
 			box = _box;
-			int weightPr = box.weight / box.count;
-			// if not different layer
-			CountLayer1 = Math.Min(maxPalWeight / (weightPr * layer1.countPr),
+
+			CountLayer1 = Math.Min(maxPalWeight / (box.weight * layer1.countBox),
 				maxPalWeight / layer1.height);
-			countPr = CountLayer1 * layer1.countPr;
+			int countBox = CountLayer1 * layer1.countBox;
 			height = CountLayer1 * layer1.height;
-			weight = weightPr * countPr;
+			weight = box.weight * countBox;
+			countPr = countBox * box.count;
 		}
 	}
 
@@ -255,8 +256,21 @@ namespace PalletViewer
 			minCount, maxCount, maxBoxWeight, ratioBox, sizeProduct);
 
 			var boxes = boxesGen.GetBoxes();
+			if (boxes.Length == 0)
+			{
+				return null;
+			}
+			var pallet = GetPalletByBox(boxes[0]);
 
-			
+			for (int i = 1; i < boxes.Length; i++)
+			{
+				var newPallet = GetPalletByBox(boxes[i]);
+				if (newPallet.countPr > pallet.countPr)
+				{
+					pallet = newPallet;
+				}
+			}
+
 			return GetPalletByBox(boxes[0]);
 		}
 
@@ -274,13 +288,13 @@ namespace PalletViewer
 				layerMaker.CreateLayer((double)box.x, (double)box.y);
 				var layer1 = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.z
 				};
 				layerMaker.CreateLayer((double)box.y, (double)box.z);
 				var layer2 = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.x
 				};
 
@@ -293,7 +307,7 @@ namespace PalletViewer
 				layerMaker.CreateLayer((double)box.x, (double)box.y);
 				var layer = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.z
 				};
 
@@ -304,19 +318,19 @@ namespace PalletViewer
 				layerMaker.CreateLayer((double)box.x, (double)box.y);
 				var layer1 = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.z
 				};
 				layerMaker.CreateLayer((double)box.y, (double)box.z);
 				var layer2 = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.x
 				};
 				layerMaker.CreateLayer((double)box.z, (double)box.x);
 				var layer3 = new Layer
 				{
-					countPr = layerMaker.CountBoxes,
+					countBox = layerMaker.CountBoxes,
 					height = box.y
 				};
 

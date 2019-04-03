@@ -16,6 +16,16 @@ namespace PalletViewer
 
 		public int count;
 		public int weight;
+
+		// sort x, y, z
+		public void NormalizedOriental()
+		{
+			var arr = new int[] { x, y, z };
+			Array.Sort(arr);
+			x = arr[0];
+			y = arr[1];
+			z = arr[3];
+		}
 	}
 
 	public class Triple
@@ -107,7 +117,31 @@ namespace PalletViewer
 					}
 				}
 			}
-			return result;
+			return Unique(result);
+		}
+
+		private BoxParam[] Unique(BoxParam[] boxes)
+		{
+			var result = new Stack<BoxParam>();
+			for (int i = 0; i < boxes.Length; i++)
+			{
+				bool isUnique = true;
+				for (int j = i + 1; j < boxes.Length; j++)
+				{
+					if (boxes[i].x == boxes[j].x &&
+						boxes[i].y == boxes[j].y &&
+						boxes[i].z == boxes[j].z)
+					{
+						isUnique = false;
+						break;
+					}
+					if (isUnique)
+					{
+						result.Push(boxes[i]);
+					}
+				}
+			}
+			return result.ToArray();
 		}
 
 		private BoxParam[] GetBoxesByTriple(Triple triple)
@@ -124,6 +158,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box.NormalizedOriental();
 				var result = new BoxParam[1];
 				result[0] = (box);
 				return result;
@@ -138,6 +173,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box1.NormalizedOriental();
 				var box2 = new BoxParam
 				{
 					x = triple.x * lenght,
@@ -146,6 +182,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box2.NormalizedOriental();
 				var box3 = new BoxParam
 				{
 					x = triple.x * height,
@@ -154,6 +191,8 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box3.NormalizedOriental();
+
 				var result = new BoxParam[3];
 				result[0] = (box1);
 				result[1] = (box2);
@@ -170,6 +209,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box1.NormalizedOriental();
 				var box2 = new BoxParam
 				{
 					x = triple.x * lenght,
@@ -178,6 +218,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box2.NormalizedOriental();
 				var box3 = new BoxParam
 				{
 					x = triple.x * height,
@@ -186,6 +227,8 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box3.NormalizedOriental();
+
 				var result = new BoxParam[3];
 				result[0] = (box1);
 				result[1] = (box2);
@@ -202,6 +245,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box1.NormalizedOriental();
 				var box2 = new BoxParam
 				{
 					x = triple.x * widht,
@@ -210,6 +254,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box2.NormalizedOriental();
 				var box3 = new BoxParam
 				{
 					x = triple.x * lenght,
@@ -218,6 +263,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box3.NormalizedOriental();
 				var box4 = new BoxParam
 				{
 					x = triple.x * widht,
@@ -226,6 +272,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box4.NormalizedOriental();
 				var box5 = new BoxParam
 				{
 					x = triple.x * height,
@@ -234,6 +281,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box5.NormalizedOriental();
 				var box6 = new BoxParam
 				{
 					x = triple.x * lenght,
@@ -242,6 +290,7 @@ namespace PalletViewer
 					count = countProduct,
 					weight = weightBox
 				};
+				box6.NormalizedOriental();
 
 				var result = new BoxParam[6];
 				result[0] = (box1);

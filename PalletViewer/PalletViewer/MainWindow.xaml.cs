@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -245,6 +244,27 @@ namespace PalletViewer
 				ErrorInput.Foreground = Brushes.Red;
 				return;
 			}
+		}
+
+		private void AddFile(object sender, RoutedEventArgs e)
+		{
+			var fileDialog = FileDialog.GetInstance();
+			try
+			{
+				if (fileDialog.OpenFileDialog() == true)
+				{
+					PathFile.Text = fileDialog.FilePath;
+				}
+			}
+			catch (Exception ex)
+			{
+				fileDialog.ShowMessage(ex.Message);
+			}
+		}
+
+		private void AddOrders(object sender, RoutedEventArgs e)
+		{
+			//
 		}
 	}
 }

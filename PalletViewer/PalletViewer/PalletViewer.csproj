@@ -56,8 +56,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BoxGenerator.cs" />
+    <Compile Include="FileDialog.cs" />
     <Compile Include="LayerOnPallet.cs" />
     <Compile Include="Palletization.cs" />
+    <Compile Include="RealayCommand.cs" />
     <Compile Include="Scene.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -73,6 +75,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Resourses.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

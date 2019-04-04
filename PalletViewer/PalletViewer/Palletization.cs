@@ -25,6 +25,7 @@ namespace PalletViewer
 		public Layer layer2;
 		public Layer layer3;
 		public BoxParam box;
+		public Layer[] layers;
 
 
 		public Pallet(Layer _layer1, Layer _layer2, Layer _layer3, bool differentLayer,
@@ -77,6 +78,19 @@ namespace PalletViewer
 					weight = countBox * box.weight;
 				}
 				weight = countPr * (box.weight / box.count);
+				layers = new Layer[CountLayer1 + CountLayer2 + CountLayer3];
+				for (int i = 0; i < CountLayer1; i++)
+				{
+					layers[i] = layer1;
+				}
+				for (int i = 0; i < CountLayer2; i++)
+				{
+					layers[i + CountLayer1] = layer2;
+				}
+				for (int i = 0; i < CountLayer3; i++)
+				{
+					layers[i + CountLayer1 + CountLayer2] = layer3;
+				}
 				return;
 			}
 			// if not different layer
@@ -95,6 +109,12 @@ namespace PalletViewer
 				height = CountLayer2 * layer2.height;
 				weight = countBox * box.weight;
 				countPr = countBox * box.count;
+
+				layers = new Layer[CountLayer2];
+				for (int i = 0; i < CountLayer2; i++)
+				{
+					layers[i] = layer2;
+				}
 			}
 			else
 			{
@@ -103,6 +123,12 @@ namespace PalletViewer
 				height = CountLayer1 * layer1.height;
 				weight = countBox * box.weight;
 				countPr = countBox * box.count;
+
+				layers = new Layer[CountLayer1];
+				for (int i = 0; i < CountLayer1; i++)
+				{
+					layers[i] = layer1;
+				}
 			}
 
 			if (countPr < CountLayer3 * layer3.countBox)
@@ -113,6 +139,12 @@ namespace PalletViewer
 				height = CountLayer3 * layer3.height;
 				weight = countBox * box.weight;
 				countPr = countBox * box.count;
+
+				layers = new Layer[CountLayer3];
+				for (int i = 0; i < CountLayer3; i++)
+				{
+					layers[i] = layer3;
+				}
 			}
 			else
 			{
@@ -161,6 +193,15 @@ namespace PalletViewer
 					weight = countBox * box.weight;
 				}
 				weight = countPr * (box.weight / box.count);
+				layers = new Layer[CountLayer1 + CountLayer2];
+				for (int i = 0; i < CountLayer1; i++)
+				{
+					layers[i] = layer1;
+				}
+				for (int i = 0; i < CountLayer2; i++)
+				{
+					layers[i + CountLayer1] = layer2;
+				}
 				return;
 			}
 			// if not different layer
@@ -176,7 +217,11 @@ namespace PalletViewer
 				height = CountLayer2 * layer1.height;
 				countPr = countBox * box.count;
 				weight = countBox * box.weight;
-				
+				layers = new Layer[CountLayer2];
+				for (int i = 0; i < CountLayer2; i++)
+				{
+					layers[i] = layer2;
+				}
 			}
 			else
 			{
@@ -185,6 +230,11 @@ namespace PalletViewer
 				height = CountLayer1 * layer1.height;
 				countPr = countBox * box.count;
 				weight = box.weight * countBox;
+				layers = new Layer[CountLayer1];
+				for (int i = 0; i < CountLayer1; i++)
+				{
+					layers[i] = layer1;
+				}
 			}
 		}
 
@@ -203,6 +253,12 @@ namespace PalletViewer
 			height = CountLayer1 * layer1.height;
 			weight = box.weight * countBox;
 			countPr = countBox * box.count;
+
+			layers = new Layer[CountLayer1];
+			for (int i = 0; i < CountLayer1; i++)
+			{
+				layers[i] = layer1;
+			}
 		}
 	}
 

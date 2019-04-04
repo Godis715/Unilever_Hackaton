@@ -10,6 +10,7 @@ namespace PalletViewer
 	{
 		public int countBox;
 		public int height;
+		public List<Box> boxes;
 	}
 
 	class Pallet

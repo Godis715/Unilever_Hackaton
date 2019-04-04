@@ -145,7 +145,10 @@ namespace PalletViewer
 			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
 
 			layer.countBox = tempMaxCountBox;
+			layer.boxes = Boxes;
 		}
+
+		private Box boxTemplate;
 
 		public Layer[] CreateLayers(double _heightBox, double _widthBox, double _lengthBox)
 		{
@@ -155,6 +158,8 @@ namespace PalletViewer
 			Length_sideWall = _lengthBox;
 			var layer1 = new Layer();
 			layer1.height = (int)_heightBox;
+			boxTemplate = boxFactory.GenBox();
+
 			FillInfoAboutLayer(ref layer1);
 			if (layer1.countBox != 0)
 			{
@@ -169,6 +174,8 @@ namespace PalletViewer
 				var layer2 = new Layer();
 				layer2.height = (int)_lengthBox;
 				FillInfoAboutLayer(ref layer2);
+				boxTemplate = boxFactory.GenBox();
+				boxTemplate.RotSide();
 				if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
@@ -182,6 +189,8 @@ namespace PalletViewer
 				var layer2 = new Layer();
 				layer2.height = (int)_lengthBox;
 				FillInfoAboutLayer(ref layer2);
+				boxTemplate = boxFactory.GenBox();
+				boxTemplate.RotSide();
 				if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
@@ -192,6 +201,8 @@ namespace PalletViewer
 				var layer3 = new Layer();
 				layer3.height = (int)_widthBox;
 				FillInfoAboutLayer(ref layer3);
+				boxTemplate = boxFactory.GenBox();
+				boxTemplate.RotFront();
 				if (layer3.countBox != 0)
 				{
 					layers.Push(layer3);
@@ -424,7 +435,7 @@ namespace PalletViewer
 						//Замощение по столбцу до разделяющей линии
 						for (int j = 1; j <= countBoxesOnColumn; j++)
 						{
-							var box = boxFactory.GenBox();
+							var box = boxTemplate;
 							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
 
 							if (orBox == OrientationBox.Horizontally) box.RotUp();

@@ -40,11 +40,11 @@
                     <Viewport3D.Camera>
                         <PerspectiveCamera 
                         FarPlaneDistance="2000" 
-                        LookDirection="{Binding Path=Camera.CameraOrient}" 
+                        LookDirection="{Binding Path=MyScene.Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
-                        Position="{Binding Path=Camera.CameraPos}" 
-                        FieldOfView="80"
+                        Position="{Binding Path=MyScene.Camera.CameraPos}" 
+                        FieldOfView="50"
                         />
             </Viewport3D.Camera>
             <!-- Add models. -->
@@ -54,32 +54,7 @@
                         <Model3DGroup x:Name="Models">
                             <Model3DGroup.Children>
                                 <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
-                                <AmbientLight Color="#FFFFFFFF"/>
-
-                                        <!-- Up faces. -->
-                                        <GeometryModel3D Geometry="{Binding Path=UpMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=UpBrush}"/>
-                                            </GeometryModel3D.Material>
-
-                                        </GeometryModel3D>
-
-                                        <GeometryModel3D Geometry="{Binding Path=FrontMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
-                                            </GeometryModel3D.Material>
-                                        </GeometryModel3D>
-
-                                        <GeometryModel3D Geometry="{Binding Path=SideMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=SideBrush}"/>
-                                            </GeometryModel3D.Material>
-
-                                        </GeometryModel3D>
-
+                                        <AmbientLight Color="#FFFFFFFF"/>
                                     </Model3DGroup.Children>
                                 </Model3DGroup>
                             </ModelVisual3D.Content>

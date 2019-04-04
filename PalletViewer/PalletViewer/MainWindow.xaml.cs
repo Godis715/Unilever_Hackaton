@@ -314,17 +314,11 @@ namespace PalletViewer
 
 		}
 
-		public Scene MyScene { get; set; }
-
 		private Model model;
 
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			model = new Model(ListLayer);
-
-			Main.DataContext = model;
 		}
 
 		#region event handlers
@@ -364,29 +358,29 @@ namespace PalletViewer
 
 		void MouseDown_ViewPort(object sender, MouseButtonEventArgs e)
 		{
-			MyScene.StartMousePos = e.GetPosition(this);
+			model.MyScene.StartMousePos = e.GetPosition(this);
 
-			MyScene.LastMousePos = MyScene.StartMousePos;
+			model.MyScene.LastMousePos = model.MyScene.StartMousePos;
 		}
 
 		void MouseMove_ViewPort(object sender, MouseEventArgs e)
 		{
 			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
 			{
-				if ((MyScene.LastMousePos - e.GetPosition(this)).Length > Params.MouseMoveEPS)
+				if ((model.MyScene.LastMousePos - e.GetPosition(this)).Length > Params.MouseMoveEPS)
 				{
-					Vector shift = e.GetPosition(this) - MyScene.StartMousePos;
+					Vector shift = e.GetPosition(this) - model.MyScene.StartMousePos;
 
-					MyScene.Camera.ShiftUVPosition(shift);
+					model.MyScene.Camera.ShiftUVPosition(shift);
 
-					MyScene.LastMousePos = e.GetPosition(this);
+					model.MyScene.LastMousePos = e.GetPosition(this);
 				}
 			}
 		}
 
 		void MouseUp_ViewPort(object sender, MouseButtonEventArgs e)
 		{
-			MyScene.Camera.RestorePosition();
+			model.MyScene.Camera.RestorePosition();
 		}
 		#endregion
 
@@ -471,10 +465,10 @@ namespace PalletViewer
 			
 				for (int i = 0; i < layers.Length; ++i)
 				{
-					BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
+					BoxToPolygons1(model.MyScene.MyMesh, layers[i].boxes.ToArray());
 				}
 
-				foreach (var note in MyScene.MyMesh.MeshDict)
+				foreach (var note in model.MyScene.MyMesh.MeshDict)
 				{
 					Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
 				}
@@ -520,7 +514,7 @@ namespace PalletViewer
 		{
 			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
 			{
-				MyScene.Camera.RestorePosition();
+				model.MyScene.Camera.RestorePosition();
 			}
 		}
 
@@ -538,7 +532,9 @@ namespace PalletViewer
 
 		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
 		{
-			MyScene = new Scene(new Point3D(500, 500, 500), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
+			model = new Model(ListLayer, Orders, new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight));
+
+			model.MyScene = new Scene(new Point3D(500, 500, 500), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
 			{
 
 				UpBrush = Params.UpBrush,
@@ -548,7 +544,7 @@ namespace PalletViewer
 				MyMesh = CreateMeshContainer()
 			};
 
-			this.DataContext = MyScene;
+			Main.DataContext = model;
 		}
 	}
 }

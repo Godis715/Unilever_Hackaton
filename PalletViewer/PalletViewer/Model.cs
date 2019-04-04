@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Media3D;
 
 namespace PalletViewer
 {
@@ -18,10 +19,11 @@ namespace PalletViewer
 		//Идёт бинд на его параметры
 		public Pallet CurrentPallet { get; set; }
 
-		public Model(StackPanel _ListLayers, MenuItem _ListOrders)
+		public Model(StackPanel _ListLayers, MenuItem _ListOrders, Size _vpsize)
 		{
 			ListLayers = _ListLayers;
 			pallets = new List<Pallet>();
+			MyScene = new Scene(new Point3D(0, 0, 0), _vpsize);
 		}
 
 		private MenuItem ListOrders;
@@ -60,5 +62,7 @@ namespace PalletViewer
 			CreateListLayer();
 			PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentPallet)));
 		}
+
+		public Scene MyScene { get; set; }
 	}
 }

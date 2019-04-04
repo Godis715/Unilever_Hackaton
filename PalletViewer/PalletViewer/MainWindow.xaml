@@ -31,7 +31,7 @@
                     </MenuItem>
                 </Menu>
             </ToolBar>
-            <Grid Grid.Row="1" Background="#f8f8ff" >
+            <Grid Grid.Row="1" Background="DarkGray" >
                 <Viewport3D 
                 Name="myViewport"
                 Margin="10,10,0,0"> 

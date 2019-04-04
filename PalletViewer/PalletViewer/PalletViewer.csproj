@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BoxGenerator.cs" />
+    <Compile Include="DrawCanvas.cs" />
     <Compile Include="FileDialog.cs" />
     <Compile Include="LayerOnPallet.cs" />
     <Compile Include="Palletization.cs" />

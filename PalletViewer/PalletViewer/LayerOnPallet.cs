@@ -20,135 +20,139 @@ namespace PalletViewer
 		 */
 		
 		#region Определения доп.типов данных
-		public enum DirectionFilling { Down, Right }
+		private enum DirectionFilling { Down, Right }
 
-		public enum OrientationBox { Vertically, Horizontally }
+		private enum OrientationBox { Vertically, Horizontally }
 		#endregion'
 
 		#region Входные данные
-		public double WidthPallet { get; set; }
-		public double LengthPallet { get; set; }
+		private double WidthPallet;
+		private double LengthPallet;
 
-		public double Length_belowWall { get; set; }
-		public double Length_sideWall { get; set; }
+		private double Length_belowWall;
+		private double Length_sideWall;
 
-		private Canvas Canvas;
 		#endregion
-		public LayerOnPallet(double _WidthPallet, double _LengthPallet, Canvas _Canvas)
-		{
-			WidthPallet = _WidthPallet;
-			LengthPallet = _LengthPallet;
-			Canvas = _Canvas;
-		}
-
+		
 		public LayerOnPallet(double _WidthPallet, double _LengthPallet)
 		{
 			WidthPallet = _WidthPallet;
 			LengthPallet = _LengthPallet;
 		}
 
-		public class BoxBlock
-		{
-			public Vector3D point1 { get; set; }
-			public Vector3D point2 { get; set; }
-			public int countX { get; set; }
-			public int countY { get; set; }
-			public int[] orient { get; set; }
-		}
-
-		#region Выходные данные 
-		public double ErrorLayer { get; set; }
-		public int CountBoxes { get; set; }
-		#endregion
-
 		#region Для 3D генерации коробов
 		private BoxFactory boxFactory;
-		private bool isEnableGen = false;
-		public void GenerateBoxs_On(BoxFactory _boxFactory)
-		{
-			Boxes = new List<Box>();
-			boxFactory = _boxFactory;
-			isEnableGen = true;
-		}
-		public void GenerateBoxs_Off()
-		{
-			isEnableGen = false;
-		}
-		public List<Box> Boxes { get; set; }
+		private Box templateBox;
+		private List<Box> Boxes;
 		#endregion
 
-		private readonly double ScalingKoef = 1;
 		private readonly double AllowEps = 0;
 
-		private void CheckValue(ref double tempErrorLayer, ref int tempMaxCountBox)
+		#region Данные о сгенерированном слое
+		private double ErrorLayer { get; set; }
+		private int CountBoxes { get; set; }
+		#endregion
+
+		#region Генерация слоя
+		private void ClearResult()
+		{
+			CountBoxes = 0;
+			ErrorLayer = 0;
+			Boxes = new List<Box>();
+		}
+
+		private void CheckValue(ref double tempErrorLayer, ref int tempMaxCountBox, ref List<Box> tempBoxes)
 		{
 			if (tempMaxCountBox < CountBoxes || (tempMaxCountBox == CountBoxes && ErrorLayer < tempErrorLayer))
 			{
 				tempMaxCountBox = CountBoxes;
 				tempErrorLayer = ErrorLayer;
+				tempBoxes = Boxes;
 			}
-			CountBoxes = 0;
-			ErrorLayer = 0;
-            Boxes = new List<Box>();
 		}
+
 		private void FillInfoAboutLayer(ref Layer layer)
 		{
-			double tempErrorLayer = double.PositiveInfinity;
-			int tempMaxCountBox = 0;
+			var tempBoxes = new List<Box>();
+			var tempErrorLayer = double.PositiveInfinity;
+			var tempMaxCountBox = 0;
 
 			var startPoint = new Vector { X = 0, Y = 0 };
+			ClearResult();
 			FillArea(DirectionFilling.Down, OrientationBox.Horizontally, startPoint, WidthPallet, LengthPallet);
-			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox, ref tempBoxes);
+
+			ClearResult();
 			FillArea(DirectionFilling.Down, OrientationBox.Vertically, startPoint, WidthPallet, LengthPallet);
-			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox, ref tempBoxes);
+
+			ClearResult();
 			FillArea(DirectionFilling.Right, OrientationBox.Horizontally, startPoint, WidthPallet, LengthPallet);
-			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox, ref tempBoxes);
+
+			ClearResult();
 			FillArea(DirectionFilling.Right, OrientationBox.Vertically, startPoint, WidthPallet, LengthPallet);
-			CheckValue(ref tempErrorLayer, ref tempMaxCountBox);
+			CheckValue(ref tempErrorLayer, ref tempMaxCountBox, ref tempBoxes);
 
 			layer.countBox = tempMaxCountBox;
-			layer.boxes = Boxes;
+			layer.boxes = tempBoxes;
 		}
-    
-		public Layer[] CreateLayers(double _heightBox, double _widthBox, double _lengthBox)
+		#endregion
+
+		public Layer[] CreateLayers(int _heightBox, int _widthBox, int _lengthBox, BoxFactory _boxFactory)
 		{
+			boxFactory = _boxFactory;
+
+			templateBox = boxFactory.GenBox();
+
 			var layers = new Stack<Layer>();
 
 			Length_belowWall = _widthBox;
 			Length_sideWall = _lengthBox;
 			var layer1 = new Layer();
-			layer1.height = (int)_heightBox;
-
+			layer1.height = _heightBox;
 			FillInfoAboutLayer(ref layer1);
 			if (layer1.countBox != 0)
 			{
 				layers.Push(layer1);
 			}
+
 			// two param is equal and one is different
 			if ((_widthBox == _lengthBox && _heightBox != _widthBox) ||
 				(_widthBox != _lengthBox && _heightBox == _widthBox))
 			{
-				Length_belowWall = _widthBox;
-				Length_sideWall = _heightBox;
+				Length_belowWall = _heightBox;
+				Length_sideWall = _widthBox;
 				var layer2 = new Layer();
-				layer2.height = (int)_lengthBox;
+				layer2.height = _lengthBox;
+
+				//boxFactory.SetOrient(new int[] { 2, 1, 0 });
+
+				templateBox = boxFactory.GenBox();
+
+				templateBox.RotSide();
+
 				FillInfoAboutLayer(ref layer2);
-                boxFactory.SetOrient(new int[] { 0, 2, 1 });
 				if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
 				}
 			}
+
 			// trhee params is equal
 			else if (_widthBox != _lengthBox && _heightBox != _widthBox)
 			{
 				Length_belowWall = _widthBox;
 				Length_sideWall = _heightBox;
 				var layer2 = new Layer();
-				layer2.height = (int)_lengthBox;
+				layer2.height = _lengthBox;
+				//boxFactory.SetOrient(new int[] { 1, 2, 0 });
+				templateBox = boxFactory.GenBox();
+
+				templateBox.RotSide();
+
 				FillInfoAboutLayer(ref layer2);
-                boxFactory.SetOrient(new int[] { 0, 2, 1 });
-                if (layer2.countBox != 0)
+				if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
 				}
@@ -157,29 +161,20 @@ namespace PalletViewer
 				Length_sideWall = _lengthBox;
 				var layer3 = new Layer();
 				layer3.height = (int)_widthBox;
+
+				//boxFactory.SetOrient(new int[] { 1, 0,2 });
+
+				templateBox = boxFactory.GenBox();
+
+				templateBox.RotFront();
+
 				FillInfoAboutLayer(ref layer3);
-                boxFactory.SetOrient(new int[] { 1, 0 , 2 });
                 if (layer3.countBox != 0)
 				{
 					layers.Push(layer3);
 				}
 			}
 			return layers.ToArray();
-		}
-
-		public void CreateLayer(double _Length_belowWall, double _Length_sideWall, double _heightBox,
-			DirectionFilling directionFilling = DirectionFilling.Down, OrientationBox orientationBox = OrientationBox.Vertically)
-		{
-			Length_belowWall = _Length_belowWall;
-			Length_sideWall = _Length_sideWall;
-			//HeightBox = _heightBox;
-
-			CountBoxes = 0;
-
-			var startPoint = new Vector { X = 0, Y = 0 };
-            
-
-			FillArea(directionFilling, orientationBox, startPoint, WidthPallet, LengthPallet);
 		}
 
 		#region Для ориентации короба
@@ -213,6 +208,7 @@ namespace PalletViewer
 		}
 		#endregion'
 
+		#region Main функции
 		private void FillArea(DirectionFilling dirFil, OrientationBox orBox,
 			Vector startPoint, double width, double length)
 		{
@@ -308,7 +304,7 @@ namespace PalletViewer
 			}
 			CountBoxes += countBoxesOnRow * countBoxesOnColumn;
 
-			if (isEnableGen) GenerateBoxes(dirFil, orBox, startPoint, countBoxesOnRow, countBoxesOnColumn);
+			GenerateBoxes(dirFil, orBox, startPoint, countBoxesOnRow, countBoxesOnColumn);
 
 			//Проверка на выход из рекурсии
 			if (nextLength < LengthTemp_belowWall && Math.Abs(nextLength - LengthTemp_belowWall) / LengthTemp_belowWall > 0)
@@ -375,7 +371,8 @@ namespace PalletViewer
 						//Замощение по столбцу до разделяющей линии
 						for (int j = 1; j <= countBoxesOnColumn; j++)
 						{
-							var box = boxFactory.GenBox();
+							//var box = boxFactory.GenBox();
+							var box = templateBox.Copy();
 							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
 
 							if (orBox == OrientationBox.Horizontally) box.RotUp();
@@ -395,7 +392,8 @@ namespace PalletViewer
 						//Замощение по строке до разделяющей линии 
 						for (int j = 1; j <= countBoxesOnRow; j++)
 						{
-							var box = boxFactory.GenBox();
+							//var box = boxFactory.GenBox();
+							var box = templateBox.Copy();
 
 							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
 
@@ -412,5 +410,6 @@ namespace PalletViewer
 					break;
 			}
 		}
+		#endregion
 	}
 }

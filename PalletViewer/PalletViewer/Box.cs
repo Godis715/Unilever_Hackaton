@@ -4,57 +4,56 @@ namespace PalletViewer
 {
     public class Box
     {
-        private Point3D S { get; set; }
-
-        private Vector3D Dim { get; set; }
-
-        private Point3D[] points;
-
-        public Point3D[] Points
-        {
-            get
-            {
-                if (points == null)
-                {
-                    var E = S + Dim;
-
-                    points = new Point3D[]
-                        {
-                            new Point3D(S.X, S.Y, S.Z),
-                            new Point3D(S.X, S.Y, E.Z),
-                            new Point3D(S.X, E.Y, S.Z),
-                            new Point3D(S.X, E.Y, E.Z),
-
-                            new Point3D(E.X, S.Y, S.Z),
-                            new Point3D(E.X, S.Y, E.Z),
-                            new Point3D(E.X, E.Y, S.Z),
-                            new Point3D(E.X, E.Y, E.Z)
-                        };
-                }
-
-                return points;
-            }
-            set
-            {
-                points = value;
-            }
-        }
-
-        public int[] Orient { get; set; }
+        public Point3D S { get; set; }
+        public Vector3D Dim { get; set; }
+		public int[] Orient { get; set; }
+		private Point3D[] points;
 
         public Box(Vector3D dim, int[] orient)
         {
-            Dim = dim; S = new Point3D(0, 0, 0);
+            Dim = dim;
+			S = new Point3D(0, 0, 0);
             Orient = new int[] { orient[0], orient[1], orient[2] };
         }
 
         public Box(Vector3D dim, Point3D start, int[] orient)
         {
-            Dim = dim; S = start;
+            Dim = dim;
+			S = start;
             Orient = new int[] { orient[0], orient[1], orient[2] };
         }
 
-        public void Translate(Vector3D shift)
+		public Point3D[] Points
+		{
+			get
+			{
+				if (points == null)
+				{
+					var E = S + Dim;
+
+					points = new Point3D[]
+						{
+							new Point3D(S.X, S.Y, S.Z),
+							new Point3D(S.X, S.Y, E.Z),
+							new Point3D(S.X, E.Y, S.Z),
+							new Point3D(S.X, E.Y, E.Z),
+
+							new Point3D(E.X, S.Y, S.Z),
+							new Point3D(E.X, S.Y, E.Z),
+							new Point3D(E.X, E.Y, S.Z),
+							new Point3D(E.X, E.Y, E.Z)
+						};
+				}
+
+				return points;
+			}
+			set
+			{
+				points = value;
+			}
+		}
+
+		public void Translate(Vector3D shift)
         {
             S += shift;
         }
@@ -82,6 +81,11 @@ namespace PalletViewer
 
             points = null;
         }
+
+		public Box Copy()
+		{
+			return new Box(Dim, S, Orient);
+		}
     }
 
     public class BoxFactory
@@ -93,7 +97,7 @@ namespace PalletViewer
         private Point3D Start { get; set; }
 
         // params of standart box
-        public BoxFactory(double sWidth, double sHeight, double sLength)
+        public BoxFactory(double sHeight, double sWidth, double sLength)
         {
             Dimensions = new Vector3D(sWidth, sHeight, sLength);
 

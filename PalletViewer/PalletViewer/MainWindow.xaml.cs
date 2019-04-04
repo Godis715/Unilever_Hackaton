@@ -14,53 +14,53 @@ using System.Windows.Shapes;
 namespace PalletViewer
 {
 	class Helper
-    {
-        public static void Swap<T>(ref T a, ref T b)
-        {
-            T temp = a;
-            a = b;
-            b = temp;
-        }
-    }
+	{
+		public static void Swap<T>(ref T a, ref T b)
+		{
+			T temp = a;
+			a = b;
+			b = temp;
+		}
+	}
 
-    public static class Params
-    {
-        public static readonly double MouseMoveEPS = 10.0;
+	public static class Params
+	{
+		public static readonly double MouseMoveEPS = 10.0;
 
-        public static readonly int[][] BoxPolyIndecies = {
-            new int[] { 4, 1, 0,   5, 1, 4,   2, 3, 6,   3, 7, 6 }, // up indecies
+		public static readonly int[][] BoxPolyIndecies = {
+			new int[] { 4, 1, 0,   5, 1, 4,   2, 3, 6,   3, 7, 6 }, // up indecies
             new int[] { 6, 0, 2,   4, 0, 6,   1, 7, 3,   1, 5, 7 }, // front
             new int[] { 2, 1, 3,   0, 1, 2,   5, 6, 7,   5, 4, 6 }, // side
         };
 
-        public static readonly int[][] BoxSidesIndecies = {
-            new int[] { 4, 5, 1, 0,    3, 7, 6, 2 },
-            new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
-            new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
-        };
+		public static readonly int[][] BoxSidesIndecies = {
+			new int[] { 4, 5, 1, 0,    3, 7, 6, 2 },
+			new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+			new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+		};
 
-        public static readonly int[][] BoxSidesWithoutBottomIndecies = {
-            new int[] {     3, 7, 6, 2 },
-            new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
-            new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
-        };
+		public static readonly int[][] BoxSidesWithoutBottomIndecies = {
+			new int[] {     3, 7, 6, 2 },
+			new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+			new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+		};
 
-        public static readonly double BroderIndent = 0.001;
+		public static readonly double BorderIndent = 0.01;
 
-        public static readonly double CameraEPS = Math.PI / 50.0;
+		public static readonly double CameraEPS = Math.PI / 50.0;
 
-        public static readonly Vector CameraRotationCoefs = new Vector(1.0, 1.0);
+		public static readonly Vector CameraRotationCoefs = new Vector(1.0, 1.0);
 
-        public static readonly SolidColorBrush UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 };
-        public static readonly SolidColorBrush FrontBush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 };
-        public static readonly SolidColorBrush SideBrush = new SolidColorBrush { Color = Colors.Green, Opacity = 1.0 };
-        public static readonly SolidColorBrush BorderBrush = new SolidColorBrush { Color = Colors.Black, Opacity = 1.0 };
+		public static readonly SolidColorBrush UpBrush = new SolidColorBrush { Color = Colors.Aqua, Opacity = 1.0 };
+		public static readonly SolidColorBrush FrontBush = new SolidColorBrush { Color = Colors.BlueViolet, Opacity = 1.0 };
+		public static readonly SolidColorBrush SideBrush = new SolidColorBrush { Color = Colors.Magenta, Opacity = 1.0 };
+		public static readonly SolidColorBrush BorderBrush = new SolidColorBrush { Color = Colors.Black, Opacity = 1.0 };
 
-        public static readonly Material UpMaterial = new DiffuseMaterial(UpBrush);
-        public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
-        public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
-        public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
-    }
+		public static readonly Material UpMaterial = new DiffuseMaterial(UpBrush);
+		public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
+		public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
+		public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
+	}
 	public class BoxBlock
 	{
 		public Vector3D Dim { get; set; }
@@ -172,7 +172,7 @@ namespace PalletViewer
 
 			indent.Normalize();
 
-			indent *= Params.BroderIndent;
+			indent *= Params.BorderIndent;
 
 			var borderPoints = new List<Point3D>();
 
@@ -234,26 +234,26 @@ namespace PalletViewer
 
 			MeshWrapper borderMesh = meshCont.GetMesh("border");
 
-			var ind = Params.BoxSidesWithoutBottomIndecies;
+			var ind = Params.BoxSidesIndecies;
 			for (int i = 0; i < boxes.Length; ++i)
 			{
 				for (int j = 0; j < 3; ++j)
 				{
 					int orient = boxes[i].Orient[j];
-					for (int k = 0; k < ind[orient].Length / 4; ++k)
+					for (int k = 0; k < ind[j].Length / 4; ++k)
 					{
 
 						CreateMarkedPolygon(
 							new Point3D[]
 							{
-								boxes[i].Points[ind[orient][k * 4 + 0]],
-								boxes[i].Points[ind[orient][k * 4 + 1]],
-								boxes[i].Points[ind[orient][k * 4 + 2]],
-								boxes[i].Points[ind[orient][k * 4 + 3]],
+								boxes[i].Points[ind[j][k * 4 + 0]],
+								boxes[i].Points[ind[j][k * 4 + 1]],
+								boxes[i].Points[ind[j][k * 4 + 2]],
+								boxes[i].Points[ind[j][k * 4 + 3]],
 							},
-							geomMeshes[j],
+							geomMeshes[orient],
 							borderMesh,
-							5.0
+							5
 							);
 					}
 				}
@@ -315,18 +315,20 @@ namespace PalletViewer
 		}
 
 		public Scene MyScene { get; set; }
+		
 
+		public MainWindow()
+		{
+			InitializeComponent();
 
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+			DrawCanvas.GetInstance().SetCanvas(TestScene);
+		}
 
-        #region event handlers
+		#region event handlers
 
-        private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            /*
+		private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+		{
+			/*
             double widthPallet = 6;
             double lengthPallet = 8;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
@@ -355,142 +357,146 @@ namespace PalletViewer
 				Models.Children.Add(model);
 			}
             */
-        }
+		}
 
-        void MouseDown_ViewPort(object sender, MouseButtonEventArgs e)
-        {
-            MyScene.StartMousePos = e.GetPosition(this);
+		void MouseDown_ViewPort(object sender, MouseButtonEventArgs e)
+		{
+			MyScene.StartMousePos = e.GetPosition(this);
 
-            MyScene.LastMousePos = MyScene.StartMousePos;
-        }
+			MyScene.LastMousePos = MyScene.StartMousePos;
+		}
 
-        void MouseMove_ViewPort(object sender, MouseEventArgs e)
-        {
-            if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                if ((MyScene.LastMousePos - e.GetPosition(this)).Length > Params.MouseMoveEPS)
-                {
-                    Vector shift = e.GetPosition(this) - MyScene.StartMousePos;
+		void MouseMove_ViewPort(object sender, MouseEventArgs e)
+		{
+			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+			{
+				if ((MyScene.LastMousePos - e.GetPosition(this)).Length > Params.MouseMoveEPS)
+				{
+					Vector shift = e.GetPosition(this) - MyScene.StartMousePos;
 
-                    MyScene.Camera.ShiftUVPosition(shift);
+					MyScene.Camera.ShiftUVPosition(shift);
 
-                    MyScene.LastMousePos = e.GetPosition(this);
-                }
-            }
-        }
+					MyScene.LastMousePos = e.GetPosition(this);
+				}
+			}
+		}
 
-        void MouseUp_ViewPort(object sender, MouseButtonEventArgs e)
-        {
-            MyScene.Camera.RestorePosition();
-        }
+		void MouseUp_ViewPort(object sender, MouseButtonEventArgs e)
+		{
+			MyScene.Camera.RestorePosition();
+		}
 		#endregion
 
 		private void AddOrder(object sender, RoutedEventArgs e)
 		{
-            try
-            {
-                #region Считывание параметров
-                var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
-                var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
-                var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
-                var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
+			try
+			{
+				//#region Считывание параметров
+				//var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
+				//var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
+				//var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
+				//var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
 
-                var _SizeProduct = "";
-                foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
-                {
-                    _SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
-                }
+				//var _SizeProduct = "";
+				//foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+				//{
+				//	_SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
+				//}
 
-                var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
-                var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
-                var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
-                var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
+				//var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
+				//var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
+				//var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
+				//var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
 
-                var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
-                var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
-                var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
-                var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
+				//var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
+				//var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
+				//var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
+				//var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
 
-                var _isDifferentLayer = false;
-                foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
-                {
-                    if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
-                    {
-                        _isDifferentLayer = true;
-                    }
-                }
-                #endregion
-                #region Сбрасывание парамтров
-                WidthProduct.Clear();
-                LengthProduct.Clear();
-                HeightProduct.Clear();
-                WeightProduct.Clear();
-                foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
-                {
-                    SizeProduct_rb.IsChecked = (SizeProduct_rb.Content.ToString() == "big") ? true : false;
-                }
-                WidthPallet.Clear();
-                LengthPallet.Clear();
-                HeigthPallet.Text = "1800";
-                MaxWeightOnPallet.Text = "800";
-                MaxWeightInBox.Text = "15";
-                MinCountInBox.Text = "10";
-                MaxCountInBox.Text = "20";
-                RatioSideBox.Text = "4";
-                foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
-                {
-                    isDifferentLayer_Answer_rb.IsChecked = (isDifferentLayer_Answer_rb.Content.ToString() == "No") ? true : false;
-                }
-                ErrorInput.Content = "Message: ";
-                ErrorInput.Foreground = Brushes.Black;
-                #endregion
+				//var _isDifferentLayer = false;
+				//foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+				//{
+				//	if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
+				//	{
+				//		_isDifferentLayer = true;
+				//	}
+				//}
+				//#endregion
+				#region Сбрасывание парамтров
+				WidthProduct.Clear();
+				LengthProduct.Clear();
+				HeightProduct.Clear();
+				WeightProduct.Clear();
+				foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+				{
+					SizeProduct_rb.IsChecked = (SizeProduct_rb.Content.ToString() == "big") ? true : false;
+				}
+				WidthPallet.Clear();
+				LengthPallet.Clear();
+				HeigthPallet.Text = "1800";
+				MaxWeightOnPallet.Text = "800";
+				MaxWeightInBox.Text = "15";
+				MinCountInBox.Text = "10";
+				MaxCountInBox.Text = "20";
+				RatioSideBox.Text = "4";
+				foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+				{
+					isDifferentLayer_Answer_rb.IsChecked = (isDifferentLayer_Answer_rb.Content.ToString() == "No") ? true : false;
+				}
+				ErrorInput.Content = "Message: ";
+				ErrorInput.Foreground = Brushes.Black;
+				#endregion
 
-                var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
-                    _LengthPallet, _WidthPallet, _HeigthPallet, _MaxWeightOnPallet,
-                    _MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
-                    _SizeProduct, _isDifferentLayer);
-                //var paletization = new Palletization(9, 10, 11, 1,
-                //	1200, 800, 1560, 650,
-                //	2, 60, 10, 200,
-                //	"big", false);
-                Stopwatch stopwatch = new Stopwatch();
+				//var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
+				//	_LengthPallet, _WidthPallet, _HeigthPallet, _MaxWeightOnPallet,
+				//	_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
+				//	_SizeProduct, _isDifferentLayer);
+				var paletization = new Palletization(159, 35, 68, 229,
+					1200, 800, 1560, 600,
+					10, 10, 5, 3,
+					"avarage", true);
 
-                stopwatch.Start();
-                var pallet = paletization.GetPallet();
-                stopwatch.Stop();
 
-                var elapsedTime = stopwatch.Elapsed;
-                var x = elapsedTime.Milliseconds;
-                int h = 0;
+				Stopwatch stopwatch = new Stopwatch();
+				stopwatch.Start();
+				var pallet = paletization.GetPallet();
+				pallet.ShiftLayers();
+				stopwatch.Stop();
 
-                var layers = new Layer[] { pallet.layer1, pallet.layer2, pallet.layer3 };
-                var layersNum = new int[] { pallet.CountLayer1, pallet.CountLayer2, pallet.CountLayer3 };
+				var elapsedTime = stopwatch.Elapsed;
+				var x = elapsedTime.Milliseconds;
+				var layers = pallet.Layers;
 
-                for (int i = 0; i < layers.Length; ++i)
-                {
-                    for (int j = 0; j < layersNum[i]; ++j)
-                    {
-                        BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
-                    }
-                }
+				var drawCanvas = DrawCanvas.GetInstance();
+				drawCanvas.DrawArea(new Vector { X = 0, Y = 0 }, new Vector { X = 800 / 2, Y = 1200 / 2 });
+				for (int j = 0; j < layers[1].boxes.Count; j++)
+				{
+					var box1 = layers[1].boxes[j];
+					drawCanvas.DrawBox(new Vector { X = box1.S.X / 2, Y = box1.S.Z / 2 }, new Vector { X = (box1.S.X + box1.Dim.X) / 2, Y = (box1.S.Z + box1.Dim.Z) / 2 });
+				}
 
-                foreach (var note in MyScene.MyMesh.MeshDict)
-                {
-                    Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
-                }
-            }
-            catch(FormatException ex)
-            {
-                ErrorInput.Content = "Message: Error! Input not correct.";
-                ErrorInput.Foreground = Brushes.Red;
-                return;
-            }
-            //catch(Exception ex)
-            //{
-            //    ErrorInput.Content = "Message: Application error! " + ex.Message + " " + ex.Source;
-            //    ErrorInput.Foreground = Brushes.Red;
-            //    return;
-            //}
+				for (int i = 0; i < layers.Length; ++i)
+				{
+					BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
+				}
+
+				foreach (var note in MyScene.MyMesh.MeshDict)
+				{
+					Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
+				}
+			}
+			catch (FormatException)
+			{
+				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Foreground = Brushes.Red;
+				return;
+			}
+			//catch(Exception ex)
+			//{
+			//    ErrorInput.Content = "Message: Application error! " + ex.Message + " " + ex.Source;
+			//    ErrorInput.Foreground = Brushes.Red;
+			//    return;
+			//}
 		}
 
 		private void AddFile(object sender, RoutedEventArgs e)
@@ -513,14 +519,14 @@ namespace PalletViewer
 		{
 			//
 		}
-	
-        void MouseLeave_ViewPort(object sender, MouseEventArgs e)
-        {
-            if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                MyScene.Camera.RestorePosition();
-            }
-        }
+
+		void MouseLeave_ViewPort(object sender, MouseEventArgs e)
+		{
+			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+			{
+				MyScene.Camera.RestorePosition();
+			}
+		}
 
 		private MeshContainer CreateMeshContainer()
 		{
@@ -534,9 +540,9 @@ namespace PalletViewer
 			return meshCont;
 		}
 
-        private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
-        {
-			MyScene = new Scene(new Point3D(60, 0, 40), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
+		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
+		{
+			MyScene = new Scene(new Point3D(500, 500, 500), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
 			{
 
 				UpBrush = Params.UpBrush,
@@ -544,10 +550,9 @@ namespace PalletViewer
 				SideBrush = Params.SideBrush,
 
 				MyMesh = CreateMeshContainer()
-            };
-
+			};
 
 			this.DataContext = MyScene;
-        }
-    }
+		}
+	}
 }

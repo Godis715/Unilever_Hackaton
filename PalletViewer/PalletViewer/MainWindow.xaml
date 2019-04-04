@@ -249,7 +249,7 @@
                                 </GroupBox>
                                 <GroupBox Header="Pallet height" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBox Text="{Binding CurrentPallet.Height}" Margin="5 0 5 0"/>
+                                        <TextBox Text="" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Weight on pallet" FontWeight="Normal">

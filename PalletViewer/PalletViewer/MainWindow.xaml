@@ -39,7 +39,7 @@
                     <!-- Add a camera. -->
                     <Viewport3D.Camera>
                         <PerspectiveCamera 
-                        FarPlaneDistance="100" 
+                        FarPlaneDistance="2000" 
                         LookDirection="{Binding Path=Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 

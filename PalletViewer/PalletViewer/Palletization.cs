@@ -287,7 +287,10 @@ namespace PalletViewer
 
 		private Pallet GetPalletByBox(BoxParam box)
 		{
+            layerMaker.GenerateBoxs_On(new BoxFactory(box.z, box.y, box.x));
+
 			var layers = layerMaker.CreateLayers((double)box.x, (double)box.y, (double)box.z);
+            
 			switch (layers.Length)
 			{
 				case 1:

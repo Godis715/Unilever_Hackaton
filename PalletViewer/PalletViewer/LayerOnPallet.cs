@@ -18,46 +18,7 @@ namespace PalletViewer
 			 |_______|
 			     w    (w,l)
 		 */
-		#region Функции рисования
-		private void DrawLine(Vector pointStart, Vector pointEnd, SolidColorBrush color)
-		{
-			Canvas.Children.Add(new Line
-			{
-				X1 = pointStart.X,
-				Y1 = pointStart.Y,
-				X2 = pointEnd.X,
-				Y2 = pointEnd.Y,
-				StrokeStartLineCap = PenLineCap.Round,
-				StrokeEndLineCap = PenLineCap.Round,
-				StrokeThickness = 1,
-				Stroke = color
-			});
-		}
-		private void DrawBox(Vector pointLD, Vector pointRU)
-		{
-			var color = Brushes.Green;
-			var pointLU = new Vector { X = pointLD.X, Y = pointRU.Y };
-			var pointRD = new Vector { X = pointRU.X, Y = pointLD.Y };
-			DrawLine(pointLD, pointRD, color);
-			DrawLine(pointLD, pointLU, color);
-			DrawLine(pointLU, pointRU, color);
-			DrawLine(pointRD, pointRU, color);
-
-			DrawLine(pointLD, pointRU, color);
-			DrawLine(pointLU, pointRD, color);
-		}
-		private void DrawArea(Vector pointLD, Vector pointRU)
-		{
-			var color = Brushes.Red;
-			var pointLU = new Vector { X = pointLD.X, Y = pointRU.Y };
-			var pointRD = new Vector { X = pointRU.X, Y = pointLD.Y };
-			DrawLine(pointLD, pointRD, color);
-			DrawLine(pointLD, pointLU, color);
-			DrawLine(pointLU, pointRU, color);
-			DrawLine(pointRD, pointRU, color);
-		}
-		#endregion
-
+		
 		#region Определения доп.типов данных
 		public enum DirectionFilling { Down, Right }
 
@@ -128,6 +89,7 @@ namespace PalletViewer
 			}
 			CountBoxes = 0;
 			ErrorLayer = 0;
+            Boxes = new List<Box>();
 		}
 		private void FillInfoAboutLayer(ref Layer layer)
 		{
@@ -147,9 +109,7 @@ namespace PalletViewer
 			layer.countBox = tempMaxCountBox;
 			layer.boxes = Boxes;
 		}
-
-		private Box boxTemplate;
-
+    
 		public Layer[] CreateLayers(double _heightBox, double _widthBox, double _lengthBox)
 		{
 			var layers = new Stack<Layer>();
@@ -158,7 +118,6 @@ namespace PalletViewer
 			Length_sideWall = _lengthBox;
 			var layer1 = new Layer();
 			layer1.height = (int)_heightBox;
-			boxTemplate = boxFactory.GenBox();
 
 			FillInfoAboutLayer(ref layer1);
 			if (layer1.countBox != 0)
@@ -174,8 +133,7 @@ namespace PalletViewer
 				var layer2 = new Layer();
 				layer2.height = (int)_lengthBox;
 				FillInfoAboutLayer(ref layer2);
-				boxTemplate = boxFactory.GenBox();
-				boxTemplate.RotSide();
+                boxFactory.SetOrient(new int[] { 0, 2, 1 });
 				if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
@@ -189,9 +147,8 @@ namespace PalletViewer
 				var layer2 = new Layer();
 				layer2.height = (int)_lengthBox;
 				FillInfoAboutLayer(ref layer2);
-				boxTemplate = boxFactory.GenBox();
-				boxTemplate.RotSide();
-				if (layer2.countBox != 0)
+                boxFactory.SetOrient(new int[] { 0, 2, 1 });
+                if (layer2.countBox != 0)
 				{
 					layers.Push(layer2);
 				}
@@ -201,9 +158,8 @@ namespace PalletViewer
 				var layer3 = new Layer();
 				layer3.height = (int)_widthBox;
 				FillInfoAboutLayer(ref layer3);
-				boxTemplate = boxFactory.GenBox();
-				boxTemplate.RotFront();
-				if (layer3.countBox != 0)
+                boxFactory.SetOrient(new int[] { 1, 0 , 2 });
+                if (layer3.countBox != 0)
 				{
 					layers.Push(layer3);
 				}
@@ -221,12 +177,7 @@ namespace PalletViewer
 			CountBoxes = 0;
 
 			var startPoint = new Vector { X = 0, Y = 0 };
-
-			//Убрать
-			if (isEnableGen)
-			{
-				DrawArea(startPoint, new Vector { X = startPoint.X + WidthPallet, Y = startPoint.Y + LengthPallet } * ScalingKoef);
-			}
+            
 
 			FillArea(directionFilling, orientationBox, startPoint, WidthPallet, LengthPallet);
 		}
@@ -314,13 +265,7 @@ namespace PalletViewer
 					nextStartPoint = new Vector { X = startPoint.X, Y = startPoint.Y + LengthTemp_sideWall * alpha };
 					nextWidth = width;
 					nextLength = length - LengthTemp_sideWall * alpha;
-
-					//Убрать
-					if (isEnableGen)
-					{
-						DrawLine(new Vector { X = startPoint.X, Y = startPoint.Y + alpha * LengthTemp_sideWall } * ScalingKoef,
-						new Vector { X = startPoint.X + width, Y = startPoint.Y + alpha * LengthTemp_sideWall } * ScalingKoef, Brushes.Blue);
-					}
+                    
 					break;
 
 				case DirectionFilling.Right:
@@ -358,12 +303,7 @@ namespace PalletViewer
 					nextStartPoint = new Vector { X = startPoint.X + LengthTemp_belowWall * alpha, Y = startPoint.Y };
 					nextWidth = width - LengthTemp_belowWall * alpha;
 					nextLength = length;
-
-					if (isEnableGen)
-					{
-						DrawLine(new Vector { X = startPoint.X + alpha * LengthTemp_belowWall, Y = startPoint.Y } * ScalingKoef,
-						new Vector { X = startPoint.X + alpha * LengthTemp_belowWall, Y = startPoint.Y + length } * ScalingKoef, Brushes.Blue);
-					}
+                    
 					break;
 			}
 			CountBoxes += countBoxesOnRow * countBoxesOnColumn;
@@ -435,16 +375,13 @@ namespace PalletViewer
 						//Замощение по столбцу до разделяющей линии
 						for (int j = 1; j <= countBoxesOnColumn; j++)
 						{
-							var box = boxTemplate;
+							var box = boxFactory.GenBox();
 							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
 
 							if (orBox == OrientationBox.Horizontally) box.RotUp();
 
-							//Убрать
-							var point1 = pointBegin * ScalingKoef;
-							var point2 = new Vector { X = pointBegin.X + LengthTemp_belowWall, Y = pointBegin.Y + LengthTemp_sideWall } * ScalingKoef;
-							DrawBox(point1, point2);
-
+                            Boxes.Add(box);
+                            
 							pointBegin.Y += LengthTemp_sideWall;
 						}
 						//Переход на следующий столбец
@@ -463,13 +400,10 @@ namespace PalletViewer
 							box.Translate(new Vector3D(pointBegin.X, 0, pointBegin.Y));
 
 							if (orBox == OrientationBox.Horizontally) box.RotUp();
+                            
+                            Boxes.Add(box);
 
-							//Убрать
-							var point1 = pointBegin * ScalingKoef;
-							var point2 = new Vector { X = pointBegin.X + LengthTemp_belowWall, Y = pointBegin.Y + LengthTemp_sideWall } * ScalingKoef;
-							DrawBox(point1, point2);
-
-							pointBegin.X += LengthTemp_belowWall;
+                            pointBegin.X += LengthTemp_belowWall;
 						}
 						//Переход на следующую строку
 						pointBegin.X = startPoint.X;

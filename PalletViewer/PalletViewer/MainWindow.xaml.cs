@@ -253,7 +253,7 @@ namespace PalletViewer
 							},
 							geomMeshes[j],
 							borderMesh,
-							0.5
+							5.0
 							);
 					}
 				}
@@ -462,13 +462,35 @@ namespace PalletViewer
                 var elapsedTime = stopwatch.Elapsed;
                 var x = elapsedTime.Milliseconds;
                 int h = 0;
+
+                var layers = new Layer[] { pallet.layer1, pallet.layer2, pallet.layer3 };
+                var layersNum = new int[] { pallet.CountLayer1, pallet.CountLayer2, pallet.CountLayer3 };
+
+                for (int i = 0; i < layers.Length; ++i)
+                {
+                    for (int j = 0; j < layersNum[i]; ++j)
+                    {
+                        BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
+                    }
+                }
+
+                foreach (var note in MyScene.MyMesh.MeshDict)
+                {
+                    Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
+                }
             }
-            catch
+            catch(FormatException ex)
             {
                 ErrorInput.Content = "Message: Error! Input not correct.";
                 ErrorInput.Foreground = Brushes.Red;
                 return;
             }
+            //catch(Exception ex)
+            //{
+            //    ErrorInput.Content = "Message: Application error! " + ex.Message + " " + ex.Source;
+            //    ErrorInput.Foreground = Brushes.Red;
+            //    return;
+            //}
 		}
 
 		private void AddFile(object sender, RoutedEventArgs e)

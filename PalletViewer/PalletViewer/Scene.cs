@@ -56,7 +56,7 @@ namespace PalletViewer
 
             var startUVPos = new Point(Math.PI / 4, Math.PI / 4);
 
-            var radius = 250.0;
+            var radius = 1000.0;
 
             Camera = new MyCamera(radius, _scenter, startUVPos, ViewportSize);
         }

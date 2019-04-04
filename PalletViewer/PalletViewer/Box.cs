@@ -42,16 +42,16 @@ namespace PalletViewer
 
         public int[] Orient { get; set; }
 
-        public Box(Vector3D dim)
+        public Box(Vector3D dim, int[] orient)
         {
             Dim = dim; S = new Point3D(0, 0, 0);
-            Orient = new int[] { 0, 1, 2 };
+            Orient = new int[] { orient[0], orient[1], orient[2] };
         }
 
-        public Box(Vector3D dim, Point3D start)
+        public Box(Vector3D dim, Point3D start, int[] orient)
         {
             Dim = dim; S = start;
-            Orient = new int[] { 0, 1, 2 };
+            Orient = new int[] { orient[0], orient[1], orient[2] };
         }
 
         public void Translate(Vector3D shift)
@@ -88,6 +88,8 @@ namespace PalletViewer
     {
         private Vector3D Dimensions { get; set; }
 
+        private int[] Orient { get; set; }
+
         private Point3D Start { get; set; }
 
         // params of standart box
@@ -95,12 +97,19 @@ namespace PalletViewer
         {
             Dimensions = new Vector3D(sWidth, sHeight, sLength);
 
+            Orient = new int[] { 0, 1, 2 };
+
             Start = new Point3D(0, 0, 0);
+        }
+
+        public void SetOrient(int[] orient)
+        {
+            Orient = orient;
         }
 
         public Box GenBox()
         {
-            return new Box(Dimensions, Start);
+            return new Box(Dimensions, Start, Orient);
         }
     }
 }

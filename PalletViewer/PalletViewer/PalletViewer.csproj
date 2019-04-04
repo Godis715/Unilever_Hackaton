@@ -61,6 +61,7 @@
     <Compile Include="Palletization.cs" />
     <Compile Include="RealayCommand.cs" />
     <Compile Include="Scene.cs" />
+    <Compile Include="Box.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

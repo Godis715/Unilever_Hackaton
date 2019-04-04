@@ -9,6 +9,8 @@ namespace PalletViewer
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private Size ViewportSize { get; set; }
+
         private Point SavedUVPos { get; set; }
 
         private Point UVPos { get; set; }
@@ -21,25 +23,29 @@ namespace PalletViewer
 
         public Point3D Center { get; set; }
 
-        public MyCamera(double _rad, Point3D _center, Point _uvpos)
+        public MyCamera(double _rad, Point3D _center, Point _uvpos, Size _vpSize)
         {
             Rad = _rad;
             Center = _center;
             SavedUVPos = _uvpos;
             UVPos = _uvpos;
+            ViewportSize = _vpSize;
 
             ShiftUVPosition(new Vector(0, 0));
         }
 
         public void ShiftUVPosition(Vector shift)
         {
-            shift /= 100;
+            Vector normShift = new Vector(
+                shift.X / ViewportSize.Width * 2 * Math.PI * Params.CameraRotationCoefs.X,
+                shift.Y / ViewportSize.Height * (Math.PI / 2 - Params.CameraEPS) * Params.CameraRotationCoefs.Y
+                );
 
-            UVPos = SavedUVPos - shift;
+            UVPos = SavedUVPos - normShift;
 
-            if (UVPos.Y < 0.1)
+            if (UVPos.Y < Params.CameraEPS)
             {
-                UVPos = new Point(UVPos.X, 0.1);
+                UVPos = new Point(UVPos.X, Params.CameraEPS);
             }
             else if (UVPos.Y > Math.PI / 2)
             {

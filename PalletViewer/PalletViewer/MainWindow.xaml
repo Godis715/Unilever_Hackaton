@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PalletViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Name="mainWindow">
+        Title="MainWindow" Height="450" Width="800" Name="mainWindow"
+        Loaded="MainWindow_Loaded_1">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -45,15 +46,15 @@
                         Position="{Binding Path=Camera.CameraPos}" 
                         FieldOfView="80"
                         />
-                    </Viewport3D.Camera>
-                    <!-- Add models. -->
-                    <Viewport3D.Children>
-                        <ModelVisual3D x:Name="Model">
-                            <ModelVisual3D.Content>
-                                <Model3DGroup >
-                                    <Model3DGroup.Children>
-                                        <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
-                                        <AmbientLight Color="#FFFFFFFF"/>
+            </Viewport3D.Camera>
+            <!-- Add models. -->
+            <Viewport3D.Children>
+                <ModelVisual3D x:Name="Model">
+                    <ModelVisual3D.Content>
+                        <Model3DGroup x:Name="Models">
+                            <Model3DGroup.Children>
+                                <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
+                                <AmbientLight Color="#FFFFFFFF"/>
 
                                         <!-- Up faces. -->
                                         <GeometryModel3D Geometry="{Binding Path=UpMesh}">
@@ -90,6 +91,9 @@
                 MouseLeftButtonDown="MouseDown_ViewPort"
                 MouseLeftButtonUp="MouseUp_ViewPort"
                 MouseMove="MouseMove_ViewPort"
+                MouseLeave="MouseLeave_ViewPort"
+                x:Name="ViewportArea"
+
                 />
             </Grid>
             <StatusBar Grid.Row="2" x:Name="StatusBar" Background="#f0f0f0">

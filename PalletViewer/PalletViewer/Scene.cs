@@ -33,6 +33,8 @@ namespace PalletViewer
 
         private Point3D SceneCenter { get; set; }
 
+        private Size ViewportSize { get; set; }
+
         public MyCamera Camera { get; set; }
 
         public void RestoreMesh(MeshGeometry3D[] meshes)
@@ -46,14 +48,23 @@ namespace PalletViewer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SideMesh)));
         }
 
-        public Scene(Point3D _scenter)
+        public Scene(Point3D _scenter, Size _vpsize)
         {
             SceneCenter = _scenter;
-            Camera = new MyCamera(50.0, _scenter, new Point(Math.PI / 4, Math.PI / 4));
+
+            ViewportSize = _vpsize;
+
+            var startUVPos = new Point(Math.PI / 4, Math.PI / 4);
+
+            var radius = 250.0;
+
+            Camera = new MyCamera(radius, _scenter, startUVPos, ViewportSize);
         }
 
         public Point StartMousePos { get; set; }
 
         public Point LastMousePos { get; set; }
-    }
+
+		public MeshContainer MyMesh { get; set; }
+	}
 }

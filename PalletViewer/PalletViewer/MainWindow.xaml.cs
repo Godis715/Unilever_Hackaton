@@ -23,81 +23,311 @@ namespace PalletViewer
         }
     }
 
-    public partial class MainWindow : Window
+    public static class Params
     {
-        public MeshGeometry3D[] BoxToPolygons(Box[] boxes)
-        {
-            var PolyIndecies = new int[][]
-            {
+        public static readonly double MouseMoveEPS = 10.0;
+
+        public static readonly int[][] BoxPolyIndecies = {
             new int[] { 4, 1, 0,   5, 1, 4,   2, 3, 6,   3, 7, 6 }, // up indecies
             new int[] { 6, 0, 2,   4, 0, 6,   1, 7, 3,   1, 5, 7 }, // front
             new int[] { 2, 1, 3,   0, 1, 2,   5, 6, 7,   5, 4, 6 }, // side
+        };
 
-            };
+        public static readonly int[][] BoxSidesIndecies = {
+            new int[] { 4, 5, 1, 0,    3, 7, 6, 2 },
+            new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+            new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+        };
 
-            var meshes = new MeshGeometry3D[3];
+		public static readonly int[][] BoxSidesWithoutBottomIndecies = {
+			new int[] {     3, 7, 6, 2 },
+			new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+			new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+		};
 
-            for (int i = 0; i < 3; ++i)
-            {
-                meshes[i] = new MeshGeometry3D();
-            }
+		public static readonly double BroderIndent = 0.001;
 
-            for (int i = 0; i < boxes.Length; ++i)
-            {
-                for (int j = 0; j < 3; ++j)
-                {
-                    for (int k = 0; k < 8; ++k)
-                    {
-                        meshes[j].Positions.Add(boxes[i].Points[k]);
-                    }
-                }
+        public static readonly double CameraEPS = Math.PI / 50.0;
 
-                for (int j = 0; j < 3; ++j)
-                {
-                    int orient = boxes[i].Orient[j];
-                    for (int k = 0; k < PolyIndecies[j].Length; ++k)
-                    {
-                        meshes[j].TriangleIndices.Add(PolyIndecies[orient][k] + i * 8);
-                    }
-                }
-            }
+        public static readonly Vector CameraRotationCoefs = new Vector(1.0, 1.0);
 
-            return meshes;
-        }
+        public static readonly SolidColorBrush UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 };
+        public static readonly SolidColorBrush FrontBush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 };
+        public static readonly SolidColorBrush SideBrush = new SolidColorBrush { Color = Colors.Green, Opacity = 1.0 };
+        public static readonly SolidColorBrush BorderBrush = new SolidColorBrush { Color = Colors.Black, Opacity = 1.0 };
 
-        public Scene MyScene { get; set; }
+        public static readonly Material UpMaterial = new DiffuseMaterial(UpBrush);
+        public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
+        public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
+        public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
+
+<<<<<<<
+        public MainWindow()
+        {
+            InitializeComponent();
+=======
+    }
+
+	public class BoxBlock
+	{
+		public Vector3D Dim { get; set; }
+>>>>>>>
+
+		public Point3D Start { get; set; }
+
+		public int[] BoxCount { get; set; }
+
+		public int[] Orient { get; set; }
+	}
+
+	public class MeshWrapper
+	{
+		public MeshGeometry3D MyMesh { get; set; }
+
+		public Material MyMat { get; set; }
+
+		public MeshWrapper(Material _mat)
+		{
+			MyMesh = new MeshGeometry3D();
+
+			MyMat = _mat;
+		}
+
+		public void AddMesh(Point3D[] points, int[] indecies)
+		{
+			int startIndex = MyMesh.Positions.Count;
+
+			for (int i = 0; i < points.Length; ++i)
+			{
+				MyMesh.Positions.Add(points[i]);
+			}
+
+			for (int i = 0; i < indecies.Length; ++i)
+			{
+				MyMesh.TriangleIndices.Add(indecies[i] + startIndex);
+			}
+		}
+	}
+
+	public class MeshContainer
+	{
+		public Dictionary<string, MeshWrapper> MeshDict { get; set; }
+
+		public MeshContainer()
+		{
+			MeshDict = new Dictionary<string, MeshWrapper>();
+		}
+
+		public void AddMesh(string meshType, Material _mat)
+		{
+			MeshDict.Add(meshType, new MeshWrapper(_mat));
+		}
+
+		public MeshWrapper GetMesh(string type)
+		{
+			MeshDict.TryGetValue(type, out MeshWrapper meshWrapper);
+
+			return meshWrapper;
+		}
+	}
+
+	public partial class MainWindow : Window
+	{
+		public MeshGeometry3D[] BoxToPolygons(MeshContainer meshCont, Box[] boxes)
+		{
+			var PolyIndecies = Params.BoxPolyIndecies;
+
+			var meshes = new MeshGeometry3D[3];
+
+			for (int i = 0; i < 3; ++i)
+			{
+				meshes[i] = new MeshGeometry3D();
+			}
+
+			for (int i = 0; i < boxes.Length; ++i)
+			{
+				for (int j = 0; j < 3; ++j)
+				{
+					for (int k = 0; k < 8; ++k)
+					{
+						meshes[j].Positions.Add(boxes[i].Points[k]);
+					}
+				}
+
+				for (int j = 0; j < 3; ++j)
+				{
+					int orient = boxes[i].Orient[j];
+					for (int k = 0; k < PolyIndecies[j].Length; ++k)
+					{
+						meshes[j].TriangleIndices.Add(PolyIndecies[orient][k] + i * 8);
+					}
+				}
+			}
+
+			return meshes;
+		}
+
+		public void CreatePolygonMesh(Point3D[] points, MeshWrapper geomMesh)
+		{
+			geomMesh.AddMesh(points, new int[] { 0, 1, 2, 2, 3, 0 });
+		}
+
+		public void CreateMarkedPolygon(Point3D[] points, MeshWrapper geomMesh, MeshWrapper borderMesh, double thickness)
+		{
+			CreatePolygonMesh(points, geomMesh);
+
+			var indent = Vector3D.CrossProduct(points[1] - points[0], points[3] - points[0]);
+
+			indent.Normalize();
+
+			indent *= Params.BroderIndent;
+
+			var borderPoints = new List<Point3D>();
+
+			var borderIndecies = new List<int>();
+
+			for (int i = 0; i < points.Length; ++i)
+			{
+				borderPoints.Add(points[i] + indent);
+			}
+
+			for (int i = 0; i < 4; ++i)
+			{
+				int j = (i + 1) % 4;
+
+				int k = (i + 2) % 4;
+
+
+				Vector3D dir = points[k] - points[j];
+
+				dir.Normalize();
+
+				dir *= thickness;
+
+				Point3D newPoint = points[j] + dir + indent;
+
+				borderPoints.Add(newPoint);
+
+				borderIndecies.Add(i);
+				borderIndecies.Add(j);
+				borderIndecies.Add(4 + 2 * i);
+
+				int l = (i + 4 - 1) % 4;
+
+				dir = points[l] - points[i];
+
+				dir.Normalize();
+
+				dir *= thickness;
+
+				newPoint = points[i] + dir + indent;
+
+				borderPoints.Add(newPoint);
+
+				borderIndecies.Add(i);
+				borderIndecies.Add(4 + 2 * i);
+				borderIndecies.Add(4 + 2 * i + 1);
+			}
+
+			borderMesh.AddMesh(borderPoints.ToArray(), borderIndecies.ToArray());
+		}
+
+		public void BoxToPolygons1(MeshContainer meshCont, Box[] boxes)
+		{
+			MeshWrapper[] geomMeshes = new MeshWrapper[] {
+				meshCont.GetMesh("up"),
+				meshCont.GetMesh("front"),
+				meshCont.GetMesh("side")
+			};
+
+			MeshWrapper borderMesh = meshCont.GetMesh("border");
+
+			var ind = Params.BoxSidesWithoutBottomIndecies;
+			for (int i = 0; i < boxes.Length; ++i)
+			{
+				for (int j = 0; j < 3; ++j)
+				{
+					int orient = boxes[i].Orient[j];
+					for (int k = 0; k < ind[orient].Length / 4; ++k)
+					{
+
+						CreateMarkedPolygon(
+							new Point3D[]
+							{
+								boxes[i].Points[ind[orient][k * 4 + 0]],
+								boxes[i].Points[ind[orient][k * 4 + 1]],
+								boxes[i].Points[ind[orient][k * 4 + 2]],
+								boxes[i].Points[ind[orient][k * 4 + 3]],
+							},
+							geomMeshes[j],
+							borderMesh,
+							0.5
+							);
+					}
+				}
+			}
+		}
+
+		//public void SplitBlock(Point3D[] points, int w, int h, MeshWrapper meshGeom, MeshWrapper border)
+
+		public void BoxBlockToPolygon(MeshContainer meshCont, BoxBlock block)
+		{
+			MeshWrapper[] geomMeshes = new MeshWrapper[] {
+				meshCont.GetMesh("up"),
+				meshCont.GetMesh("front"),
+				meshCont.GetMesh("side")
+			};
+
+			MeshWrapper borderMesh = meshCont.GetMesh("border");
+
+			var S = block.Start;
+			var E = S + block.Dim;
+
+			var points = new Point3D[]
+			{
+							new Point3D(S.X, S.Y, S.Z),
+							new Point3D(S.X, S.Y, E.Z),
+							new Point3D(S.X, E.Y, S.Z),
+							new Point3D(S.X, E.Y, E.Z),
+
+							new Point3D(E.X, S.Y, S.Z),
+							new Point3D(E.X, S.Y, E.Z),
+							new Point3D(E.X, E.Y, S.Z),
+							new Point3D(E.X, E.Y, E.Z)
+			};
+
+			var ind = Params.BoxSidesWithoutBottomIndecies;
+
+			for (int j = 0; j < 3; ++j)
+			{
+				int orient = block.Orient[j];
+				for (int k = 0; k < ind[orient].Length; ++k)
+				{
+
+					CreateMarkedPolygon(
+						new Point3D[]
+						{
+								points[ind[orient][k * 4 + 0]],
+								points[ind[orient][k * 4 + 1]],
+								points[ind[orient][k * 4 + 2]],
+								points[ind[orient][k * 4 + 3]],
+						},
+						geomMeshes[orient],
+						borderMesh,
+						0.5
+						);
+				}
+			}
+
+
+		}
+
+		public Scene MyScene { get; set; }
+
 
         public MainWindow()
         {
             InitializeComponent();
-
-            BoxFactory boxFactory = new BoxFactory(0.23, 0.11, 0.13);
-
-            Box box = boxFactory.GenBox();
-
-            Box box1 = boxFactory.GenBox();
-
-            Box box2 = boxFactory.GenBox();
-
-            box.RotUp();
-
-            box1.RotFront();
-
-            MeshGeometry3D[] meshes = BoxToPolygons(new Box[] { box, box1, box2 });
-
-            MyScene = new Scene(new Point3D(0, 0, 0))
-            {
-
-                UpBrush = new SolidColorBrush { Color = Colors.Red, Opacity = 1.0 },
-                FrontBrush = new SolidColorBrush { Color = Colors.Yellow, Opacity = 1.0 },
-                SideBrush = new SolidColorBrush { Color = Colors.Green, Opacity = 1.0 },
-
-                UpMesh = meshes[0],
-                FrontMesh = meshes[1],
-                SideMesh = meshes[2],
-            };
-
-            this.DataContext = MyScene;
         }
 
         #region event handlers
@@ -113,6 +343,7 @@ namespace PalletViewer
             double heigthBox = 2.3;
 
 			Stopwatch stopwatch = new Stopwatch();
+            BoxToPolygons1(MyScene.MyMesh, layer.coordBoxes.ToArray());
 
 			stopwatch.Start();
 			layer.GenerateBoxs_On(new BoxFactory(widthBox, heigthBox, lengthBox));
@@ -125,6 +356,11 @@ namespace PalletViewer
             var meshes = BoxToPolygons(layer.Boxes.ToArray());
 
             MyScene.RestoreMesh(meshes);
+			foreach (var mesh in MyScene.MyMesh.MeshDict)
+			{
+				var model = new GeometryModel3D(mesh.Value.MyMesh, mesh.Value.MyMat);
+				Models.Children.Add(model);
+			}
 
         }
 
@@ -139,7 +375,7 @@ namespace PalletViewer
         {
             if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
             {
-                if ((MyScene.LastMousePos - e.GetPosition(this)).Length > 10)
+                if ((MyScene.LastMousePos - e.GetPosition(this)).Length > Params.MouseMoveEPS)
                 {
                     Vector shift = e.GetPosition(this) - MyScene.StartMousePos;
 
@@ -284,4 +520,42 @@ namespace PalletViewer
 			//
 		}
 	}
+
+        void MouseLeave_ViewPort(object sender, MouseEventArgs e)
+        {
+            if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                MyScene.Camera.RestorePosition();
+            }
+        }
+		#endregion
+
+		private MeshContainer CreateMeshContainer()
+		{
+			var meshCont = new MeshContainer();
+
+			meshCont.AddMesh("up", Params.UpMaterial);
+			meshCont.AddMesh("front", Params.FrontMaterial);
+			meshCont.AddMesh("side", Params.SideMaterial);
+			meshCont.AddMesh("border", Params.BorderMaterial);
+
+			return meshCont;
+		}
+
+        private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
+        {
+			MyScene = new Scene(new Point3D(60, 0, 40), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
+			{
+
+				UpBrush = Params.UpBrush,
+				FrontBrush = Params.FrontBush,
+				SideBrush = Params.SideBrush,
+
+				MyMesh = CreateMeshContainer()
+            };
+
+
+			this.DataContext = MyScene;
+        }
+    }
 }

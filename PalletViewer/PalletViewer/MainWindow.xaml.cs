@@ -463,7 +463,6 @@ namespace PalletViewer
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
 				var pallet = paletization.GetPallet();
-				pallet.ShiftLayers();
 				stopwatch.Stop();
 
 				var elapsedTime = stopwatch.Elapsed;

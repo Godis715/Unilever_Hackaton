@@ -39,13 +39,13 @@ namespace PalletViewer
             new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
         };
 
-		public static readonly int[][] BoxSidesWithoutBottomIndecies = {
-			new int[] {     3, 7, 6, 2 },
-			new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
-			new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
-		};
+        public static readonly int[][] BoxSidesWithoutBottomIndecies = {
+            new int[] {     3, 7, 6, 2 },
+            new int[] { 2, 6, 4, 0,    5, 7, 3, 1 },
+            new int[] { 3, 2, 0, 1,    6, 7, 5, 4 },
+        };
 
-		public static readonly double BroderIndent = 0.001;
+        public static readonly double BroderIndent = 0.001;
 
         public static readonly double CameraEPS = Math.PI / 50.0;
 
@@ -60,18 +60,10 @@ namespace PalletViewer
         public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
         public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
         public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
-
-<<<<<<<
-        public MainWindow()
-        {
-            InitializeComponent();
-=======
     }
-
 	public class BoxBlock
 	{
 		public Vector3D Dim { get; set; }
->>>>>>>
 
 		public Point3D Start { get; set; }
 
@@ -334,6 +326,7 @@ namespace PalletViewer
 
         private void TestScene_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            /*
             double widthPallet = 6;
             double lengthPallet = 8;
             var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
@@ -343,7 +336,7 @@ namespace PalletViewer
             double heigthBox = 2.3;
 
 			Stopwatch stopwatch = new Stopwatch();
-            BoxToPolygons1(MyScene.MyMesh, layer.coordBoxes.ToArray());
+            BoxToPolygons1(MyScene.MyMesh, layer.Boxes.ToArray());
 
 			stopwatch.Start();
 			layer.GenerateBoxs_On(new BoxFactory(widthBox, heigthBox, lengthBox));
@@ -361,7 +354,7 @@ namespace PalletViewer
 				var model = new GeometryModel3D(mesh.Value.MyMesh, mesh.Value.MyMat);
 				Models.Children.Add(model);
 			}
-
+            */
         }
 
         void MouseDown_ViewPort(object sender, MouseButtonEventArgs e)
@@ -394,7 +387,7 @@ namespace PalletViewer
 
 		private void AddOrder(object sender, RoutedEventArgs e)
 		{
-			try
+            try
             {
                 #region Считывание параметров
                 var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
@@ -429,33 +422,33 @@ namespace PalletViewer
                 #endregion
                 #region Сбрасывание парамтров
                 WidthProduct.Clear();
-				LengthProduct.Clear();
-				HeightProduct.Clear();
-				WeightProduct.Clear();
-				foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
-				{
-					SizeProduct_rb.IsChecked = (SizeProduct_rb.Content.ToString() == "big") ? true : false;
-				}
-				WidthPallet.Clear();
-				LengthPallet.Clear();
-				HeigthPallet.Text = "1800";
-				MaxWeightOnPallet.Text = "800";
-				MaxWeightInBox.Text = "15";
-				MinCountInBox.Text = "10";
-				MaxCountInBox.Text = "20";
-				RatioSideBox.Text = "4";
-				foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
-				{
-					isDifferentLayer_Answer_rb.IsChecked = (isDifferentLayer_Answer_rb.Content.ToString() == "No") ? true : false;
-				}
-				ErrorInput.Content = "Message: ";
-				ErrorInput.Foreground = Brushes.Black;
-				#endregion
+                LengthProduct.Clear();
+                HeightProduct.Clear();
+                WeightProduct.Clear();
+                foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+                {
+                    SizeProduct_rb.IsChecked = (SizeProduct_rb.Content.ToString() == "big") ? true : false;
+                }
+                WidthPallet.Clear();
+                LengthPallet.Clear();
+                HeigthPallet.Text = "1800";
+                MaxWeightOnPallet.Text = "800";
+                MaxWeightInBox.Text = "15";
+                MinCountInBox.Text = "10";
+                MaxCountInBox.Text = "20";
+                RatioSideBox.Text = "4";
+                foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+                {
+                    isDifferentLayer_Answer_rb.IsChecked = (isDifferentLayer_Answer_rb.Content.ToString() == "No") ? true : false;
+                }
+                ErrorInput.Content = "Message: ";
+                ErrorInput.Foreground = Brushes.Black;
+                #endregion
 
-				var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
-					_LengthPallet, _WidthPallet, _HeigthPallet, _MaxWeightOnPallet,
-					_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
-					_SizeProduct, _isDifferentLayer);
+                var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
+                    _LengthPallet, _WidthPallet, _HeigthPallet, _MaxWeightOnPallet,
+                    _MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
+                    _SizeProduct, _isDifferentLayer);
                 //var paletization = new Palletization(9, 10, 11, 1,
                 //	1200, 800, 1560, 650,
                 //	2, 60, 10, 200,
@@ -469,34 +462,13 @@ namespace PalletViewer
                 var elapsedTime = stopwatch.Elapsed;
                 var x = elapsedTime.Milliseconds;
                 int h = 0;
-                //var boxesGen = new BoxGenerator((int)_WeightProduct, (int)_LengthPallet, (int)_HeightProduct, (int)_MinCountInBox, (int)_MaxCountInBox, (int)_WeightProduct);
-                //var boxes = boxesGen.GetBoxes();
-                //boxes = boxesGen.ValidationSize(boxes, (int)_RatioSideBox);
-
-                //var file = new StreamWriter("test.txt");
-                //foreach (var item in boxes)
-                //{
-                //	file.WriteLine("Box: " + item.x.ToString() + "; "
-                //		+ item.y.ToString() + "; " + item.z.ToString());
-                //}
-                //file.WriteLine(boxes.Length);
-                //file.Close();
-                //TestScene.Children.Clear();
-
-                //double widthPallet = 200;
-                //double lengthPallet = 150;
-                //var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
-
-                //layer.GenerateBoxs_On(new BoxFactory(_WeightProduct, _HeightProduct, _LengthPallet));
-                //layer.CreateLayer(_WeightProduct, _LengthPallet, _HeightProduct,
-                //	LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
             }
-			catch
-			{
-				ErrorInput.Content = "Message: Error! Input not correct.";
-				ErrorInput.Foreground = Brushes.Red;
-				return;
-			}
+            catch
+            {
+                ErrorInput.Content = "Message: Error! Input not correct.";
+                ErrorInput.Foreground = Brushes.Red;
+                return;
+            }
 		}
 
 		private void AddFile(object sender, RoutedEventArgs e)
@@ -519,8 +491,7 @@ namespace PalletViewer
 		{
 			//
 		}
-	}
-
+	
         void MouseLeave_ViewPort(object sender, MouseEventArgs e)
         {
             if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
@@ -528,7 +499,6 @@ namespace PalletViewer
                 MyScene.Camera.RestorePosition();
             }
         }
-		#endregion
 
 		private MeshContainer CreateMeshContainer()
 		{

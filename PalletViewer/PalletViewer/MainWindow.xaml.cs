@@ -159,40 +159,40 @@ namespace PalletViewer
 		private void AddOrder(object sender, RoutedEventArgs e)
 		{
 			try
-			{
-				//#region Считывание параметров
-				//var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
-				//var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
-				//var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
-				//var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
+            {
+                #region Считывание параметров
+                var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
+                var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
+                var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
+                var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
 
-				//var _SizeProduct = "";
-				//foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
-				//{
-				//	_SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
-				//}
+                var _SizeProduct = "";
+                foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+                {
+                    _SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
+                }
 
-				//var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
-				//var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
-				//var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
-				//var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
+                var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
+                var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
+                var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
+                var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
 
-				//var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
-				//var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
-				//var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
-				//var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
+                var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
+                var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
+                var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
+                var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
 
-				//var _isDifferentLayer = false;
-				//foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
-				//{
-				//	if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
-				//	{
-				//		_isDifferentLayer = true;
-				//	}
-				//}
-				//#endregion
-				#region Сбрасывание парамтров
-				WidthProduct.Clear();
+                var _isDifferentLayer = false;
+                foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+                {
+                    if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
+                    {
+                        _isDifferentLayer = true;
+                    }
+                }
+                #endregion
+                #region Сбрасывание парамтров
+                WidthProduct.Clear();
 				LengthProduct.Clear();
 				HeightProduct.Clear();
 				WeightProduct.Clear();
@@ -220,43 +220,41 @@ namespace PalletViewer
 					_LengthPallet, _WidthPallet, _HeigthPallet, _MaxWeightOnPallet,
 					_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
 					_SizeProduct, _isDifferentLayer);
-				var pallet = paletization.GetPallet();
+                //var paletization = new Palletization(9, 10, 11, 1,
+                //	1200, 800, 1560, 650,
+                //	2, 60, 10, 200,
+                //	"big", false);
+                Stopwatch stopwatch = new Stopwatch();
 
-				//var paletization = new Palletization(9, 10, 11, 1,
-				//	1200, 800, 1560, 650,
-				//	2, 60, 10, 200,
-				//	"big", false);
-				//Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+                var pallet = paletization.GetPallet();
+                stopwatch.Stop();
 
-				//stopwatch.Start();
-				//var pallet = paletization.GetPallet();
-				//stopwatch.Stop();
+                var elapsedTime = stopwatch.Elapsed;
+                var x = elapsedTime.Milliseconds;
+                int h = 0;
+                //var boxesGen = new BoxGenerator((int)_WeightProduct, (int)_LengthPallet, (int)_HeightProduct, (int)_MinCountInBox, (int)_MaxCountInBox, (int)_WeightProduct);
+                //var boxes = boxesGen.GetBoxes();
+                //boxes = boxesGen.ValidationSize(boxes, (int)_RatioSideBox);
 
-				//var elapsedTime = stopwatch.Elapsed;
-				//var x = elapsedTime.Milliseconds;
-				//int h = 0;
-				//var boxesGen = new BoxGenerator((int)_WeightProduct, (int)_LengthPallet, (int)_HeightProduct, (int)_MinCountInBox, (int)_MaxCountInBox, (int)_WeightProduct);
-				//var boxes = boxesGen.GetBoxes();
-				//boxes = boxesGen.ValidationSize(boxes, (int)_RatioSideBox);
+                //var file = new StreamWriter("test.txt");
+                //foreach (var item in boxes)
+                //{
+                //	file.WriteLine("Box: " + item.x.ToString() + "; "
+                //		+ item.y.ToString() + "; " + item.z.ToString());
+                //}
+                //file.WriteLine(boxes.Length);
+                //file.Close();
+                //TestScene.Children.Clear();
 
-				//var file = new StreamWriter("test.txt");
-				//foreach (var item in boxes)
-				//{
-				//	file.WriteLine("Box: " + item.x.ToString() + "; "
-				//		+ item.y.ToString() + "; " + item.z.ToString());
-				//}
-				//file.WriteLine(boxes.Length);
-				//file.Close();
-				//TestScene.Children.Clear();
+                //double widthPallet = 200;
+                //double lengthPallet = 150;
+                //var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
 
-				//double widthPallet = 200;
-				//double lengthPallet = 150;
-				//var layer = new LayerOnPallet(widthPallet, lengthPallet, TestScene);
-
-				//layer.GenerateBoxs_On(new BoxFactory(_WeightProduct, _HeightProduct, _LengthPallet));
-				//layer.CreateLayer(_WeightProduct, _LengthPallet, _HeightProduct,
-				//	LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
-			}
+                //layer.GenerateBoxs_On(new BoxFactory(_WeightProduct, _HeightProduct, _LengthPallet));
+                //layer.CreateLayer(_WeightProduct, _LengthPallet, _HeightProduct,
+                //	LayerOnPallet.DirectionFilling.Right, LayerOnPallet.OrientationBox.Vertically);
+            }
 			catch
 			{
 				ErrorInput.Content = "Message: Error! Input not correct.";

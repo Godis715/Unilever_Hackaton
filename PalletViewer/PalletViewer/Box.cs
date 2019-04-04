@@ -84,7 +84,6 @@ namespace PalletViewer
         }
     }
 
-
     public class BoxFactory
     {
         private Vector3D Dimensions { get; set; }

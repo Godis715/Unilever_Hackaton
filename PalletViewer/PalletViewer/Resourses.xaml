@@ -23,4 +23,6 @@
         </DrawingBrush.Drawing>
     </DrawingBrush>
 
+	<AmbientLight x:Key="SceneLight" Color="#FFFFFFFF"/>
+
 </ResourceDictionary>

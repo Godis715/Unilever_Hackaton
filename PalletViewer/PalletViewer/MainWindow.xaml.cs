@@ -61,6 +61,7 @@ namespace PalletViewer
 		public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
 		public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
 	}
+
 	public class BoxBlock
 	{
 		public Vector3D Dim { get; set; }
@@ -122,6 +123,8 @@ namespace PalletViewer
 			return meshWrapper;
 		}
 	}
+
+	
 
 	public partial class MainWindow : Window
 	{
@@ -260,6 +263,38 @@ namespace PalletViewer
 			}
 		}
 
+		public void DrawPallet(Pallet pallet)
+		{
+			Vector3D palletDim = new Vector3D(pallet.Widht, pallet.Height, pallet.Lenght);
+
+			double radParam = 1.0;
+
+			double cameraRadius = palletDim.Length * radParam;
+
+			Point3D center = new Point3D(0, 0, 0);
+
+			MyScene.Camera = new MyCamera(cameraRadius, center, new Point(Math.PI / 4, Math.PI / 4), MyScene.ViewportSize);
+
+			var light = Models.Children[0];
+			//Models.Children.Clear();
+
+			//Models.Children.Add(light);
+
+			MyScene.MyMesh = CreateMeshContainer();
+
+			BoxToPolygons1(MyScene.MyMesh, new Box[] { new Box(new Vector3D(300, 200, 50), new int[] { 0, 1, 2 }) });
+
+			foreach (var layer in pallet.Layers)
+			{
+				BoxToPolygons1(MyScene.MyMesh, layer.boxes.ToArray());
+			}
+
+			foreach (var model in MyScene.MyMesh.MeshDict)
+			{
+				Models.Children.Add(new GeometryModel3D(model.Value.MyMesh, model.Value.MyMat));
+			}
+		}
+
 		//public void SplitBlock(Point3D[] points, int w, int h, MeshWrapper meshGeom, MeshWrapper border)
 
 		public void BoxBlockToPolygon(MeshContainer meshCont, BoxBlock block)
@@ -319,6 +354,10 @@ namespace PalletViewer
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			model = new Model(ListLayer);
+
+			Main.DataContext = model;
 		}
 
 		#region event handlers
@@ -465,10 +504,10 @@ namespace PalletViewer
 			
 				for (int i = 0; i < layers.Length; ++i)
 				{
-					BoxToPolygons1(model.MyScene.MyMesh, layers[i].boxes.ToArray());
+					BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
 				}
 
-				foreach (var note in model.MyScene.MyMesh.MeshDict)
+				foreach (var note in MyScene.MyMesh.MeshDict)
 				{
 					Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
 				}
@@ -548,3 +587,8 @@ namespace PalletViewer
 		}
 	}
 }
+
+				var layers = pallet.Layers;
+
+				DrawPallet(pallet);
+				//model.AddPallet(pallet);

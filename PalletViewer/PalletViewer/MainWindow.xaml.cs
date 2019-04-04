@@ -271,18 +271,18 @@ namespace PalletViewer
 
 			double cameraRadius = palletDim.Length * radParam;
 
-			Point3D center = new Point3D(pallet.Widht / 2, pallet.Height / 2, pallet.Lenght / 2);
+			Point3D center = new Point3D(0, 0, 0);
 
-			MyScene.Camera.Center = center;
+			MyScene.Camera = new MyCamera(cameraRadius, center, new Point(Math.PI / 4, Math.PI / 4), MyScene.ViewportSize);
 
-			MyScene.Camera.Rad = cameraRadius;
+			var light = Models.Children[0];
+			//Models.Children.Clear();
 
-
-			Models.Children.Clear();
-
-			Models.Children.Add((AmbientLight)Resources["SceneLight"]);
+			//Models.Children.Add(light);
 
 			MyScene.MyMesh = CreateMeshContainer();
+
+			BoxToPolygons1(MyScene.MyMesh, new Box[] { new Box(new Vector3D(300, 200, 50), new int[] { 0, 1, 2 }) });
 
 			foreach (var layer in pallet.Layers)
 			{
@@ -357,7 +357,7 @@ namespace PalletViewer
 		{
 			InitializeComponent();
 
-			model = new Model(ListLayer);
+			model = new Model(ListLayer, Orders);
 
 			Main.DataContext = model;
 		}
@@ -502,17 +502,9 @@ namespace PalletViewer
 
 				var elapsedTime = stopwatch.Elapsed;
 				var x = elapsedTime.Milliseconds;
-				var layers = pallet.BoxPallet.Layers;
-			
-				for (int i = 0; i < layers.Length; ++i)
-				{
-					BoxToPolygons1(MyScene.MyMesh, layers[i].boxes.ToArray());
-				}
+				var layers = pallet.Layers;
 
-				foreach (var note in MyScene.MyMesh.MeshDict)
-				{
-					Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
-				}
+				DrawPallet(pallet);
 
 				//model.AddPallet(pallet);
 			}

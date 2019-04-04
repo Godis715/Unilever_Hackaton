@@ -31,9 +31,7 @@ namespace PalletViewer
         public MeshGeometry3D SideMesh { get; set; }
         #endregion
 
-        private Point3D SceneCenter { get; set; }
-
-        private Size ViewportSize { get; set; }
+        public Size ViewportSize { get; private set; }
 
         public MyCamera Camera { get; set; }
 
@@ -50,8 +48,6 @@ namespace PalletViewer
 
         public Scene(Point3D _scenter, Size _vpsize)
         {
-            SceneCenter = _scenter;
-
             ViewportSize = _vpsize;
 
             var startUVPos = new Point(Math.PI / 4, Math.PI / 4);

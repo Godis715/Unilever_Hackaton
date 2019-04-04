@@ -56,10 +56,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Generation\BoxGenerator.cs" />
+    <Compile Include="Generation\Palletization.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Other\FileDialog.cs" />
     <Compile Include="Generation\LayerOnPallet.cs" />
-    <Compile Include="Generation\Palletization.cs" />
     <Compile Include="Other\RealayCommand.cs" />
     <Compile Include="View\Scene.cs" />
     <Compile Include="View\Box.cs" />

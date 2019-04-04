@@ -239,30 +239,41 @@
                             <StackPanel>
                                 <GroupBox Header="Pallet width" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBox Text="Добавить бинд" Margin="5 0 5 0"/>
+                                        <TextBlock Text="Добавить бинд" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Pallet length" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBox Text="Добавить бинд" Margin="5 0 5 0"/>
+                                        <TextBlock Text="Добавить бинд" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Pallet height" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBox Text="{Binding CurrentPallet.Height}" Margin="5 0 5 0"/>
+                                        <TextBlock Text="{Binding CurrentPallet.Height}" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Weight on pallet" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBox Text="650" Margin="5 0 5 0"/>
+                                        <TextBlock Text="{Binding CurrentPallet.Weight}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Count product on pallet" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.CountPr}" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                             </StackPanel>
                         </GroupBox>
                     </ScrollViewer>
-                    
                 </Grid>
-                
+                <Grid Grid.Row="1">
+                    <ScrollViewer CanContentScroll="True">
+                        <GroupBox Header="List layer" FontWeight="Bold">
+                            <StackPanel x:Name="ListLayer">
+                            </StackPanel>
+                        </GroupBox>
+                    </ScrollViewer>
+                </Grid>
             </Grid>
         </Grid>
 

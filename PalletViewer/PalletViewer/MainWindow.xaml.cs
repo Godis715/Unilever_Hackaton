@@ -322,9 +322,9 @@ namespace PalletViewer
 		{
 			InitializeComponent();
 
-			model = new Model();
+			model = new Model(ListLayer);
 
-			Info.DataContext = model;
+			Main.DataContext = model;
 		}
 
 		#region event handlers

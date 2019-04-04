@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="mainWindow"
         Loaded="MainWindow_Loaded_1">
-    <Grid>
+    <Grid x:Name="Main">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="auto"/>
@@ -223,12 +223,47 @@
                 </Grid>
             </Grid>
             <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
-            <Canvas x:Name="TestScene" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            <!--<Canvas x:Name="TestScene" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
                     Background="Black"
                     MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
                     ClipToBounds="True">
-            </Canvas>
-
+            </Canvas>-->
+            <Grid Grid.Row="2" x:Name="Info">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <ScrollViewer CanContentScroll="True">
+                        <GroupBox Header="Information about pallet:" FontWeight="Bold">
+                            <StackPanel>
+                                <GroupBox Header="Pallet width" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBox Text="Добавить бинд" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Pallet length" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBox Text="Добавить бинд" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Pallet height" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBox Text="{Binding CurrentPallet.Height}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Weight on pallet" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBox Text="650" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </GroupBox>
+                    </ScrollViewer>
+                    
+                </Grid>
+                
+            </Grid>
         </Grid>
 
         

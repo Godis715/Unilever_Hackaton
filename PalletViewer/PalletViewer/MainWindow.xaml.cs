@@ -320,8 +320,6 @@ namespace PalletViewer
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			DrawCanvas.GetInstance().SetCanvas(TestScene);
 		}
 
 		#region event handlers
@@ -460,20 +458,12 @@ namespace PalletViewer
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
 				var pallet = paletization.GetPallet();
-				pallet.ShiftLayers();
 				stopwatch.Stop();
 
 				var elapsedTime = stopwatch.Elapsed;
 				var x = elapsedTime.Milliseconds;
-				var layers = pallet.Layers;
+				var layers = pallet.BoxPallet.Layers;
 
-				var drawCanvas = DrawCanvas.GetInstance();
-				drawCanvas.DrawArea(new Vector { X = 0, Y = 0 }, new Vector { X = 800 / 2, Y = 1200 / 2 });
-				for (int j = 0; j < layers[1].boxes.Count; j++)
-				{
-					var box1 = layers[1].boxes[j];
-					drawCanvas.DrawBox(new Vector { X = box1.S.X / 2, Y = box1.S.Z / 2 }, new Vector { X = (box1.S.X + box1.Dim.X) / 2, Y = (box1.S.Z + box1.Dim.Z) / 2 });
-				}
 
 				for (int i = 0; i < layers.Length; ++i)
 				{

@@ -52,6 +52,7 @@ namespace PalletViewer
 		private int CountLayer3 { get; set; }
 		public BoxParam Box { get; private set; }
 		public Layer[] Layers { get; private set; }
+		public Pallet BoxPallet { get; private set; }
 
 
 		public Pallet(Layer layer1, Layer layer2, Layer layer3, bool differentLayer,
@@ -291,6 +292,46 @@ namespace PalletViewer
 				shift += Layers[i].height;
 			}
 		}
+
+		public void InitBoxPallet(int length, int widht, int height, int weight)
+		{
+			var box = new BoxParam
+			{
+				x = height,
+				y = widht,
+				z = length,
+				count = 1,
+				weight = weight
+			};
+
+			var layerMaker = new LayerOnPallet(Box.y, Box.z);
+			var boxLayers = layerMaker.CreateLayers(box.x, box.y, box.z,
+				new BoxFactory(box.x, box.y, box.z));
+
+			switch (boxLayers.Length)
+			{
+				case 1:
+					{
+						BoxPallet = new Pallet(boxLayers[0], box, Box.x, Box.weight);
+						break;
+					}
+				case 2:
+					{
+						BoxPallet = new Pallet(boxLayers[0], boxLayers[1], false,
+							box, Box.x, Box.weight);
+						break;
+					}
+				case 3:
+					{
+						BoxPallet = new Pallet(boxLayers[0], boxLayers[1], boxLayers[2], false,
+							box, Box.x, Box.weight);
+						break;
+					}
+				default:
+					throw new Exception();
+			}
+			BoxPallet.ShiftLayers();
+		}
 	}
 
 	class Palletization
@@ -374,7 +415,13 @@ namespace PalletViewer
 					pallet = newPallet;
 				}
 			}
+			if (pallet == null)
+			{
+				return null;
+			}
 
+			pallet.ShiftLayers();
+			pallet.InitBoxPallet(lengthPr, widhtPr, heightPr, weightPr);
 			return pallet;
 		}
 

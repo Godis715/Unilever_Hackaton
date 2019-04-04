@@ -8,7 +8,7 @@ using System.Windows.Media.Media3D;
 
 namespace PalletViewer
 {
-	class Layer
+	public class Layer
 	{
 		public int countBox;
 		public int height;
@@ -24,7 +24,8 @@ namespace PalletViewer
 
 		public Layer Copy()
 		{
-			var copyLayer = new Layer {
+			var copyLayer = new Layer
+			{
 				countBox = countBox,
 				height = height,
 				boxes = new List<Box>()
@@ -42,9 +43,11 @@ namespace PalletViewer
 		}
 	}
 
-	class Pallet
+	public class Pallet
 	{
 		public int CountPr { get; private set; }
+		public int Lenght { get; private set; }
+		public int Widht { get; private set; }
 		public int Height { get; private set; }
 		public int Weight { get; private set; }
 		private int CountLayer1 { get; set; }
@@ -52,11 +55,14 @@ namespace PalletViewer
 		private int CountLayer3 { get; set; }
 		public BoxParam Box { get; private set; }
 		public Layer[] Layers { get; private set; }
+		public Pallet BoxPallet { get; private set; }
 
 
 		public Pallet(Layer layer1, Layer layer2, Layer layer3, bool differentLayer,
-			BoxParam _box, int maxHeightPal, int maxPalWeight)
+			BoxParam _box, int _Lenght, int _Widht, int maxHeightPal, int maxPalWeight)
 		{
+			Lenght = _Lenght;
+			Widht = _Widht;
 			Box = _box;
 			if (differentLayer)
 			{
@@ -176,7 +182,7 @@ namespace PalletViewer
 		}
 
 		public Pallet(Layer layer1, Layer layer2, bool differentLayer,
-	BoxParam _box, int maxHeightPal, int maxPalWeight)
+	BoxParam _box, int _Lenght, int _Widht, int maxHeightPal, int maxPalWeight)
 		{
 			CountLayer3 = 0;
 			Box = _box;
@@ -229,7 +235,7 @@ namespace PalletViewer
 				maxPalWeight / layer1.height);
 			CountLayer2 = Math.Min(maxPalWeight / (Box.weight * layer2.countBox),
 				maxPalWeight / layer2.height);
-			
+
 			if (CountLayer1 * layer1.countBox < CountLayer2 * layer2.countBox)
 			{
 				CountLayer1 = 0;
@@ -258,7 +264,8 @@ namespace PalletViewer
 			}
 		}
 
-		public Pallet(Layer layer1, BoxParam _box, int maxHeightPal, int maxPalWeight)
+		public Pallet(Layer layer1, BoxParam _box,
+			int _Lenght, int _Widht, int maxHeightPal, int maxPalWeight)
 		{
 			CountLayer2 = 0;
 			CountLayer3 = 0;
@@ -290,6 +297,46 @@ namespace PalletViewer
 				Layers[i].UpPallet(shift);
 				shift += Layers[i].height;
 			}
+		}
+
+		public void InitBoxPallet(int length, int widht, int height, int weight)
+		{
+			var box = new BoxParam
+			{
+				x = height,
+				y = widht,
+				z = length,
+				count = 1,
+				weight = weight
+			};
+
+			var layerMaker = new LayerOnPallet(Box.y, Box.z);
+			var boxLayers = layerMaker.CreateLayers(box.x, box.y, box.z,
+				new BoxFactory(box.x, box.y, box.z));
+
+			switch (boxLayers.Length)
+			{
+				case 1:
+					{
+						BoxPallet = new Pallet(boxLayers[0], box, Box.z, box.y, Box.x, Box.weight);
+						break;
+					}
+				case 2:
+					{
+						BoxPallet = new Pallet(boxLayers[0], boxLayers[1], false,
+							box, Box.z, box.y, Box.x, Box.weight);
+						break;
+					}
+				case 3:
+					{
+						BoxPallet = new Pallet(boxLayers[0], boxLayers[1], boxLayers[2], false,
+							box, Box.z, box.y, Box.x, Box.weight);
+						break;
+					}
+				default:
+					throw new Exception();
+			}
+			BoxPallet.ShiftLayers();
 		}
 	}
 
@@ -358,23 +405,27 @@ namespace PalletViewer
 			while (i < boxes.Length && pallet == null)
 			{
 				pallet = GetPalletByBox(boxes[i]);
-
-				
 				++i;
 			}
-			
+
 
 			for (; i < boxes.Length; i++)
 			{
 				var newPallet = GetPalletByBox(boxes[i]);
-				if (newPallet != null && 
+				if (newPallet != null &&
 					(newPallet.CountPr > pallet.CountPr ||
 					(newPallet.CountPr == pallet.CountPr && newPallet.Height < pallet.Height)))
 				{
 					pallet = newPallet;
 				}
 			}
+			if (pallet == null)
+			{
+				return null;
+			}
 
+			pallet.ShiftLayers();
+			pallet.InitBoxPallet(lengthPr, widhtPr, heightPr, weightPr);
 			return pallet;
 		}
 
@@ -386,14 +437,15 @@ namespace PalletViewer
 
 		private Pallet GetPalletByBox(BoxParam box)
 		{
-			var layers = layerMaker.CreateLayers(box.x, box.y, box.z, 
+			var layers = layerMaker.CreateLayers(box.x, box.y, box.z,
 				new BoxFactory(box.x, box.y, box.z));
-		
+
 			switch (layers.Length)
 			{
 				case 1:
 					{
-						var pallet = new Pallet(layers[0], box, heightPal, maxPalWeight);
+						var pallet = new Pallet(layers[0], box, 
+							lengthPal, widhtPal, heightPal, maxPalWeight);
 						if (pallet.Layers.Length > 0)
 						{
 							return pallet;
@@ -406,7 +458,7 @@ namespace PalletViewer
 				case 2:
 					{
 						var pallet = new Pallet(layers[0], layers[1], differentLayer,
-							box, heightPal, maxPalWeight);
+							box, lengthPal, widhtPal, heightPal, maxPalWeight);
 						if (pallet.Layers.Length > 0)
 						{
 							return pallet;
@@ -419,7 +471,7 @@ namespace PalletViewer
 				case 3:
 					{
 						var pallet = new Pallet(layers[0], layers[1], layers[2], differentLayer,
-							box, heightPal, maxPalWeight);
+							box, lengthPal, widhtPal, heightPal, maxPalWeight);
 						if (pallet.Layers.Length > 0)
 						{
 							return pallet;

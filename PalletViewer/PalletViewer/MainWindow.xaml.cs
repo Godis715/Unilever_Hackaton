@@ -61,6 +61,7 @@ namespace PalletViewer
 		public static readonly Material SideMaterial = new DiffuseMaterial(SideBrush);
 		public static readonly Material BorderMaterial = new DiffuseMaterial(BorderBrush);
 	}
+
 	public class BoxBlock
 	{
 		public Vector3D Dim { get; set; }
@@ -122,6 +123,8 @@ namespace PalletViewer
 			return meshWrapper;
 		}
 	}
+
+	
 
 	public partial class MainWindow : Window
 	{
@@ -257,6 +260,38 @@ namespace PalletViewer
 							);
 					}
 				}
+			}
+		}
+
+		public void DrawPallet(Pallet pallet)
+		{
+			Vector3D palletDim = new Vector3D(pallet.Widht, pallet.Height, pallet.Lenght);
+
+			double radParam = 1.0;
+
+			double cameraRadius = palletDim.Length * radParam;
+
+			Point3D center = new Point3D(pallet.Widht / 2, pallet.Height / 2, pallet.Lenght / 2);
+
+			MyScene.Camera.Center = center;
+
+			MyScene.Camera.Rad = cameraRadius;
+
+
+			Models.Children.Clear();
+
+			Models.Children.Add((AmbientLight)Resources["SceneLight"]);
+
+			MyScene.MyMesh = CreateMeshContainer();
+
+			foreach (var layer in pallet.Layers)
+			{
+				BoxToPolygons1(MyScene.MyMesh, layer.boxes.ToArray());
+			}
+
+			foreach (var model in MyScene.MyMesh.MeshDict)
+			{
+				Models.Children.Add(new GeometryModel3D(model.Value.MyMesh, model.Value.MyMat));
 			}
 		}
 
@@ -467,7 +502,7 @@ namespace PalletViewer
 
 				var elapsedTime = stopwatch.Elapsed;
 				var x = elapsedTime.Milliseconds;
-				var layers = pallet.Layers;
+				var layers = pallet.BoxPallet.Layers;
 			
 				for (int i = 0; i < layers.Length; ++i)
 				{
@@ -479,7 +514,7 @@ namespace PalletViewer
 					Models.Children.Add(new GeometryModel3D(note.Value.MyMesh, note.Value.MyMat));
 				}
 
-				model.AddPallet(pallet);
+				//model.AddPallet(pallet);
 			}
 			catch (FormatException)
 			{

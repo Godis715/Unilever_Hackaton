@@ -61,6 +61,7 @@ namespace PalletViewer
             Camera = new MyCamera(radius, _scenter, startUVPos, ViewportSize);
         }
 
+
         public Point StartMousePos { get; set; }
 
         public Point LastMousePos { get; set; }

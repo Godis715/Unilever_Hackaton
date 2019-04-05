@@ -21,8 +21,10 @@ namespace PalletViewer
 		//Идёт бинд на его параметры
 		public Pallet CurrentPallet { get; set; }
 
+		//Status bar биндиться на это поле
 		public string tempOrderStr { get; set; }
 
+		#region Поддон
 		private List<Box> BasePallet;
 
 		private void CreateBasePallet()
@@ -48,6 +50,7 @@ namespace PalletViewer
 				BasePallet.Add(balk);
 			}
 		}
+		#endregion
 
 		public Model(StackPanel _ListLayers, MenuItem _ListOrders, Model3DGroup modelGroup, Size _vpsize)
 		{
@@ -128,6 +131,7 @@ namespace PalletViewer
 			PropertyChanged(this, new PropertyChangedEventArgs(nameof(tempOrderStr)));
 		}
 		#endregion
+		
 		#region Список слоёв
 		private void ChooseLayer(object sender, RoutedEventArgs e)
 		{

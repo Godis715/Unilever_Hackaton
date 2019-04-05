@@ -84,7 +84,7 @@ namespace PalletViewer
 				for (int j = i; j < divs.Length &&
 					divs[i] * divs[j] * divs[j] <= count; j++)
 				{
-					if (sizeProduct == "avarage" &&
+					if (sizeProduct == "average" &&
 						divs[j] == 1 &&
 						divs[i] == 1)
 					{

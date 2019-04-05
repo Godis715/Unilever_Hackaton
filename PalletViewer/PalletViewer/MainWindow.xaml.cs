@@ -1,9 +1,11 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -314,7 +316,7 @@ namespace PalletViewer
 				//var paletization = new Palletization(159, 35, 68, 229,
 				//	1200, 800, 1560, 600,
 				//	10, 10, 5, 3,
-				//	"avarage", true);
+				//	"average", true);
 
 
 				var pallet = paletization.GetPallet();
@@ -359,7 +361,66 @@ namespace PalletViewer
 
 		private void ImportOrders(object sender, RoutedEventArgs e)
 		{
-			//
+			using (ExcelPackage xlPackage = new ExcelPackage(new FileInfo(PathImportFile.Text.ToString())))
+			{
+				var myWorksheet = xlPackage.Workbook.Worksheets.First(); //select sheet here
+				var totalRows = myWorksheet.Dimension.End.Row;
+				var totalColumns = myWorksheet.Dimension.End.Column;
+
+				for (int rowNum = 2; rowNum <= totalRows; rowNum++) //selet starting row here
+				{
+					var valueInColumns = myWorksheet.Cells[rowNum, 1, rowNum, totalColumns].Select(c => c.Value == null ? string.Empty : c.Value.ToString()).ToArray<string>();
+					try
+					{
+						#region Считывание параметров
+						var _WidthProduct = (int)UInt32.Parse(valueInColumns[0]);
+						var _LengthProduct = (int)UInt32.Parse(valueInColumns[1]);
+						var _HeightProduct = (int)UInt32.Parse(valueInColumns[2]);
+						var _WeightProduct = (int)UInt32.Parse(valueInColumns[3]);
+						var _SizeProduct = valueInColumns[4];
+
+						var _WidthPallet = (int)UInt32.Parse(valueInColumns[5]);
+						var _LengthPallet = (int)UInt32.Parse(valueInColumns[6]);
+						var _HeigthPallet = (int)UInt32.Parse(valueInColumns[7]);
+						var _MaxWeightOnPallet = (int)UInt32.Parse(valueInColumns[8]);
+						var _HeigthBasePallet = (int)UInt32.Parse(valueInColumns[9]);
+
+						var _MaxWeightInBox = (int)UInt32.Parse(valueInColumns[10]);
+						var _MinCountInBox = (int)UInt32.Parse(valueInColumns[11]);
+						var _MaxCountInBox = (int)UInt32.Parse(valueInColumns[12]);
+						var _RatioSideBox = (int)UInt32.Parse(valueInColumns[13]);
+
+						var _isDifferentLayer = (valueInColumns[14] == "Yes") ? true : false;
+
+						if (_WidthProduct == 0 || _LengthPallet == 0 || _HeightProduct == 0 || _WeightProduct == 0 || _HeigthBasePallet == 0
+							|| _WidthPallet == 0 || _LengthPallet == 0 || _HeigthPallet == 0 || _MaxWeightOnPallet == 0
+							|| _MaxWeightInBox == 0 || _MinCountInBox == 0 || _MaxCountInBox == 0 || _RatioSideBox == 0)
+						{
+							throw new FormatException();
+						}
+						#endregion
+
+						var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
+							_LengthPallet, _WidthPallet, _HeigthPallet, _HeigthBasePallet, _MaxWeightOnPallet,
+							_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
+							_SizeProduct, _isDifferentLayer);
+
+						var pallet = paletization.GetPallet();
+						if (pallet != null)
+						{
+							model.AddPallet(pallet);
+						}
+						PathImportFile.Text = "";
+					}
+					catch (FormatException)
+					{
+						ErrorInput.Content = "Message: Error! Input not correct.";
+						ErrorInput.Foreground = Brushes.Red;
+						return;
+					}
+				}
+				
+			}
 		}
 		#endregion
 		#region Export orders
@@ -384,8 +445,6 @@ namespace PalletViewer
 			//
 		}
 		#endregion
-
-
 
 
 		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)

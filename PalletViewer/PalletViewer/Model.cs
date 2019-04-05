@@ -20,6 +20,8 @@ namespace PalletViewer
 		//Идёт бинд на его параметры
 		public Pallet CurrentPallet { get; set; }
 
+		public string tempOrderStr { get; set; }
+
 		private List<Box> BasePallet;
 
 		private void CreateBasePallet()
@@ -53,12 +55,14 @@ namespace PalletViewer
 			pallets = new List<Pallet>();
 			MyScene = new Scene(new Point3D(0, 0, 0), _vpsize);
 			ModelGroup = modelGroup;
+			tempOrderStr = "Current order: ";
 		}
 
 		#region Список заказов
 		private void ChooseOrder(object sender, RoutedEventArgs e)
 		{
-			var index = Int32.Parse(((MenuItem)sender).Header.ToString().Split('#')[1]);
+			var nameOrder = ((MenuItem)sender).Header.ToString();
+			var index = Int32.Parse(nameOrder.Split('#')[1]);
 
 			CurrentPallet = pallets[index];
 
@@ -66,16 +70,24 @@ namespace PalletViewer
 			PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentPallet)));
 			CreateBasePallet();
 			DrawPallet(CurrentPallet);
+
+			tempOrderStr = "Current order: " + nameOrder;
+			PropertyChanged(this, new PropertyChangedEventArgs(nameof(tempOrderStr)));
 		}
 
 		private MenuItem ListOrders;
 
 		private void AddOrderToList()
 		{
+			var nameOrder = "Order" + '#' + (pallets.Count - 1).ToString();
+
 			var order = new MenuItem();
-			order.Header = "Order" + '#' + (pallets.Count - 1).ToString();
+			order.Header = nameOrder;
 			order.Click += ChooseOrder;
 			ListOrders.Items.Add(order);
+
+			tempOrderStr = "Current order: " + nameOrder;
+			PropertyChanged(this, new PropertyChangedEventArgs(nameof(tempOrderStr)));
 		}
 		#endregion
 		#region Список слоёв

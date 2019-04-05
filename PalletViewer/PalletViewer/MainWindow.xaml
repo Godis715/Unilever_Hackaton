@@ -21,13 +21,13 @@
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <ToolBar Grid.Row="0" HorizontalAlignment="Stretch" >
-                
-                <Button Margin="2" HorizontalAlignment="Stretch">MainView</Button>
-                <Button Margin="2">BoxView</Button>
+
+                <Button Margin="2" Click="MainView_cl" HorizontalAlignment="Stretch">MainView</Button>
+                <Button Margin="2" Click="BoxView_cl">BoxView</Button>
                 <Separator/>
                 <Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
-                    <MenuItem  x:Name="Orders" Header="Orders"  Width="200">
-                        <MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />
+                    <MenuItem  x:Name="ListOrders" Header="Orders"  Width="200">
+                        <!--<MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />-->
                     </MenuItem>
                 </Menu>
             </ToolBar>
@@ -39,7 +39,7 @@
                     <!-- Add a camera. -->
                     <Viewport3D.Camera>
                         <PerspectiveCamera 
-                        FarPlaneDistance="2000" 
+                        FarPlaneDistance="5000" 
                         LookDirection="{Binding Path=MyScene.Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
@@ -55,6 +55,7 @@
                             <Model3DGroup.Children>
                                 <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
                                         <AmbientLight Color="#FFFFFFFF"/>
+                                        <!--<DirectionalLight Color="#FFFFFFFF" Direction="-2, -2, -2"/>-->
                                     </Model3DGroup.Children>
                                 </Model3DGroup>
                             </ModelVisual3D.Content>
@@ -133,6 +134,11 @@
                                     <GroupBox Header="Pallet height" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="1800" Name="HeigthPallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
+                                    <GroupBox Header="Base pallet height" FontWeight="Normal">
+                                        <StackPanel>
+                                            <TextBox Text="145" Name="HeigthBasePallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
                                     <GroupBox Header="Max weight on pallet" FontWeight="Normal">

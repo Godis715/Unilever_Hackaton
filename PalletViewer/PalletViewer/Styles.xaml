@@ -18,15 +18,17 @@
             <GradientStop Color="#CCCCFF" Offset="0.5"/>
             <GradientStop Color="#ff6161" Offset="1"/>
         </LinearGradientBrush>
+    
         <LinearGradientBrush x:Key="RedGardientBrush_Invert"  
                                     StartPoint="0,0" EndPoint="1,1">
             <GradientStop Color="#ff9494" Offset="0.0"/>
             <GradientStop Color="#CCCCFF" Offset="0.5"/>
             <GradientStop Color="{DynamicResource  ColorViewPort}" Offset="1"/>
         </LinearGradientBrush>
+    
         <LinearGradientBrush x:Key="BlueGardientBrush"  
                                     StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="{DynamicResource  ColorViewPort}" Offset="0.0"/>
+            <GradientStop Color="#f8f8ff" Offset="0.0"/>
             <GradientStop Color="#CCCCFF" Offset="1.0"/>
         </LinearGradientBrush>
         <Color x:Key="ColorViewPort">#f8f8ff</Color>

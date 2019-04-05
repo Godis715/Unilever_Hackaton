@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
@@ -57,6 +58,7 @@ namespace PalletViewer
 		public static readonly SolidColorBrush FrontBush = new SolidColorBrush { Color = Colors.BlueViolet, Opacity = 1.0 };
 		public static readonly SolidColorBrush SideBrush = new SolidColorBrush { Color = Colors.Magenta, Opacity = 1.0 };
 		public static readonly SolidColorBrush BorderBrush = new SolidColorBrush { Color = Colors.Black, Opacity = 1.0 };
+		//public static readonly ImageBrush test = new ImageBrush((BitmapImage)Application.Current.TryFindResource("test"));
 
 		public static readonly Material UpMaterial = new DiffuseMaterial(UpBrush);
 		public static readonly Material FrontMaterial = new DiffuseMaterial(FrontBush);
@@ -442,7 +444,7 @@ namespace PalletViewer
 
 		private void ExportOrders(object sender, RoutedEventArgs e)
 		{
-			//
+			model.ExportOrders(PathExportFile.Text.ToString());
 		}
 		#endregion
 

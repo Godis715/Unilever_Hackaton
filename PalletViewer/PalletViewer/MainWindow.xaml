@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PalletViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Name="mainWindow"
+        Title="Palletization" Height="450" Width="800" Name="mainWindow"
         Loaded="MainWindow_Loaded_1">
     <Grid x:Name="Main">
         <Grid.ColumnDefinitions>
@@ -34,7 +34,7 @@
             <Grid Grid.Row="1" Background="#b4b6c2" >
                 <Viewport3D 
                 Name="myViewport"
-                Margin="10,10,0,0"> 
+                Margin="10,10,0,0">
 
                     <!-- Add a camera. -->
                     <Viewport3D.Camera>
@@ -46,14 +46,14 @@
                         Position="{Binding Path=MyScene.Camera.CameraPos}" 
                         FieldOfView="50"
                         />
-            </Viewport3D.Camera>
-            <!-- Add models. -->
-            <Viewport3D.Children>
-                <ModelVisual3D x:Name="Model">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="Models">
-                            <Model3DGroup.Children>
-                                <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
+                    </Viewport3D.Camera>
+                    <!-- Add models. -->
+                    <Viewport3D.Children>
+                        <ModelVisual3D x:Name="Model">
+                            <ModelVisual3D.Content>
+                                <Model3DGroup x:Name="Models">
+                                    <Model3DGroup.Children>
+                                        <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
                                         <AmbientLight Color="#FFFFFFFF"/>
                                         <!--<DirectionalLight Color="#FFFFFFFF" Direction="-2, -2, -2"/>-->
                                     </Model3DGroup.Children>
@@ -191,28 +191,28 @@
                 </Grid>
                 <Separator Grid.Row="2" />
                 <GroupBox Grid.Row="3" Header="Import orders" FontWeight="Bold" >
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="*" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-						<Grid Grid.Row="0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<TextBox Grid.Column="0" Name="PathImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
-							<Button  Grid.Column="1" Content="Browser"  Click="ImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
-						</Grid>
-						<Grid Grid.Row="1">
-							<Button Content="Import" Click="ImportOrders"  Margin="5"/>
-						</Grid>
-					</Grid>
-				</GroupBox>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Name="PathImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                            <Button  Grid.Column="1" Content="Browser"  Click="ImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Button Content="Import" Click="ImportOrders"  Margin="5"/>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
 
             </Grid>
-			<GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
-			<Grid Grid.Row="2" x:Name="Info">
+            <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
+            <Grid Grid.Row="2" x:Name="Info">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -285,7 +285,7 @@
                         </GroupBox>
                     </ScrollViewer>
                 </Grid>
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="2" Background="{StaticResource BlueGardientBrush}">
                     <ScrollViewer CanContentScroll="True">
                         <GroupBox Header="List layer" FontWeight="Bold">
                             <StackPanel x:Name="ListLayer">
@@ -293,28 +293,26 @@
                         </GroupBox>
                     </ScrollViewer>
                 </Grid>
-				<GroupBox Grid.Row="3" Header="Export result orders" FontWeight="Bold" >
-					<Grid>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="*" />
-							<RowDefinition Height="*" />
-						</Grid.RowDefinitions>
-						<Grid Grid.Row="0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" />
-								<ColumnDefinition Width="*" />
-							</Grid.ColumnDefinitions>
-							<TextBox Grid.Column="0" Name="PathExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
-							<Button  Grid.Column="1" Content="Browser"  Click="ExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
-						</Grid>
-						<Grid Grid.Row="1">
-							<Button Content="Export" Click="ExportOrders"  Margin="5"/>
-						</Grid>
-					</Grid>
-				</GroupBox>
-			</Grid>
+                <GroupBox Grid.Row="3" Header="Export result orders" FontWeight="Bold" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Name="PathExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                            <Button  Grid.Column="1" Content="Browser"  Click="ExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Button Content="Export" Click="ExportOrders"  Margin="5"/>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
+            </Grid>
         </Grid>
-
-        
     </Grid>
 </Window>

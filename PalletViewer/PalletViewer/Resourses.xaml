@@ -25,4 +25,17 @@
 
 	<AmbientLight x:Key="SceneLight" Color="#FFFFFFFF"/>
 
+    <!--<SolidColorBrush x:Key="test" Color="DarkBlue" />-->
+
+    <!--<DiffuseMaterial x:Key="TestMaterial">
+        <DiffuseMaterial.Brush>
+            <ImageBrush ImageSource="Resources/Logo_Dove.png"></ImageBrush>
+        </DiffuseMaterial.Brush>
+    </DiffuseMaterial>-->
+    <!--<DiffuseMaterial x:Key="test">
+        <DiffuseMaterial.Brush>
+            <SolidColorBrush Color="DarkBlue" />
+        </DiffuseMaterial.Brush>
+    </DiffuseMaterial>-->
+
 </ResourceDictionary>

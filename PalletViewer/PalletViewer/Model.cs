@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OfficeOpenXml;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -56,6 +57,43 @@ namespace PalletViewer
 			MyScene = new Scene(new Point3D(0, 0, 0), _vpsize);
 			ModelGroup = modelGroup;
 			tempOrderStr = "Current order: ";
+		}
+
+		public void ExportOrders(string pathFile)
+		{
+			using (ExcelPackage excel = new ExcelPackage())
+			{
+				//Создание листа
+				excel.Workbook.Worksheets.Add("Result");
+				var excelWorksheet = excel.Workbook.Worksheets["Result"];
+
+				//Добавление заголовка
+				List<string[]> headerRow = new List<string[]>()
+				{
+				  new string[] { "PalletWidth", "PalletLength", "PalletHeight", "WeightOnPallet", "CountProductOnPallet",
+				  "BoxWidth", "BoxLength", "BoxHeight", "WeightInBox", "CountProductInBox"}
+				};
+				string headerRange = "A1:" + Char.ConvertFromUtf32(headerRow[0].Length + 64) + "1";
+				excelWorksheet.Cells[headerRange].LoadFromArrays(headerRow);
+
+				//Добавление содержимого
+				var cellData = new List<object[]>();
+				for (int i = 0; i < pallets.Count; i++)
+				{
+					var pallet = pallets[i];
+					cellData.Add(new object[] {
+						pallet.Widht.ToString(), pallet.Lenght.ToString(),
+						pallet.Height.ToString(), pallet.Weight.ToString(), pallet.CountPr.ToString(),
+						pallet.BoxPallet.Widht.ToString(), pallet.BoxPallet.Lenght.ToString(),
+						pallet.BoxPallet.Height.ToString(), pallet.BoxPallet.Weight.ToString(), pallet.BoxPallet.CountPr.ToString()
+					});
+				}
+				excelWorksheet.Cells[2, 1].LoadFromArrays(cellData);
+
+				//Сохранение
+				FileInfo excelFile = new FileInfo(pathFile);
+				excel.SaveAs(excelFile);
+			}
 		}
 
 		#region Список заказов
@@ -128,7 +166,6 @@ namespace PalletViewer
 			DrawPallet(CurrentPallet);
 		}
 
-
 		#region Функции сцены
 
 		public Scene MyScene { get; set; }
@@ -158,7 +195,7 @@ namespace PalletViewer
 								},
 								palletBaseMesh,
 								borderMesh,
-								1.0
+								5.0
 								);
 						}
 					}

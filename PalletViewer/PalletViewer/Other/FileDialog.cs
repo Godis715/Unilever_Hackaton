@@ -13,13 +13,32 @@ namespace PalletViewer
 	{
 		public string FilePath { get; set; }
 
-		public bool OpenFileDialog()
+		public bool ImportFileDialog()
 		{
-			OpenFileDialog openFileDialog = new OpenFileDialog();
-			openFileDialog.Filter = "(*.xlsx)|*.xlsx";
-			if (openFileDialog.ShowDialog() == true)
+			OpenFileDialog importFileDialog = new OpenFileDialog();
+			importFileDialog.Title = "Import";
+			importFileDialog.Filter = "(*.xlsx)|*.xlsx";
+			if (importFileDialog.ShowDialog() == true)
 			{
-				FilePath = openFileDialog.FileName;
+				FilePath = importFileDialog.FileName;
+				return true;
+			}
+			return false;
+		}
+
+		public bool ExportFileDialog()
+
+		{
+			SaveFileDialog exportFileDialog = new SaveFileDialog();
+
+			exportFileDialog.Title = "Export";
+
+			exportFileDialog.Filter = "(*.xlsx)|*.xlsx";
+
+			if (exportFileDialog.ShowDialog() == true)
+
+			{
+				FilePath = exportFileDialog.FileName;
 				return true;
 			}
 			return false;

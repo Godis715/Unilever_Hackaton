@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PalletViewer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Name="mainWindow"
+        Title="Palletization" Height="450" Width="800" Name="mainWindow"
         Loaded="MainWindow_Loaded_1">
     <Grid x:Name="Main">
         <Grid.ColumnDefinitions>
@@ -21,65 +21,41 @@
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
             <ToolBar Grid.Row="0" HorizontalAlignment="Stretch" >
-                
-                <Button Margin="2" HorizontalAlignment="Stretch">MainView</Button>
-                <Button Margin="2">BoxView</Button>
+
+                <Button Margin="2" Click="MainView_cl" HorizontalAlignment="Stretch">MainView</Button>
+                <Button Margin="2" Click="BoxView_cl">BoxView</Button>
                 <Separator/>
                 <Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
-                    <MenuItem  x:Name="Orders" Header="Orders"  Width="200">
-                        <MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />
+                    <MenuItem  x:Name="ListOrders" Header="Orders"  Width="200">
+                        <!--<MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />-->
                     </MenuItem>
                 </Menu>
             </ToolBar>
-            <Grid Grid.Row="1" Background="DarkGray" >
+            <Grid Grid.Row="1" Background="#b4b6c2" >
                 <Viewport3D 
                 Name="myViewport"
-                Margin="10,10,0,0"> 
+                Margin="10,10,0,0">
 
                     <!-- Add a camera. -->
                     <Viewport3D.Camera>
                         <PerspectiveCamera 
-                        FarPlaneDistance="2000" 
-                        LookDirection="{Binding Path=Camera.CameraOrient}" 
+                        FarPlaneDistance="5000" 
+                        LookDirection="{Binding Path=MyScene.Camera.CameraOrient}" 
                         UpDirection="0,1,0" 
                         NearPlaneDistance="1" 
-                        Position="{Binding Path=Camera.CameraPos}" 
-                        FieldOfView="80"
+                        Position="{Binding Path=MyScene.Camera.CameraPos}" 
+                        FieldOfView="50"
                         />
-            </Viewport3D.Camera>
-            <!-- Add models. -->
-            <Viewport3D.Children>
-                <ModelVisual3D x:Name="Model">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="Models">
-                            <Model3DGroup.Children>
-                                <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
-                                <AmbientLight Color="#FFFFFFFF"/>
-
-                                        <!-- Up faces. -->
-                                        <GeometryModel3D Geometry="{Binding Path=UpMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=UpBrush}"/>
-                                            </GeometryModel3D.Material>
-
-                                        </GeometryModel3D>
-
-                                        <GeometryModel3D Geometry="{Binding Path=FrontMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=FrontBrush}"/>
-                                            </GeometryModel3D.Material>
-                                        </GeometryModel3D>
-
-                                        <GeometryModel3D Geometry="{Binding Path=SideMesh}">
-
-                                            <GeometryModel3D.Material>
-                                                <DiffuseMaterial Brush="{Binding Path=SideBrush}"/>
-                                            </GeometryModel3D.Material>
-
-                                        </GeometryModel3D>
-
+                    </Viewport3D.Camera>
+                    <!-- Add models. -->
+                    <Viewport3D.Children>
+                        <ModelVisual3D x:Name="Model">
+                            <ModelVisual3D.Content>
+                                <Model3DGroup x:Name="Models">
+                                    <Model3DGroup.Children>
+                                        <!-- Lights, MeshGeometry3D and DiffuseMaterial objects are added to the ModelVisual3D. -->
+                                        <AmbientLight Color="#FFFFFFFF"/>
+                                        <!--<DirectionalLight Color="#FFFFFFFF" Direction="-2, -2, -2"/>-->
                                     </Model3DGroup.Children>
                                 </Model3DGroup>
                             </ModelVisual3D.Content>
@@ -97,7 +73,7 @@
                 />
             </Grid>
             <StatusBar Grid.Row="2" x:Name="StatusBar" Background="#f0f0f0">
-                <Label Content="TempOrder: ..."  />
+                <Label Content="{Binding tempOrderStr}" />
             </StatusBar>
         </Grid>
         <GridSplitter Grid.Column="1" ShowsPreview="False" Style="{StaticResource VerticalGridSplitter}" />
@@ -160,6 +136,11 @@
                                             <TextBox Text="1800" Name="HeigthPallet" Margin="5 0 5 0"/>
                                         </StackPanel>
                                     </GroupBox>
+                                    <GroupBox Header="Base pallet height" FontWeight="Normal">
+                                        <StackPanel>
+                                            <TextBox Text="145" Name="HeigthBasePallet" Margin="5 0 5 0"/>
+                                        </StackPanel>
+                                    </GroupBox>
                                     <GroupBox Header="Max weight on pallet" FontWeight="Normal">
                                         <StackPanel>
                                             <TextBox Text="650" Name="MaxWeightOnPallet" Margin="5 0 5 0"/>
@@ -190,7 +171,7 @@
                                     <GroupBox Header="Product size" FontWeight="Normal">
                                         <StackPanel Name="SizesProduct">
                                             <RadioButton Content="small" Margin="4"/>
-                                            <RadioButton Content="avarage"  Margin="4"/>
+                                            <RadioButton Content="average"  Margin="4"/>
                                             <RadioButton Content="big" IsChecked="True" Margin="4"/>
                                         </StackPanel>
                                     </GroupBox>
@@ -208,30 +189,35 @@
                 <Grid Grid.Row="1">
                     <Button Content="Add order" Click="AddOrder" Margin="5"/>
                 </Grid>
-                <GroupBox Grid.Row="2" Header="Added a lot order" FontWeight="Bold" >
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Name="PathFile" Margin="5 0 5 0" FontWeight="Normal"/>
-                        <Button  Grid.Column="1" Content="Open file"  Click="AddFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                <Separator Grid.Row="2" />
+                <GroupBox Grid.Row="3" Header="Import orders" FontWeight="Bold" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Name="PathImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                            <Button  Grid.Column="1" Content="Browser"  Click="ImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Button Content="Import" Click="ImportOrders"  Margin="5"/>
+                        </Grid>
                     </Grid>
                 </GroupBox>
-                <Grid Grid.Row="3">
-                    <Button Content="Download file" Click="AddOrders"  Margin="5"/>
-                </Grid>
+
             </Grid>
             <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
-            <!--<Canvas x:Name="TestScene" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                    Background="Black"
-                    MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
-                    ClipToBounds="True">
-            </Canvas>-->
             <Grid Grid.Row="2" x:Name="Info">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <ScrollViewer CanContentScroll="True">
@@ -239,12 +225,12 @@
                             <StackPanel>
                                 <GroupBox Header="Pallet width" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBlock Text="Добавить бинд" Margin="5 0 5 0"/>
+                                        <TextBlock Text="{Binding CurrentPallet.Widht}" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Pallet length" FontWeight="Normal">
                                     <StackPanel>
-                                        <TextBlock Text="Добавить бинд" Margin="5 0 5 0"/>
+                                        <TextBlock Text="{Binding CurrentPallet.Lenght}" Margin="5 0 5 0"/>
                                     </StackPanel>
                                 </GroupBox>
                                 <GroupBox Header="Pallet height" FontWeight="Normal">
@@ -268,15 +254,65 @@
                 </Grid>
                 <Grid Grid.Row="1">
                     <ScrollViewer CanContentScroll="True">
+                        <GroupBox Header="Information about box:" FontWeight="Bold">
+                            <StackPanel>
+                                <GroupBox Header="Box width" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.BoxPallet.Widht}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Box length" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.BoxPallet.Lenght}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Box height" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.BoxPallet.Height}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Weight in box" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.BoxPallet.Weight}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                                <GroupBox Header="Count product on box" FontWeight="Normal">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding CurrentPallet.BoxPallet.CountPr}" Margin="5 0 5 0"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </StackPanel>
+                        </GroupBox>
+                    </ScrollViewer>
+                </Grid>
+                <Grid Grid.Row="2" Background="{StaticResource BlueGardientBrush}">
+                    <ScrollViewer CanContentScroll="True">
                         <GroupBox Header="List layer" FontWeight="Bold">
                             <StackPanel x:Name="ListLayer">
                             </StackPanel>
                         </GroupBox>
                     </ScrollViewer>
                 </Grid>
+                <GroupBox Grid.Row="3" Header="Export result orders" FontWeight="Bold" >
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox Grid.Column="0" Name="PathExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                            <Button  Grid.Column="1" Content="Browser"  Click="ExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Button Content="Export" Click="ExportOrders"  Margin="5"/>
+                        </Grid>
+                    </Grid>
+                </GroupBox>
             </Grid>
         </Grid>
-
-        
     </Grid>
 </Window>

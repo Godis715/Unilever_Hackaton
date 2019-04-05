@@ -88,7 +88,6 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <ScrollViewer Grid.Row="0" CanContentScroll="True">
                     <GroupBox Header="Added one order" FontWeight="Bold">
@@ -189,30 +188,33 @@
                 <Grid Grid.Row="1">
                     <Button Content="Add order" Click="AddOrder" Margin="5"/>
                 </Grid>
-                <GroupBox Grid.Row="2" Header="Added a lot order" FontWeight="Bold" >
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBox Grid.Column="0" Name="PathFile" Margin="5 0 5 0" FontWeight="Normal"/>
-                        <Button  Grid.Column="1" Content="Open file"  Click="AddFile" Margin="5 0 5 0" FontWeight="Normal"/>
-                    </Grid>
-                </GroupBox>
-                <Grid Grid.Row="3">
-                    <Button Content="Download file" Click="AddOrders"  Margin="5"/>
-                </Grid>
+                <GroupBox Grid.Row="2" Header="Import orders" FontWeight="Bold" >
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Column="0" Name="PathImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+							<Button  Grid.Column="1" Content="Browser"  Click="ImportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+						</Grid>
+						<Grid Grid.Row="1">
+							<Button Content="Import" Click="ImportOrders"  Margin="5"/>
+						</Grid>
+					</Grid>
+				</GroupBox>
+
             </Grid>
-            <GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
-            <!--<Canvas x:Name="TestScene" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
-                    Background="Black"
-                    MouseLeftButtonDown="TestScene_MouseLeftButtonDown"
-                    ClipToBounds="True">
-            </Canvas>-->
-            <Grid Grid.Row="2" x:Name="Info">
+			<GridSplitter Style="{StaticResource HorizontalGridSplitter}" Grid.Row="1"/>
+			<Grid Grid.Row="2" x:Name="Info">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <ScrollViewer CanContentScroll="True">
@@ -255,7 +257,26 @@
                         </GroupBox>
                     </ScrollViewer>
                 </Grid>
-            </Grid>
+				<GroupBox Grid.Row="2" Header="Export result orders" FontWeight="Bold" >
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*" />
+							<RowDefinition Height="*" />
+						</Grid.RowDefinitions>
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<TextBox Grid.Column="0" Name="PathExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+							<Button  Grid.Column="1" Content="Browser"  Click="ExportFile" Margin="5 0 5 0" FontWeight="Normal"/>
+						</Grid>
+						<Grid Grid.Row="1">
+							<Button Content="Export" Click="ExportOrders"  Margin="5"/>
+						</Grid>
+					</Grid>
+				</GroupBox>
+			</Grid>
         </Grid>
 
         

@@ -333,15 +333,22 @@ namespace PalletViewer
 			//    return;
 			//}
 		}
-
-		private void AddFile(object sender, RoutedEventArgs e)
+		void MouseLeave_ViewPort(object sender, MouseEventArgs e)
+		{
+			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+			{
+				model.MyScene.Camera.RestorePosition();
+			}
+		}
+		#region Import orders
+		private void ImportFile(object sender, RoutedEventArgs e)
 		{
 			var fileDialog = FileDialog.GetInstance();
 			try
 			{
-				if (fileDialog.OpenFileDialog() == true)
+				if (fileDialog.ImportFileDialog() == true)
 				{
-					PathFile.Text = fileDialog.FilePath;
+					PathImportFile.Text = fileDialog.FilePath;
 				}
 			}
 			catch (Exception ex)
@@ -350,20 +357,35 @@ namespace PalletViewer
 			}
 		}
 
-		private void AddOrders(object sender, RoutedEventArgs e)
+		private void ImportOrders(object sender, RoutedEventArgs e)
 		{
 			//
 		}
-
-		void MouseLeave_ViewPort(object sender, MouseEventArgs e)
+		#endregion
+		#region Export orders
+		private void ExportFile(object sender, RoutedEventArgs e)
 		{
-			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
+			var fileDialog = FileDialog.GetInstance();
+			try
 			{
-				model.MyScene.Camera.RestorePosition();
+				if (fileDialog.ExportFileDialog() == true)
+				{
+					PathExportFile.Text = fileDialog.FilePath;
+				}
+			}
+			catch (Exception ex)
+			{
+				fileDialog.ShowMessage(ex.Message);
 			}
 		}
 
-		
+		private void ExportOrders(object sender, RoutedEventArgs e)
+		{
+			//
+		}
+		#endregion
+
+
 
 
 		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)

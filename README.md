@@ -2,6 +2,6 @@
 
 В скором времени появится содержание
 
-Ссылка на установку загрузочного файла: https://drive.google.com/open?id=11Hvlgg98Tn6VhS4Jb5AkjF2yhjDijGh-
+Ссылка на установку загрузочного файла: https://drive.google.com/open?id=13QoBs7a6oFXqf4YHFurfMUliSWmFq3qW
 
 (В конце установки обратите внимание на инструкцию по использованию данного приложения)

@@ -73,13 +73,16 @@ namespace PalletViewer
 		private int CountLayer2 { get; set; }
 		private int CountLayer3 { get; set; }
 		public BoxParam Box { get; private set; }
-		public Layer[] Layers { get; private set; }
+		public Layer[] Layers { get; set; }
+		public Layer CurrentLayer { get; set; }
+		public int I { get; set; }
 		public Pallet BoxPallet { get; private set; }
 
 
 		public Pallet(Layer layer1, Layer layer2, Layer layer3, bool differentLayer,
 			BoxParam _box, int _Lenght, int _Widht, int maxHeightPal, int _BaseHeight, int maxPalWeight)
 		{
+			I = -1;
 			Lenght = _Lenght;
 			Widht = _Widht;
 			BaseHeight = _BaseHeight;
@@ -208,6 +211,7 @@ namespace PalletViewer
 		public Pallet(Layer layer1, Layer layer2, bool differentLayer,
 	BoxParam _box, int _Lenght, int _Widht, int maxHeightPal, int _BaseHeight, int maxPalWeight)
 		{
+			I = -1;
 			Lenght = _Lenght;
 			Widht = _Widht;
 			BaseHeight = _BaseHeight;
@@ -298,6 +302,7 @@ namespace PalletViewer
 		public Pallet(Layer layer1, BoxParam _box,
 			int _Lenght, int _Widht, int maxHeightPal, int _BaseHeight, int maxPalWeight)
 		{
+			I = -1;
 			Lenght = _Lenght;
 			Widht = _Widht;
 			BaseHeight = _BaseHeight;
@@ -330,7 +335,7 @@ namespace PalletViewer
 			int shift = Layers[0].height;
 			for (int i = 1; i < Layers.Length; i++)
 			{
-				Layers[i].UpPallet(shift);
+				Layers[i].UpPallet(shift - (int)Layers[i].boxes[0].S.Y);
 				shift += Layers[i].height;
 			}
 		}

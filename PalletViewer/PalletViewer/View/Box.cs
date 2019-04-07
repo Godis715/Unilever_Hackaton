@@ -56,7 +56,9 @@ namespace PalletViewer
 		public void Translate(Vector3D shift)
         {
             S += shift;
-        }
+
+			points = null;
+		}
 
         public void RotUp()
         {

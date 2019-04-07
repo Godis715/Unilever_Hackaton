@@ -9,9 +9,9 @@
         Loaded="MainWindow_Loaded_1">
     <Grid x:Name="Main">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
@@ -26,11 +26,16 @@
                 <Button Margin="2" Click="BoxView_cl">BoxView</Button>
                 <Separator/>
                 <Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
-                    <MenuItem  x:Name="ListOrders" Header="Orders"  Width="200">
-                        <!--<MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />-->
-                    </MenuItem>
+                    <MenuItem  x:Name="ListOrders" Header="Orders"  Width="100">
+						<MenuItem Width="100" />
+					</MenuItem>
                 </Menu>
-            </ToolBar>
+				<Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
+					<MenuItem  x:Name="ListLayers" Header="Layers"  Width="100">
+						<!--<MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />-->
+					</MenuItem>
+				</Menu>
+			</ToolBar>
             <Grid Grid.Row="1" Background="#b4b6c2" >
                 <Viewport3D 
                 Name="myViewport"
@@ -285,14 +290,29 @@
                         </GroupBox>
                     </ScrollViewer>
                 </Grid>
-                <Grid Grid.Row="2" Background="{StaticResource BlueGardientBrush}">
-                    <ScrollViewer CanContentScroll="True">
+				<!--<Grid Grid.Row="2" Background="{StaticResource BlueGardientBrush}">-->
+				<GroupBox Grid.Row="2" Header="redaction">
+                    <!--<ScrollViewer CanContentScroll="True">
                         <GroupBox Header="List layer" FontWeight="Bold">
                             <StackPanel x:Name="ListLayer">
                             </StackPanel>
                         </GroupBox>
-                    </ScrollViewer>
-                </Grid>
+                    </ScrollViewer>-->
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="2*" />
+						</Grid.ColumnDefinitions>
+						<Button Grid.Column="0" Content="Flip X" Click="FlipByX" Width="60" Height="20" />
+						<Button Grid.Column="1" Content="Flip Z" Click="FlipByZ" Width="60" Height="20" />
+						<Menu Grid.Column="2" Margin="2" Height="20" Style="{StaticResource MenuStyle}">
+							<MenuItem  x:Name="ListLayersToSwap" Header="Swap"  Width="100">
+								<!--<MenuItem HorizontalAlignment="Stretch" Header="Заказ 1" />-->
+							</MenuItem>
+						</Menu>
+					</Grid>
+				</GroupBox>
                 <GroupBox Grid.Row="3" Header="Export result orders" FontWeight="Bold" >
                     <Grid>
                         <Grid.RowDefinitions>

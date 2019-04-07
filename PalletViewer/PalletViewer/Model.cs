@@ -52,9 +52,10 @@ namespace PalletViewer
 		}
 		#endregion
 
-		public Model(StackPanel _ListLayers, MenuItem _ListOrders, Model3DGroup modelGroup, Size _vpsize)
+		public Model(/*StackPanel*/ MenuItem _ListLayers, MenuItem _ListLayersToSwap, MenuItem _ListOrders, Model3DGroup modelGroup, Size _vpsize)
 		{
 			ListLayers = _ListLayers;
+			ListLayersToSwap = _ListLayersToSwap;
 			ListOrders = _ListOrders;
 			pallets = new List<Pallet>();
 			MyScene = new Scene(new Point3D(0, 0, 0), _vpsize);
@@ -135,26 +136,83 @@ namespace PalletViewer
 		#region Список слоёв
 		private void ChooseLayer(object sender, RoutedEventArgs e)
 		{
-			var index = Int32.Parse(((Button)sender).Content.ToString().Split('#')[1]);
+			//var index = Int32.Parse(((Button)sender).Content.ToString().Split('#')[1]);
+
+			var nameLayer = ((MenuItem)sender).Header.ToString();
+			var index = Int32.Parse(nameLayer.Split('#')[1]);
 			var layer = CurrentPallet.Layers[index];
 			var layerPallet = new Pallet(layer, CurrentPallet.Box,
 				CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
+			CurrentPallet.CurrentLayer = layer;
+			CurrentPallet.I = index;
 
 			DrawPallet(layerPallet);
 		}
 
-		private StackPanel ListLayers;
+		private void SwapLayer(object sender, RoutedEventArgs e)
+		{
+			//var index = Int32.Parse(((Button)sender).Content.ToString().Split('#')[1]);
+			var layer = CurrentPallet.CurrentLayer;
+			if (layer == null)
+			{
+				return;
+			}
+			int i = CurrentPallet.I;
+
+			var nameLayer = ((MenuItem)sender).Header.ToString();
+			var index = Int32.Parse(nameLayer.Split('#')[1]);
+
+			Helper.Swap(ref CurrentPallet.Layers[i], ref CurrentPallet.Layers[index]);
+			//int shift = (int)(CurrentPallet.Layers[i].boxes[0].S.Y - CurrentPallet.Layers[index].boxes[0].S.Y);
+			//CurrentPallet.Layers[i].UpPallet(-shift);
+			//CurrentPallet.Layers[index].UpPallet(shift);
+			// restore height first layers
+			CurrentPallet.Layers[0].UpPallet((int)-CurrentPallet.Layers[0].boxes[0].S.Y);
+			CurrentPallet.ShiftLayers();
+
+			PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentPallet)));
+
+			// redraw
+			var layerPallet = new Pallet(CurrentPallet.Layers[i], CurrentPallet.Box,
+				CurrentPallet.Lenght, CurrentPallet.Widht, CurrentPallet.Layers[i].height, 0, CurrentPallet.Weight);
+			
+			DrawPallet(layerPallet);
+		}
+
+		//private StackPanel ListLayers;
+		private MenuItem ListLayers;
+		private MenuItem ListLayersToSwap;
 
 		private void CreateListLayer()
 		{
-			ListLayers.Children.Clear();
+			//ListLayers.Children.Clear();
+
+			//for (int i = 0; i < CurrentPallet.Layers.ToList().Count; i++)
+			//{
+			//	var tempLayer = new Button();
+			//	tempLayer.Content = "Layer" + '#' + i.ToString();
+			//	tempLayer.Click += ChooseLayer;
+			//	ListLayers.Children.Add(tempLayer);
+			//}
+
+			ListLayers.Items.Clear();
+			ListLayersToSwap.Items.Clear();
 			for (int i = 0; i < CurrentPallet.Layers.ToList().Count; i++)
 			{
-				var tempLayer = new Button();
-				tempLayer.Content = "Layer" + '#' + i.ToString();
-				tempLayer.Click += ChooseLayer;
-				ListLayers.Children.Add(tempLayer);
+				var nameLayer = "Layer" + '#' + i.ToString();
+
+				var layer = new MenuItem();
+				var layerToSwap = new MenuItem();
+				layer.Header = nameLayer;
+				layer.Click += ChooseLayer;
+				ListLayers.Items.Add(layer);
+
+				layerToSwap.Header = nameLayer;
+				layerToSwap.Click += SwapLayer;
+				ListLayersToSwap.Items.Add(layerToSwap);
 			}
+
+			//PropertyChanged(this, new PropertyChangedEventArgs(nameof(tempOrderStr)));
 		}
 		#endregion
 

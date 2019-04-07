@@ -74,6 +74,11 @@
     <Compile Include="Other\FileDialog.cs" />
     <Compile Include="Generation\LayerOnPallet.cs" />
     <Compile Include="Other\RealayCommand.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="View\Scene.cs" />
     <Compile Include="View\Box.cs" />
     <Page Include="MainWindow.xaml">
@@ -101,11 +106,6 @@
     <Compile Include="View\MyCamera.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>

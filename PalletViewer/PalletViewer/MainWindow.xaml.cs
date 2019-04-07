@@ -247,45 +247,45 @@ namespace PalletViewer
 		{
 			try
 			{
-				#region Считывание параметров
-				var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
-				var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
-				var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
-				var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
+				//#region Считывание параметров
+				//var _WidthProduct = (int)UInt32.Parse(WidthProduct.Text);
+				//var _LengthProduct = (int)UInt32.Parse(LengthProduct.Text);
+				//var _HeightProduct = (int)UInt32.Parse(HeightProduct.Text);
+				//var _WeightProduct = (int)UInt32.Parse(WeightProduct.Text);
 
-				var _SizeProduct = "";
-				foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
-				{
-					_SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
-				}
+				//var _SizeProduct = "";
+				//foreach (RadioButton SizeProduct_rb in SizesProduct.Children)
+				//{
+				//	_SizeProduct = SizeProduct_rb.IsChecked.Value ? SizeProduct_rb.Content.ToString() : _SizeProduct;
+				//}
 
-				var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
-				var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
-				var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
-				var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
-				var _HeigthBasePallet = (int)UInt32.Parse(HeigthBasePallet.Text);
+				//var _WidthPallet = (int)UInt32.Parse(WidthPallet.Text);
+				//var _LengthPallet = (int)UInt32.Parse(LengthPallet.Text);
+				//var _HeigthPallet = (int)UInt32.Parse(HeigthPallet.Text);
+				//var _MaxWeightOnPallet = (int)UInt32.Parse(MaxWeightOnPallet.Text);
+				//var _HeigthBasePallet = (int)UInt32.Parse(HeigthBasePallet.Text);
 
-				var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
-				var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
-				var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
-				var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
+				//var _MaxWeightInBox = (int)UInt32.Parse(MaxWeightInBox.Text);
+				//var _MinCountInBox = (int)UInt32.Parse(MinCountInBox.Text);
+				//var _MaxCountInBox = (int)UInt32.Parse(MaxCountInBox.Text);
+				//var _RatioSideBox = (int)UInt32.Parse(RatioSideBox.Text);
 
-				var _isDifferentLayer = false;
-				foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
-				{
-					if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
-					{
-						_isDifferentLayer = true;
-					}
-				}
+				//var _isDifferentLayer = false;
+				//foreach (RadioButton isDifferentLayer_Answer_rb in isDifferentLayer.Children)
+				//{
+				//	if (isDifferentLayer_Answer_rb.IsChecked.Value && isDifferentLayer_Answer_rb.Content.ToString() == "Yes")
+				//	{
+				//		_isDifferentLayer = true;
+				//	}
+				//}
 
-				if (_WidthProduct == 0 || _LengthPallet == 0 || _HeightProduct == 0 || _WeightProduct == 0 || _HeigthBasePallet == 0
-					|| _WidthPallet == 0 || _LengthPallet == 0 || _HeigthPallet == 0 || _MaxWeightOnPallet == 0
-					|| _MaxWeightInBox == 0 || _MinCountInBox == 0 || _MaxCountInBox == 0 || _RatioSideBox == 0)
-				{
-					throw new FormatException();
-				}
-				#endregion
+				//if (_WidthProduct == 0 || _LengthPallet == 0 || _HeightProduct == 0 || _WeightProduct == 0 || _HeigthBasePallet == 0
+				//	|| _WidthPallet == 0 || _LengthPallet == 0 || _HeigthPallet == 0 || _MaxWeightOnPallet == 0
+				//	|| _MaxWeightInBox == 0 || _MinCountInBox == 0 || _MaxCountInBox == 0 || _RatioSideBox == 0)
+				//{
+				//	throw new FormatException();
+				//}
+				//#endregion
 				#region Сбрасывание парамтров
 				WidthProduct.Clear();
 				LengthProduct.Clear();
@@ -311,18 +311,21 @@ namespace PalletViewer
 				ErrorInput.Foreground = Brushes.Black;
 				#endregion
 
-				var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
-					_LengthPallet, _WidthPallet, _HeigthPallet, _HeigthBasePallet,  _MaxWeightOnPallet,
-					_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
-					_SizeProduct, _isDifferentLayer);
-				//var paletization = new Palletization(159, 35, 68, 229,
-				//	1200, 800, 1560, 600,
-				//	10, 10, 5, 3,
-				//	"average", true);
+				//var paletization = new Palletization(_LengthProduct, _WidthProduct, _HeightProduct, _WeightProduct,
+				//	_LengthPallet, _WidthPallet, _HeigthPallet, _HeigthBasePallet,  _MaxWeightOnPallet,
+				//	_MinCountInBox, _MaxCountInBox, _MaxWeightInBox, _RatioSideBox,
+				//	_SizeProduct, _isDifferentLayer);
+				var paletization = new Palletization(159, 35, 68, 229,
+					1200, 800, 1710, 145, 800,
+					10, 10, 5, 3,
+					"average", true);
 
 
 				var pallet = paletization.GetPallet();
-				model.AddPallet(pallet);
+				if (pallet != null)
+				{
+					model.AddPallet(pallet);
+				}
 			}
 			catch (FormatException)
 			{
@@ -337,6 +340,7 @@ namespace PalletViewer
 			//    return;
 			//}
 		}
+
 		void MouseLeave_ViewPort(object sender, MouseEventArgs e)
 		{
 			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
@@ -344,6 +348,7 @@ namespace PalletViewer
 				model.MyScene.Camera.RestorePosition();
 			}
 		}
+
 		#region Import orders
 		private void ImportFile(object sender, RoutedEventArgs e)
 		{
@@ -451,7 +456,7 @@ namespace PalletViewer
 
 		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
 		{
-			model = new Model(ListLayer, ListOrders, Models, new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight));
+			model = new Model(ListLayers,ListOrders, Models, new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight));
 
 			model.MyScene = new Scene(new Point3D(500, 500, 500), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
 			{
@@ -466,12 +471,18 @@ namespace PalletViewer
 
 		private void BoxView_cl(object sender, RoutedEventArgs e)
 		{
-			model.DrawPallet(model.CurrentPallet.BoxPallet);
+			if (model.CurrentPallet != null)
+			{
+				model.DrawPallet(model.CurrentPallet.BoxPallet);
+			}
 		}
 
 		private void MainView_cl(object sender, RoutedEventArgs e)
 		{
-			model.DrawPallet(model.CurrentPallet);
+			if (model.CurrentPallet != null)
+			{
+				model.DrawPallet(model.CurrentPallet);
+			}
 		}
 	}
 }

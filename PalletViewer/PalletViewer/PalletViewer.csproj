@@ -126,10 +126,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Logo_Dove.png" />
+    <Resource Include="MainLogo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="MainLogo.ico" />
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -38,4 +38,15 @@
         </DiffuseMaterial.Brush>
     </DiffuseMaterial>-->
 
+    <Menu x:Key="RedactionLayer" Margin="2" Height="20" Style="{StaticResource MenuStyle}">
+        <MenuItem Header="Redaction" Width="100">
+            <MenuItem  Header="Flip X"  Width="100"/>
+            <!--Click="FlipByX"-->
+            <MenuItem  Header="Flip Z"  Width="100"/>
+            <!--Click="FlipByZ"-->
+            <MenuItem  x:Name="ListLayersToSwap" Header="Swap"  Width="100">
+            </MenuItem>
+        </MenuItem>
+    </Menu>
+
 </ResourceDictionary>

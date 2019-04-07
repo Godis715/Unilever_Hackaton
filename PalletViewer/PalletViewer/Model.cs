@@ -131,29 +131,118 @@ namespace PalletViewer
 			PropertyChanged(this, new PropertyChangedEventArgs(nameof(tempOrderStr)));
 		}
 		#endregion
-		
-		#region Список слоёв
-		private void ChooseLayer(object sender, RoutedEventArgs e)
-		{
-			var index = Int32.Parse(((Button)sender).Content.ToString().Split('#')[1]);
-			var layer = CurrentPallet.Layers[index];
-			var layerPallet = new Pallet(layer, CurrentPallet.Box,
-				CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
 
-			DrawPallet(layerPallet);
+		#region Список слоёв
+		private StackPanel ListLayers;
+
+		private Layer GetLayerByName(string name) => CurrentPallet.Layers[Int32.Parse(name.Split('#')[1])];
+
+		private void FlipByX(object sender, RoutedEventArgs e)
+		{
+			var nameLayer = ((Button)((Grid)((Menu)((MenuItem)((MenuItem)sender).Parent).Parent).Parent).Children[0]).Content.ToString();
+			var layer = GetLayerByName(nameLayer); 
+			if (layer != null)
+			{
+				layer.FlipByX(CurrentPallet.Widht);
+				//var layerPallet = new Pallet(layer, CurrentPallet.Box,
+				//CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
+
+				DrawPallet(CurrentPallet);
+			}
 		}
 
-		private StackPanel ListLayers;
+		private void FlipByZ(object sender, RoutedEventArgs e)
+		{
+			var nameLayer = ((Button)((Grid)((Menu)((MenuItem)((MenuItem)sender).Parent).Parent).Parent).Children[0]).Content.ToString();
+			var layer = GetLayerByName(nameLayer);
+			if (layer != null)
+			{
+				layer.FlipByZ(CurrentPallet.Lenght);
+				//var layerPallet = new Pallet(layer, CurrentPallet.Box,
+				//CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
+
+				DrawPallet(CurrentPallet);
+			}
+		}
+
+		private void SwapLayer(object sender, RoutedEventArgs e)
+		{
+			var nameLayer1 = ((Button)((Grid)((Menu)((MenuItem)((MenuItem)((MenuItem)sender).Parent).Parent).Parent).Parent).Children[0]).Content.ToString();
+			var layer1 = GetLayerByName(nameLayer1);
+			var index1 = CurrentPallet.Layers.ToList<Layer>().IndexOf(layer1);
+
+			var nameLayer2 = ((MenuItem)sender).Header.ToString();
+			var layer2 = GetLayerByName(nameLayer2);
+			var index2 = CurrentPallet.Layers.ToList<Layer>().IndexOf(layer2);
+
+			Helper.Swap(ref CurrentPallet.Layers[index1], ref CurrentPallet.Layers[index2]);
+
+			// restore heights
+			CurrentPallet.ShiftLayers();
+
+			// redraw
+			DrawPallet(CurrentPallet);
+		}
+
+		private void ChooseLayer(object sender, RoutedEventArgs e)
+		{
+			var nameLayer = ((Button)sender).Content.ToString();
+
+			var layer = GetLayerByName(nameLayer);
+
+			// drawing
+			var layerPallet = new Pallet(layer, CurrentPallet.Box,
+				CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
+			DrawPallet(layerPallet);
+		}
 
 		private void CreateListLayer()
 		{
 			ListLayers.Children.Clear();
+
 			for (int i = 0; i < CurrentPallet.Layers.ToList().Count; i++)
 			{
+				var grid = new Grid();
+				grid.ColumnDefinitions.Add(new ColumnDefinition ());
+				grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
 				var tempLayer = new Button();
 				tempLayer.Content = "Layer" + '#' + i.ToString();
 				tempLayer.Click += ChooseLayer;
-				ListLayers.Children.Add(tempLayer);
+
+				var redLayer_menu = new Menu();
+				var redLayer_menuIt = new MenuItem { Header = "Redaction" };
+
+				var flipX_item = new MenuItem { Header = "Flip X"};
+				flipX_item.Click += FlipByX;
+				var flipZ_item = new MenuItem { Header = "Flip Z" };
+				flipZ_item.Click += FlipByZ;
+				var swap_item = new MenuItem { Header = "Swap"};
+				for (int j = 0; j < CurrentPallet.Layers.ToList().Count; j++)
+				{
+					if (j != i)
+					{
+						var nameLayer = "Layer" + '#' + j.ToString();
+						var layerToSwap = new MenuItem();
+						layerToSwap.Header = nameLayer;
+						layerToSwap.Click += SwapLayer;
+						swap_item.Items.Add(layerToSwap);
+					}
+				}
+
+				redLayer_menuIt.Items.Add(flipX_item);
+				redLayer_menuIt.Items.Add(flipZ_item);
+				redLayer_menuIt.Items.Add(swap_item);
+
+				redLayer_menu.Items.Add(redLayer_menuIt);
+
+				Grid.SetColumn(tempLayer, 0);
+				Grid.SetColumn(redLayer_menu, 1);
+
+				grid.Children.Add(tempLayer);
+				grid.Children.Add(redLayer_menu);
+
+				ListLayers.Children.Add(grid);
 			}
 		}
 		#endregion
@@ -211,11 +300,11 @@ namespace PalletViewer
 		{
 			Vector3D palletDim = new Vector3D(pallet.Widht, pallet.Height, pallet.Lenght);
 
-			double radParam = 1.8;
+			double radParam = 2;
 
 			double cameraRadius = palletDim.Length * radParam;
 
-			Point3D center = pallet.Layers[0].boxes[0].S + (new Vector3D(pallet.Widht / 2, 0, pallet.Lenght / 2));
+			Point3D center = new Point3D(pallet.Widht / 2, 0, pallet.Lenght / 2);
 
 			//model.MyScene.Camera = new MyCamera(cameraRadius, center, new Point(Math.PI / 4, Math.PI / 4), model.MyScene.ViewportSize);
 
@@ -308,7 +397,7 @@ namespace PalletViewer
 				}
 			}
 
-
+			
 		}
 
 		public void BoxToPolygons(MeshContainer meshCont, Box[] boxes)

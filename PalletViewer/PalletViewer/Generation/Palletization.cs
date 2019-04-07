@@ -22,6 +22,24 @@ namespace PalletViewer
 			}
 		}
 
+		public void FlipByZ(int len)
+		{
+			foreach (var box in boxes)
+			{
+				double shift = len - 2 * box.S.Z - box.Dim.Z;
+				box.Translate(new Vector3D { X = 0, Y = 0, Z = shift });
+			}
+		}
+
+		public void FlipByX(int wid)
+		{
+			foreach (var box in boxes)
+			{
+				double shift = wid - 2 * box.S.X - box.Dim.X;
+				box.Translate(new Vector3D { X = shift, Y = 0, Z = 0 });
+			}
+		}
+
 		public Layer Copy()
 		{
 			var copyLayer = new Layer
@@ -51,12 +69,15 @@ namespace PalletViewer
 		public int Height { get; private set; }
 		public int BaseHeight { get; private set; }
 		public int Weight { get; private set; }
+		public double Density { get; private set; }
 		private int CountLayer1 { get; set; }
 		private int CountLayer2 { get; set; }
 		private int CountLayer3 { get; set; }
 		public BoxParam Box { get; private set; }
-		public Layer[] Layers { get; private set; }
+		public Layer[] Layers { get; set; }
 		public Pallet BoxPallet { get; private set; }
+
+		
 
 
 		public Pallet(Layer layer1, Layer layer2, Layer layer3, bool differentLayer,
@@ -124,6 +145,8 @@ namespace PalletViewer
 				{
 					Layers[i + CountLayer1 + CountLayer2] = layer3.Copy();
 				}
+
+				Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 				Height += BaseHeight;
 				return;
 			}
@@ -184,6 +207,8 @@ namespace PalletViewer
 			{
 				CountLayer3 = 0;
 			}
+
+			Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 
@@ -239,6 +264,8 @@ namespace PalletViewer
 				{
 					Layers[i + CountLayer1] = layer2.Copy();
 				}
+
+				Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 				Height += BaseHeight;
 				return;
 			}
@@ -274,6 +301,8 @@ namespace PalletViewer
 					Layers[i] = layer1.Copy();
 				}
 			}
+
+			Density = (double)Weight  * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 
@@ -300,6 +329,8 @@ namespace PalletViewer
 			{
 				Layers[i] = layer1.Copy();
 			}
+
+			Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 
@@ -309,10 +340,10 @@ namespace PalletViewer
 			{
 				throw new Exception("Invalid pallet");
 			}
-			int shift = Layers[0].height;
-			for (int i = 1; i < Layers.Length; i++)
+			int shift = 0;
+			for (int i = 0; i < Layers.Length; i++)
 			{
-				Layers[i].UpPallet(shift);
+				Layers[i].UpPallet(shift - (int)Layers[i].boxes[0].S.Y);
 				shift += Layers[i].height;
 			}
 		}

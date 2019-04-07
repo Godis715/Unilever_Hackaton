@@ -22,6 +22,24 @@ namespace PalletViewer
 			}
 		}
 
+		public void FlipByZ(int len)
+		{
+			foreach (var box in boxes)
+			{
+				double shift = len - 2 * box.S.Z - box.Dim.Z;
+				box.Translate(new Vector3D { X = 0, Y = 0, Z = shift });
+			}
+		}
+
+		public void FlipByX(int wid)
+		{
+			foreach (var box in boxes)
+			{
+				double shift = wid - 2 * box.S.X - box.Dim.X;
+				box.Translate(new Vector3D { X = shift, Y = 0, Z = 0 });
+			}
+		}
+
 		public Layer Copy()
 		{
 			var copyLayer = new Layer

@@ -322,7 +322,11 @@ namespace PalletViewer
 
 
 				var pallet = paletization.GetPallet();
-				model.AddPallet(pallet);
+				if (pallet != null)
+				{
+					pallet.Layers[0].FlipByX(pallet.Lenght);
+					model.AddPallet(pallet);
+				}
 			}
 			catch (FormatException)
 			{
@@ -337,6 +341,7 @@ namespace PalletViewer
 			//    return;
 			//}
 		}
+
 		void MouseLeave_ViewPort(object sender, MouseEventArgs e)
 		{
 			if (System.Windows.Input.Mouse.LeftButton == MouseButtonState.Pressed)
@@ -344,6 +349,7 @@ namespace PalletViewer
 				model.MyScene.Camera.RestorePosition();
 			}
 		}
+
 		#region Import orders
 		private void ImportFile(object sender, RoutedEventArgs e)
 		{
@@ -410,6 +416,7 @@ namespace PalletViewer
 						var pallet = paletization.GetPallet();
 						if (pallet != null)
 						{
+							pallet.Layers[0].FlipByZ(pallet.Lenght);
 							model.AddPallet(pallet);
 						}
 						PathImportFile.Text = "";

@@ -215,7 +215,7 @@ namespace PalletViewer
 
 			double cameraRadius = palletDim.Length * radParam;
 
-			Point3D center = pallet.Layers[0].boxes[0].S + (new Vector3D(pallet.Widht / 2, 0, pallet.Lenght / 2));
+			Point3D center = new Point3D(pallet.Widht / 2, 0, pallet.Lenght / 2);
 
 			//model.MyScene.Camera = new MyCamera(cameraRadius, center, new Point(Math.PI / 4, Math.PI / 4), model.MyScene.ViewportSize);
 

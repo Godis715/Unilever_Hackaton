@@ -456,7 +456,7 @@ namespace PalletViewer
 
 		private void MainWindow_Loaded_1(object sender, RoutedEventArgs e)
 		{
-			model = new Model(ListLayers, ListLayersToSwap,ListOrders, Models, new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight));
+			model = new Model(ListLayers,ListOrders, Models, new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight));
 
 			model.MyScene = new Scene(new Point3D(500, 500, 500), new Size(ViewportArea.ActualWidth, ViewportArea.ActualHeight))
 			{
@@ -477,34 +477,6 @@ namespace PalletViewer
 		private void MainView_cl(object sender, RoutedEventArgs e)
 		{
 			model.DrawPallet(model.CurrentPallet);
-		}
-
-		private void FlipByX(object sender, RoutedEventArgs e)
-		{
-			var pallet = model.CurrentPallet;
-			var layer = model.CurrentLayer;
-			if (layer != null)
-			{
-				layer.FlipByX(pallet.Widht);
-				var layerPallet = new Pallet(layer, pallet.Box,
-				pallet.Lenght, pallet.Widht, layer.height, 0, pallet.Weight);
-
-				model.DrawPallet(layerPallet);
-			}
-		}
-
-		private void FlipByZ(object sender, RoutedEventArgs e)
-		{
-			var pallet = model.CurrentPallet;
-			var layer = model.CurrentLayer;
-			if (layer != null)
-			{
-				layer.FlipByZ(pallet.Lenght);
-				var layerPallet = new Pallet(layer, pallet.Box,
-				pallet.Lenght, pallet.Widht, layer.height, 0, pallet.Weight);
-
-				model.DrawPallet(layerPallet);
-			}
 		}
 	}
 }

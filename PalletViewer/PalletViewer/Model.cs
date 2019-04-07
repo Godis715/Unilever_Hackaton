@@ -300,7 +300,7 @@ namespace PalletViewer
 		{
 			Vector3D palletDim = new Vector3D(pallet.Widht, pallet.Height, pallet.Lenght);
 
-			double radParam = 1.8;
+			double radParam = 2;
 
 			double cameraRadius = palletDim.Length * radParam;
 
@@ -397,7 +397,7 @@ namespace PalletViewer
 				}
 			}
 
-
+			
 		}
 
 		public void BoxToPolygons(MeshContainer meshCont, Box[] boxes)

@@ -471,12 +471,18 @@ namespace PalletViewer
 
 		private void BoxView_cl(object sender, RoutedEventArgs e)
 		{
-			model.DrawPallet(model.CurrentPallet.BoxPallet);
+			if (model.CurrentPallet != null)
+			{
+				model.DrawPallet(model.CurrentPallet.BoxPallet);
+			}
 		}
 
 		private void MainView_cl(object sender, RoutedEventArgs e)
 		{
-			model.DrawPallet(model.CurrentPallet);
+			if (model.CurrentPallet != null)
+			{
+				model.DrawPallet(model.CurrentPallet);
+			}
 		}
 	}
 }

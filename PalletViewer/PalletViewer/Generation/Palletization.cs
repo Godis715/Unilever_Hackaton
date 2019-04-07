@@ -69,12 +69,15 @@ namespace PalletViewer
 		public int Height { get; private set; }
 		public int BaseHeight { get; private set; }
 		public int Weight { get; private set; }
+		public double Density { get; private set; }
 		private int CountLayer1 { get; set; }
 		private int CountLayer2 { get; set; }
 		private int CountLayer3 { get; set; }
 		public BoxParam Box { get; private set; }
 		public Layer[] Layers { get; set; }
 		public Pallet BoxPallet { get; private set; }
+
+		
 
 
 		public Pallet(Layer layer1, Layer layer2, Layer layer3, bool differentLayer,
@@ -142,6 +145,8 @@ namespace PalletViewer
 				{
 					Layers[i + CountLayer1 + CountLayer2] = layer3.Copy();
 				}
+
+				Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 				Height += BaseHeight;
 				return;
 			}
@@ -202,6 +207,8 @@ namespace PalletViewer
 			{
 				CountLayer3 = 0;
 			}
+
+			Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 
@@ -257,6 +264,8 @@ namespace PalletViewer
 				{
 					Layers[i + CountLayer1] = layer2.Copy();
 				}
+
+				Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 				Height += BaseHeight;
 				return;
 			}
@@ -292,6 +301,8 @@ namespace PalletViewer
 					Layers[i] = layer1.Copy();
 				}
 			}
+
+			Density = (double)Weight  * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 
@@ -318,6 +329,8 @@ namespace PalletViewer
 			{
 				Layers[i] = layer1.Copy();
 			}
+
+			Density = (double)Weight * 1000 / (Lenght * Widht * Height);
 			Height += BaseHeight;
 		}
 

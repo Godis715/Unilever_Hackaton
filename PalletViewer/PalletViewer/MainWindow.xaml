@@ -27,7 +27,6 @@
                 <Separator/>
                 <Menu Margin="2" Height="20" Style="{StaticResource MenuStyle}">
                     <MenuItem  x:Name="ListOrders" Header="Orders"  Width="100">
-                        <MenuItem Width="100" />
                     </MenuItem>
                 </Menu>
             </ToolBar>
@@ -263,6 +262,11 @@
                                         <GroupBox Header="Count product on pallet" FontWeight="Normal">
                                             <StackPanel>
                                                 <TextBlock Text="{Binding CurrentPallet.CountPr}" Margin="5 0 5 0"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        <GroupBox Header="Density" FontWeight="Normal">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding CurrentPallet.Density}" Margin="5 0 5 0"/>
                                             </StackPanel>
                                         </GroupBox>
                                     </StackPanel>

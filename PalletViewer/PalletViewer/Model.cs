@@ -20,6 +20,7 @@ namespace PalletViewer
 
 		//Идёт бинд на его параметры
 		public Pallet CurrentPallet { get; set; }
+		public Layer CurrentLayer { get; set; }
 
 		//Status bar биндиться на это поле
 		public string tempOrderStr { get; set; }
@@ -140,43 +141,43 @@ namespace PalletViewer
 
 			var nameLayer = ((MenuItem)sender).Header.ToString();
 			var index = Int32.Parse(nameLayer.Split('#')[1]);
+
 			var layer = CurrentPallet.Layers[index];
+			CurrentLayer = layer;
+			// drawing
 			var layerPallet = new Pallet(layer, CurrentPallet.Box,
 				CurrentPallet.Lenght, CurrentPallet.Widht, layer.height, 0, CurrentPallet.Weight);
-			CurrentPallet.CurrentLayer = layer;
-			CurrentPallet.I = index;
-
 			DrawPallet(layerPallet);
 		}
 
 		private void SwapLayer(object sender, RoutedEventArgs e)
 		{
 			//var index = Int32.Parse(((Button)sender).Content.ToString().Split('#')[1]);
-			var layer = CurrentPallet.CurrentLayer;
-			if (layer == null)
+			if (CurrentLayer == null)
 			{
 				return;
 			}
-			int i = CurrentPallet.I;
-
 			var nameLayer = ((MenuItem)sender).Header.ToString();
 			var index = Int32.Parse(nameLayer.Split('#')[1]);
-
-			Helper.Swap(ref CurrentPallet.Layers[i], ref CurrentPallet.Layers[index]);
-			//int shift = (int)(CurrentPallet.Layers[i].boxes[0].S.Y - CurrentPallet.Layers[index].boxes[0].S.Y);
-			//CurrentPallet.Layers[i].UpPallet(-shift);
-			//CurrentPallet.Layers[index].UpPallet(shift);
-			// restore height first layers
-			CurrentPallet.Layers[0].UpPallet((int)-CurrentPallet.Layers[0].boxes[0].S.Y);
+			int i = 0;
+			for (; i < CurrentPallet.Layers.Length; i++)
+			{
+				if (CurrentLayer == CurrentPallet.Layers[i])
+				{
+					break;
+				}
+			}
+			if (i != index && i != CurrentPallet.Layers.Length)
+			{
+				Helper.Swap(ref CurrentPallet.Layers[i], ref CurrentPallet.Layers[index]);
+			}
+			CurrentLayer = null;
+			// restore heights
 			CurrentPallet.ShiftLayers();
 
-			PropertyChanged(this, new PropertyChangedEventArgs(nameof(CurrentPallet)));
 
 			// redraw
-			var layerPallet = new Pallet(CurrentPallet.Layers[i], CurrentPallet.Box,
-				CurrentPallet.Lenght, CurrentPallet.Widht, CurrentPallet.Layers[i].height, 0, CurrentPallet.Weight);
-			
-			DrawPallet(layerPallet);
+			DrawPallet(CurrentPallet);
 		}
 
 		//private StackPanel ListLayers;

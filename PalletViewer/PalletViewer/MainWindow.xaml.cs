@@ -482,13 +482,12 @@ namespace PalletViewer
 		private void FlipByX(object sender, RoutedEventArgs e)
 		{
 			var pallet = model.CurrentPallet;
-			var layer = pallet.CurrentLayer;
+			var layer = model.CurrentLayer;
 			if (layer != null)
 			{
-				int i = pallet.I;
-				pallet.Layers[i].FlipByX(pallet.Widht);
-				var layerPallet = new Pallet(pallet.Layers[i], pallet.Box,
-				pallet.Lenght, pallet.Widht, pallet.Layers[i].height, 0, pallet.Weight);
+				layer.FlipByX(pallet.Widht);
+				var layerPallet = new Pallet(layer, pallet.Box,
+				pallet.Lenght, pallet.Widht, layer.height, 0, pallet.Weight);
 
 				model.DrawPallet(layerPallet);
 			}
@@ -497,13 +496,12 @@ namespace PalletViewer
 		private void FlipByZ(object sender, RoutedEventArgs e)
 		{
 			var pallet = model.CurrentPallet;
-			var layer = pallet.CurrentLayer;
+			var layer = model.CurrentLayer;
 			if (layer != null)
 			{
-				int i = pallet.I;
-				pallet.Layers[i].FlipByZ(pallet.Lenght);
-				var layerPallet = new Pallet(pallet.Layers[i], pallet.Box,
-				pallet.Lenght, pallet.Widht, pallet.Layers[i].height, 0, pallet.Weight);
+				layer.FlipByZ(pallet.Lenght);
+				var layerPallet = new Pallet(layer, pallet.Box,
+				pallet.Lenght, pallet.Widht, layer.height, 0, pallet.Weight);
 
 				model.DrawPallet(layerPallet);
 			}

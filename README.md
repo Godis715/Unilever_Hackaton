@@ -16,6 +16,6 @@
 
 
 
-[Ссылка на установочный файл](https://drive.google.com/open?id=1x21ZZbPlwf2EuZ-y3E5pT1xlvjy8oO2s)
+[Ссылка на установочный файл](https://drive.google.com/drive/folders/1x21ZZbPlwf2EuZ-y3E5pT1xlvjy8oO2s?usp=sharing)
 
 (В конце установки обратите внимание на инструкцию по использованию данного приложения)

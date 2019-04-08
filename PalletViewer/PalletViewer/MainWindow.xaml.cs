@@ -368,17 +368,17 @@ namespace PalletViewer
 
 		private void ImportOrders(object sender, RoutedEventArgs e)
 		{
-			using (ExcelPackage xlPackage = new ExcelPackage(new FileInfo(PathImportFile.Text.ToString())))
+			try
 			{
-				var myWorksheet = xlPackage.Workbook.Worksheets.First(); //select sheet here
-				var totalRows = myWorksheet.Dimension.End.Row;
-				var totalColumns = myWorksheet.Dimension.End.Column;
-
-				for (int rowNum = 2; rowNum <= totalRows; rowNum++) //selet starting row here
+				using (ExcelPackage xlPackage = new ExcelPackage(new FileInfo(PathImportFile.Text.ToString())))
 				{
-					var valueInColumns = myWorksheet.Cells[rowNum, 1, rowNum, totalColumns].Select(c => c.Value == null ? string.Empty : c.Value.ToString()).ToArray<string>();
-					try
+					var myWorksheet = xlPackage.Workbook.Worksheets.First(); //select sheet here
+					var totalRows = myWorksheet.Dimension.End.Row;
+					var totalColumns = myWorksheet.Dimension.End.Column;
+
+					for (int rowNum = 2; rowNum <= totalRows; rowNum++) //selet starting row here
 					{
+						var valueInColumns = myWorksheet.Cells[rowNum, 1, rowNum, totalColumns].Select(c => c.Value == null ? string.Empty : c.Value.ToString()).ToArray<string>();
 						#region Считывание параметров
 						var _WidthProduct = (int)UInt32.Parse(valueInColumns[0]);
 						var _LengthProduct = (int)UInt32.Parse(valueInColumns[1]);
@@ -419,14 +419,19 @@ namespace PalletViewer
 						}
 						PathImportFile.Text = "";
 					}
-					catch (FormatException)
-					{
-						ErrorInput.Content = "Message: Error! Input not correct.";
-						ErrorInput.Foreground = Brushes.Red;
-						return;
-					}
 				}
-				
+			}
+			catch (System.ArgumentException)
+			{
+				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Foreground = Brushes.Red;
+				return;
+			}
+			catch (FormatException)
+			{
+				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Foreground = Brushes.Red;
+				return;
 			}
 		}
 		#endregion

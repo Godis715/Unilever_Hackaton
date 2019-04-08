@@ -329,7 +329,7 @@ namespace PalletViewer
 			}
 			catch (FormatException)
 			{
-				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Content = "Message: Error! Input is not correct.";
 				ErrorInput.Foreground = Brushes.Red;
 				return;
 			}
@@ -376,6 +376,11 @@ namespace PalletViewer
 					var totalRows = myWorksheet.Dimension.End.Row;
 					var totalColumns = myWorksheet.Dimension.End.Column;
 
+					if (totalColumns != 15)
+					{
+						throw new ArgumentException();
+					}
+
 					for (int rowNum = 2; rowNum <= totalRows; rowNum++) //selet starting row here
 					{
 						var valueInColumns = myWorksheet.Cells[rowNum, 1, rowNum, totalColumns].Select(c => c.Value == null ? string.Empty : c.Value.ToString()).ToArray<string>();
@@ -418,18 +423,26 @@ namespace PalletViewer
 							model.AddPallet(pallet);
 						}
 						PathImportFile.Text = "";
+						ErrorInput.Foreground = Brushes.Black;
+						ErrorInput.Content = "Message:";
 					}
 				}
 			}
-			catch (System.ArgumentException)
+			catch (ArgumentException)
 			{
-				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Content = "Message: Error! File is not correct.";
 				ErrorInput.Foreground = Brushes.Red;
 				return;
 			}
 			catch (FormatException)
 			{
-				ErrorInput.Content = "Message: Error! Input not correct.";
+				ErrorInput.Content = "Message: Error! Input is not correct.";
+				ErrorInput.Foreground = Brushes.Red;
+				return;
+			}
+			catch (InvalidOperationException)
+			{
+				ErrorInput.Content = "Message: Error! File is not correct.";
 				ErrorInput.Foreground = Brushes.Red;
 				return;
 			}
